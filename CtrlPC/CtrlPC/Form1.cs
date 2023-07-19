@@ -319,6 +319,7 @@ namespace CtrlPC
                         string str = Clipboard.GetText();
                         OutputtextBox.AppendText(str + ", " + arg1 + "\r\n");
                         OutputtextBox.Refresh();
+                        System.Windows.Forms.Application.DoEvents();
                     }
                     break;
 

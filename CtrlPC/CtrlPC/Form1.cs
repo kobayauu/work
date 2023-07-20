@@ -19,6 +19,11 @@ namespace CtrlPC
     public partial class Form1 : Form
     {
         private bool cancelFlag = false;
+        private int hightRatio = 0;
+        private int widthRatio = 0;
+
+        private const int STD_HIGHT = 1080;
+        private const int STD_WIDTH = 1920;
 
         private const int MOUSEEVENTF_LEFTDOWN = 0x2;
         private const int MOUSEEVENTF_LEFTUP = 0x4;
@@ -41,6 +46,11 @@ namespace CtrlPC
             {
                 FuncFiletextBox.Text = AppDomain.CurrentDomain.BaseDirectory + "func.csv";
             }
+
+            int hight = System.Windows.Forms.Screen.PrimaryScreen.Bounds.Height;
+            int width = System.Windows.Forms.Screen.PrimaryScreen.Bounds.Width;
+            hightRatio = hight / STD_HIGHT;
+            widthRatio = width / STD_WIDTH;
         }
 
         private void RefCtrlFilebutton_Click(object sender, EventArgs e)
@@ -75,6 +85,7 @@ namespace CtrlPC
                 CtrlFiletextBox.Enabled = false;
                 FuncFiletextBox.Enabled = false;
                 OutputtextBox.Enabled = false;
+                ConsiderResolutioncheckBox.Enabled = false;
 
                 // 操作ファイルに従い、PC操作
                 cancelFlag = false;
@@ -103,6 +114,7 @@ namespace CtrlPC
                 CtrlFiletextBox.Enabled = true;
                 FuncFiletextBox.Enabled = true;
                 OutputtextBox.Enabled = true;
+                ConsiderResolutioncheckBox.Enabled = true;
 
                 if (cancelFlag == false)
                 {
@@ -136,6 +148,7 @@ namespace CtrlPC
                 RecordStartbutton.Enabled = false;
                 RecordCancelbutton.Enabled = true;
                 OutputtextBox.Enabled = false;
+                ConsiderResolutioncheckBox.Enabled = false;
 
                 // クリックした位置を取得
                 OutputtextBox.Text = "";
@@ -184,6 +197,7 @@ namespace CtrlPC
                 RecordStartbutton.Enabled = true;
                 RecordCancelbutton.Enabled = false;
                 OutputtextBox.Enabled = true;
+                ConsiderResolutioncheckBox.Enabled = true;
             }
         }
 
@@ -268,7 +282,18 @@ namespace CtrlPC
 
                 // 移動してクリック
                 case "PosClick":
-                    SetCursorPos(int.Parse(arg1), int.Parse(arg2));
+                    int posX, posY;
+                    if (ConsiderResolutioncheckBox.Checked == true) {
+                        posX = int.Parse(arg1) * widthRatio;
+                        posY = int.Parse(arg2) * hightRatio;
+                    }
+                    else
+                    {
+                        posX = int.Parse(arg1);
+                        posY = int.Parse(arg2);
+                    }
+
+                    SetCursorPos(posY, posY);
 
                     for (int i = 0; i < int.Parse(arg3); i++)
                     {
@@ -280,8 +305,9 @@ namespace CtrlPC
                 // 文字入力
                 case "Input":
                     Clipboard.SetText(arg1);
-                    //System.Threading.Thread.Sleep(200);
+                    System.Threading.Thread.Sleep(100);
                     SendKeys.Send("^(v)");
+                    System.Threading.Thread.Sleep(100);
                     break;
 
                 // ドラッグ

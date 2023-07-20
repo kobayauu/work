@@ -41,7 +41,6 @@
             this.OutputtextBox = new System.Windows.Forms.TextBox();
             this.RecordStartbutton = new System.Windows.Forms.Button();
             this.RecordCancelbutton = new System.Windows.Forms.Button();
-            this.ConsiderResolutioncheckBox = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // Startbutton
@@ -167,22 +166,11 @@
             this.RecordCancelbutton.UseVisualStyleBackColor = true;
             this.RecordCancelbutton.Click += new System.EventHandler(this.RecordCancelbutton_Click);
             // 
-            // ConsiderResolutioncheckBox
-            // 
-            this.ConsiderResolutioncheckBox.AutoSize = true;
-            this.ConsiderResolutioncheckBox.Location = new System.Drawing.Point(265, 81);
-            this.ConsiderResolutioncheckBox.Name = "ConsiderResolutioncheckBox";
-            this.ConsiderResolutioncheckBox.Size = new System.Drawing.Size(112, 16);
-            this.ConsiderResolutioncheckBox.TabIndex = 16;
-            this.ConsiderResolutioncheckBox.Text = "解像度を考慮する";
-            this.ConsiderResolutioncheckBox.UseVisualStyleBackColor = true;
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(480, 231);
-            this.Controls.Add(this.ConsiderResolutioncheckBox);
             this.Controls.Add(this.RecordCancelbutton);
             this.Controls.Add(this.RecordStartbutton);
             this.Controls.Add(this.OutputtextBox);
@@ -220,7 +208,6 @@
         private System.Windows.Forms.TextBox OutputtextBox;
         private System.Windows.Forms.Button RecordStartbutton;
         private System.Windows.Forms.Button RecordCancelbutton;
-        private System.Windows.Forms.CheckBox ConsiderResolutioncheckBox;
     }
 }
 

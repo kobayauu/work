@@ -1,0 +1,9 @@
+コメントアウト,コマンド,引数1,引数2,引数3,引数4,メモ
+,Func,pcllookファイル選択,,,,
+,Input,L0_HL1_WE0.arxp,,,,
+,Func,W3発数取得,,,,
+,Copy,L0_1_0,,,,
+,Func,pcllookファイル選択,,,,
+,Input,L0_HL2_WE0.arxp,,,,
+,Func,W3発数取得,,,,
+,Copy,L0_2_0,,,,

@@ -55,13 +55,20 @@ namespace CtrlPC
 
         private void Startbutton_Click(object sender, EventArgs e)
         {
-            List<string> ctrclLists = new List<string>();
+            List<string> ctrlLists = new List<string>();
+            List<string> funcLists = new List<string>();
 
             DialogResult result = MessageBox.Show("PC操作を開始します。", "CtrlPC", MessageBoxButtons.OKCancel, MessageBoxIcon.Information);
             if (result == DialogResult.OK)
             {
                 // 操作ファイル読込
-                if (ReadCSV(CtrlFiletextBox.Text, ctrclLists) != 0)
+                if (ReadCSV(CtrlFiletextBox.Text, ctrlLists) != 0)
+                {
+                    return;
+                }
+
+                // 関数ファイル読込
+                if (ReadCSV(FuncFiletextBox.Text, funcLists) != 0)
                 {
                     return;
                 }
@@ -83,7 +90,7 @@ namespace CtrlPC
                 CtrlFiletextBox.Refresh();
                 FuncFiletextBox.Refresh();
                 System.Threading.Thread.Sleep(1000);
-                foreach (string list in ctrclLists)
+                foreach (string list in ctrlLists)
                 {
                     // 「ESC」キーで中断
                     if (GetAsyncKeyState((int)System.Windows.Forms.Keys.Escape) != 0)
@@ -91,7 +98,7 @@ namespace CtrlPC
                         cancelFlag = true;
                         break;
                     }
-                    CtrlMotion(list);
+                    CtrlMotion(list, funcLists);
                 }
 
                 // ボタンを有効化
@@ -238,9 +245,9 @@ namespace CtrlPC
         }
 
         // PC操作
-        private void CtrlMotion(string lists)
+        private void CtrlMotion(string list, List<string> funcLists)
         {
-            string[] values = lists.Split(',');
+            string[] values = list.Split(',');
             bool sleepFlag = true;
             string commentout = "";
             string command = "";
@@ -267,8 +274,8 @@ namespace CtrlPC
                     break;
 
                 // 移動してクリック
-                case "PosClick":                    SetCursorPos(int.Parse(arg1), int.Parse(arg2));
-
+                case "PosClick":
+                    SetCursorPos(int.Parse(arg1), int.Parse(arg2));
                     for (int i = 0; i < int.Parse(arg3); i++)
                     {
                         mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0);
@@ -333,7 +340,31 @@ namespace CtrlPC
 
                 // 関数(使い回す処理のまとまりで別シートに記載)
                 case "Func":
-                    CtrlFunc(arg1);
+                    bool endFlag = false;
+                    string funcCommand = "";
+
+                    foreach (string funcList in funcLists)
+                    {
+                        string[] funcValues = funcList.Split(',');
+                        funcCommand = funcValues[1];
+
+                        // 関数名が一致したら、関数の処理を開始
+                        if ((endFlag == false) && (funcCommand == arg1))
+                        {
+                            endFlag = true;
+
+                        }
+                        else if ((endFlag == true) && (funcCommand != ""))
+                        {
+                            CtrlMotion(funcList, funcLists);
+
+                        }
+                        // 関数名が空白なら、関数の処理を終了
+                        else if ((endFlag == true) && (funcCommand == ""))
+                        {
+                            break;
+                        }
+                    }
                     break;
 
                 default:
@@ -344,44 +375,6 @@ namespace CtrlPC
             if (sleepFlag == true)
             {
                 System.Threading.Thread.Sleep(200);
-            }
-        }
-
-        // PC操作(関数)
-        private void CtrlFunc(string funcName)
-        {
-            List<string> funcLists = new List<string>();
-            bool endFlag = false;
-            string command = "";
-
-            if (ReadCSV(FuncFiletextBox.Text, funcLists) != 0)
-            {
-                return;
-            }
-
-            // 関数ファイルに従い、PC操作
-            foreach (string list in funcLists)
-            {
-                string[] values = list.Split(',');
-                command = values[1];
-
-                // 関数名が一致したら、関数の処理を開始
-                if ((endFlag == false) && (command == funcName))
-                {
-                    endFlag = true;
-
-                }
-                // 関数名が空白なら、関数の処理を終了
-                else if ((endFlag == true) && (command == ""))
-                {
-                    return;
-
-                }
-
-                if (endFlag == true)
-                {
-                    CtrlMotion(list);
-                }
             }
         }
     }

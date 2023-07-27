@@ -5,7 +5,7 @@ import pyperclip
 import subprocess
 import ctypes
 
-# ã‚°ãƒ­ãƒ¼ãƒãƒ«å¤‰æ•°
+# ƒOƒ[ƒoƒ‹•Ï”
 global g_lines
 global g_f
 
@@ -13,7 +13,7 @@ FUNC_FILE = 'func.txt'
 OUTPUT_FILE = 'output.txt'
 
 #----------------------------------------------------------------------------------------------------#
-# PCæ“ä½œ
+# PC‘€ì
 def auto_GUI(array):
     buf = array.split(',')
     cmt = buf[0]
@@ -23,30 +23,30 @@ def auto_GUI(array):
     arg3 = buf[4]
     arg4 = buf[5]
 
-    # ã‚³ãƒ¡ãƒ³ãƒˆè¡Œã¯å‡¦ç†ã—ãªã„
+    # ƒRƒƒ“ƒgs‚Íˆ—‚µ‚È‚¢
     if cmt != "":
        return
         
-    # å¾…æ©Ÿ(Sleep)
+    # ‘Ò‹@(Sleep)
     if cmd == "Sleep":
         time.sleep(float(arg1) / 1000)
 
-    # ç§»å‹•ã—ã¦ã‚¯ãƒªãƒƒã‚¯
+    # ˆÚ“®‚µ‚ÄƒNƒŠƒbƒN
     elif cmd == "Click":
         pyautogui.moveTo(int(arg1), int(arg2))
         pyautogui.click(button="left", clicks=int(arg3))
 
-    # æ–‡å­—å…¥åŠ›
+    # •¶š“ü—Í
     elif cmd == "Input":
         pyperclip.copy(arg1)
         time.sleep(0.1)
         pyautogui.hotkey('ctrl','v')
 
-    # ç‰¹å®šã‚­ãƒ¼æŠ¼ä¸‹(2ã¤åŒæ™‚ã¾ã§å¯)
+    # “Á’èƒL[‰Ÿ‰º(2‚Â“¯‚Ü‚Å‰Â)
     elif cmd == "KeyPress":
         pyautogui.hotkey(arg1, arg2)
 
-    # ãƒ‰ãƒ©ãƒƒã‚°
+    # ƒhƒ‰ƒbƒO
     elif cmd == "Drug":
         pyautogui.moveTo(int(arg1), int(arg2))
         time.sleep(0.05)
@@ -56,7 +56,7 @@ def auto_GUI(array):
         time.sleep(0.05)
         pyautogui.mouseUp()
 
-    # æƒ…å ±ã®ã‚³ãƒ”ãƒ¼
+    # î•ñ‚ÌƒRƒs[
     elif cmd == "Copy":
         pyautogui.hotkey('ctrl','c')
         time.sleep(0.1)
@@ -64,11 +64,11 @@ def auto_GUI(array):
         g_f.write(s_copy + '\n')
         print(s_copy)
           
-    # ãƒ•ã‚¡ã‚¤ãƒ«ã®ã‚ªãƒ¼ãƒ—ãƒ³
+    # ƒtƒ@ƒCƒ‹‚ÌƒI[ƒvƒ“
     elif cmd == "OpenFile":
         subprocess.Popen(arg1)
 
-    # é–¢æ•°(ä½¿ã„å›ã™å‡¦ç†ã®ã¾ã¨ã¾ã‚Šã§åˆ¥ãƒ•ã‚¡ã‚¤ãƒ«ã«è¨˜è¼‰)
+    # ŠÖ”(g‚¢‰ñ‚·ˆ—‚Ì‚Ü‚Æ‚Ü‚è‚Å•Êƒtƒ@ƒCƒ‹‚É‹LÚ)
     elif cmd == "Func":
         end_flag = False
             
@@ -87,7 +87,7 @@ def auto_GUI(array):
 
 
 #----------------------------------------------------------------------------------------------------#
-# ãƒã‚¦ã‚¹ä½ç½®è¨˜éŒ²
+# ƒ}ƒEƒXˆÊ’u‹L˜^
 def record_pos():
     print('Press Esc key if you want to abort.')
     
@@ -98,7 +98,7 @@ def record_pos():
             g_f.write(s_pos + '\n')
             print(s_pos)
 
-        # ã€ŒESCã€ã‚­ãƒ¼ã§ä¸­æ–­
+        # uESCvƒL[‚Å’†’f
         if keyboard.is_pressed('escape'):
             break
 
@@ -109,7 +109,7 @@ def record_pos():
 #----------------------------------------------------------------------------------------------------#
 # Main
 try:
-    # å‡ºåŠ›ãƒ•ã‚¡ã‚¤ãƒ«ã®å†…å®¹ã‚’å‰Šé™¤
+    # o—Íƒtƒ@ƒCƒ‹‚Ì“à—e‚ğíœ
     g_f = open(OUTPUT_FILE, 'a')
     g_f.truncate(0)
 
@@ -118,16 +118,16 @@ try:
     print('\t1 - Record click position')
     option = input('Your option? ')
     if option == "0":
-        # æ“ä½œãƒ•ã‚¡ã‚¤ãƒ«å…¥åŠ›
+        # ‘€ìƒtƒ@ƒCƒ‹“ü—Í
         file = input('Input scenario file name in the same folder as the app(.txt): ')
         file = file + '.txt'
 
-        # æ“ä½œãƒ•ã‚¡ã‚¤ãƒ«èª­è¾¼
+        # ‘€ìƒtƒ@ƒCƒ‹“Ç
         f = open(file, 'r', encoding='UTF-8')
         lines = f.readlines()
         f.close()
         
-        # é–¢æ•°ãƒ•ã‚¡ã‚¤ãƒ«èª­è¾¼
+        # ŠÖ”ƒtƒ@ƒCƒ‹“Ç
         f = open(FUNC_FILE, 'r', encoding='UTF-8')
         g_lines = f.readlines()
         f.close()
@@ -138,7 +138,7 @@ try:
         for line in lines:
             auto_GUI(line)
 
-            # ã€ŒESCã€ã‚­ãƒ¼ã§ä¸­æ–­
+            # uESCvƒL[‚Å’†’f
             if keyboard.is_pressed('escape'):
                 break
 
@@ -153,3 +153,4 @@ finally:
     input('Press Enter key to close the app...')
 #----------------------------------------------------------------------------------------------------#
     
+

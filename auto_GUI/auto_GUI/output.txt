@@ -1,0 +1,14 @@
+[Window Title]
+エクスプローラー
+
+[Content]
+'C:\Users\kobayauu\OneDrive - Brother\work\GTXpro_特注GLB評価\結果用\Win10' は見つかりません。綴りを確認して再実行してください。
+
+[OK],L0_1_0
+[Window Title]
+エクスプローラー
+
+[Content]
+'C:\Users\kobayauu\OneDrive - Brother\work\GTXpro_特注GLB評価\結果用\Win10' は見つかりません。綴りを確認して再実行してください。
+
+[OK],L0_2_0

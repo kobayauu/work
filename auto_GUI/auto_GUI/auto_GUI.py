@@ -1,20 +1,79 @@
+#! /usr/bin/env python
+# -*- coding: shift_jis -*-
 import pyautogui
 import time
 import keyboard
 import pyperclip
 import subprocess
 import ctypes
+import sys
+import tkinter
+from tkinter import filedialog
+from tkinter import messagebox
+from tkinter import scrolledtext
+import threading
+
 
 # グローバル変数
-global g_lines
-global g_f
+global end_flag
 
-FUNC_FILE = "func.txt"
-OUTPUT_FILE = "output.txt"
+AUTO_GUI =0
+CHECK_FLAG = 1
+GET_POS = 2
+
+
+#----------------------------------------------------------------------------------------------------#
+# スレッド開始
+def start_thread(thread_num):
+    if thread_num == AUTO_GUI:
+
+        thread = threading.Thread(target=auto_GUI)
+    elif thread_num == CHECK_FLAG:
+        thread = threading.Thread(target=check_flag)
+    elif thread_num == GET_POS:
+        thread = threading.Thread(target=record_pos)
+    
+    thread.start()
+
+#----------------------------------------------------------------------------------------------------#
 
 #----------------------------------------------------------------------------------------------------#
 # PC操作
-def auto_GUI(array):
+def auto_GUI():
+    try:
+        # 操作ファイル読込
+        f = open(text1.get(), "r", encoding="UTF-8")
+        lines = f.readlines()
+        f.close()
+        
+        # 関数ファイル読込
+        global g_lines
+        if text2.get() != "":
+            f = open(text2.get(), "r", encoding="UTF-8")
+            g_lines = f.readlines()
+            f.close()
+        
+        for line in lines:
+            if end_flag == True:
+                button_enable("normal")
+                button4["state"] = "normal"
+                break
+
+            ctrl_motion(line)
+
+        if end_flag == False:
+            messagebox.showinfo("確認", "操作が完了しました。")
+        else:
+            messagebox.showinfo("確認", "操作を中止しました。")
+
+    except Exception as e:
+        messagebox.showerror("エラー", e)
+
+#----------------------------------------------------------------------------------------------------#
+
+#----------------------------------------------------------------------------------------------------#
+# PC操作
+def ctrl_motion(array):
     buf = array.split(",")
     cmt = buf[0]
     cmd = buf[1]
@@ -60,9 +119,9 @@ def auto_GUI(array):
     elif cmd == "Copy":
         pyautogui.hotkey("ctrl","c")
         time.sleep(0.1)
-        s_copy = pyperclip.paste() + "," + arg1
-        g_f.write(s_copy + "\n")
-        print(s_copy)
+        text3.insert(tkinter.END, pyperclip.paste() + "," + arg1 + "\n")
+        text3.see("end")
+        text3.update()
           
     # ファイルのオープン
     elif cmd == "OpenFile":
@@ -79,78 +138,176 @@ def auto_GUI(array):
             if end_flag == False and func == arg1:
                 end_flag = True
             elif end_flag == True and func != "":
-                auto_GUI(func_line)
+                ctrl_motion(func_line)
             elif end_flag == True and func == "":
                 break
 
 #----------------------------------------------------------------------------------------------------#
 
+#----------------------------------------------------------------------------------------------------#
+# PC操作終了フラグチェック
+def check_flag():
+    global end_flag
+    
+    # 「ESC」キーで中断
+    while True:
+        if keyboard.is_pressed("escape"):
+            end_flag = True
+            break
+
+#----------------------------------------------------------------------------------------------------#
 
 #----------------------------------------------------------------------------------------------------#
 # マウス位置記録
 def record_pos():
-    print("Press Esc key if you want to abort.")
-    
-    while True:
-        if ctypes.windll.user32.GetAsyncKeyState(0x01) != 0:
-            x, y = pyautogui.position()
-            s_pos = "X: " + str(x) + " Y: " + str(y)
-            g_f.write(s_pos + "\n")
-            print(s_pos)
+    start_flag = False
 
-        # 「ESC」キーで中断
-        if keyboard.is_pressed("escape"):
+    while True:
+        # キャンセルボタンがクリックされたか調べる
+        if end_flag == True:
+            # ボタン等を有効化
+            button4["text"] = "記録開始"
+            button_enable("normal")
             break
 
-        time.sleep(0.1)
+        if ctypes.windll.user32.GetAsyncKeyState(0x01) != 0:
+            if start_flag == True:
+                x, y = pyautogui.position()
+                text3.insert(tkinter.END, "X: " + str(x) + " Y: " + str(y) + "\n")
+                text3.see("end")
+                text3.update()
+
+            else:
+                start_flag = True
+
+            time.sleep(0.1)
+
 #----------------------------------------------------------------------------------------------------#
 
+#----------------------------------------------------------------------------------------------------#
+# ファイルパス取得
+def get_file_path():
+    typ = [('テキストファイル','*.txt')] 
+    fle = filedialog.askopenfilename(filetypes = typ)
+    return fle
+
+#----------------------------------------------------------------------------------------------------#
+
+#----------------------------------------------------------------------------------------------------#
+# ボタン有効/無効切替
+def button_enable(is_enabled):
+        global end_flag
+        end_flag = False
+
+        text1["state"] = is_enabled
+        text2["state"] = is_enabled
+        button1["state"] = is_enabled
+        button2["state"] = is_enabled
+        button3["state"] = is_enabled
+        button5["state"] = is_enabled
     
+#----------------------------------------------------------------------------------------------------#
+
+
+#----------------------------------------------------------------------------------------------------#
+# 「参照」ボタンクリックイベント
+def SetCtrlFileButton_Click():
+    text1.insert(tkinter.END, get_file_path())
+
+#----------------------------------------------------------------------------------------------------#
+
+#----------------------------------------------------------------------------------------------------#
+# 「参照」ボタンクリックイベント
+def SetFuncFileButton_Click():
+    text2.insert(tkinter.END, get_file_path())
+
+#----------------------------------------------------------------------------------------------------#
+
+#----------------------------------------------------------------------------------------------------#
+# 「操作開始」ボタンクリックイベント
+def StartCtrlButton_Click():
+    if text1.get() == "":
+        messagebox.showerror("エラー","操作ファイルを選択してください。")
+        return
+
+    if messagebox.askokcancel("確認", "自動操作を開始します。"):
+        # ボタン等を無効化
+        button_enable("disabled")
+        button4["state"] = "disabled"
+        text3.delete("1.0","end")
+
+        start_thread(AUTO_GUI)
+        start_thread(CHECK_FLAG)
+
+#----------------------------------------------------------------------------------------------------#
+
+#----------------------------------------------------------------------------------------------------#
+# 「記録開始」ボタンクリックイベント
+def StartRecordClickPosButton_Click():
+    if button4["text"] == "記録開始":
+        if messagebox.askokcancel("確認", "マウスクリック位置の記録を開始します。"):
+            # ボタン等を無効化
+            button_enable("disabled")
+            button4["text"] = "記録中断"
+            text3.delete("1.0","end")
+
+            start_thread(GET_POS)
+
+    elif button4["text"] == "記録中断":
+        global end_flag
+        end_flag = True
+
+#----------------------------------------------------------------------------------------------------#
+
+#----------------------------------------------------------------------------------------------------#
+# 「閉じる」ボタンクリックイベント
+def CloseButton_Click():
+    if messagebox.askokcancel("確認", "終了しますか？"):
+        root.destroy()
+    
+#----------------------------------------------------------------------------------------------------#
+
+
 #----------------------------------------------------------------------------------------------------#
 # Main
-try:
-    # 出力ファイルの内容を削除
-    g_f = open(OUTPUT_FILE, "a")
-    g_f.truncate(0)
+# ウィンドウ作成
+root = tkinter.Tk()
+root.title("AutoGUI")
+root.geometry("480x250")
+root.resizable(False, False)
 
-    print("Choose an option the following list:")
-    print("\t0 - Start Automatic PC control")
-    print("\t1 - Record click position")
-    option = input("Your option? ")
-    if option == "0":
-        # 操作ファイル入力
-        file = input("Input scenario file name in the same folder as the app(.txt): ")
-        file = file + ".txt"
+# ラベル作成
+label1 = tkinter.Label(text="操作ファイル")
+label1.place(x=10, y=10)
+label2 = tkinter.Label(text="関数ファイル")
+label2.place(x=10, y=50)
+label3 = tkinter.Label(text="出力結果")
+label3.place(x=10, y=130)
 
-        # 操作ファイル読込
-        f = open(file, "r", encoding="UTF-8")
-        lines = f.readlines()
-        f.close()
-        
-        # 関数ファイル読込
-        f = open(FUNC_FILE, "r", encoding="UTF-8")
-        g_lines = f.readlines()
-        f.close()
+# テキストボックス作成
+text1 = tkinter.Entry(width=50)
+text1.place(x=80, y=10)
+text2 = tkinter.Entry(width=50)
+text2.place(x=80, y=50)
+text3= scrolledtext.ScrolledText(root, width=40, height=6)
+text3.place(x=80, y=130)
 
-        print("Press Esc key if you want to abort.")
-        time.sleep(0.5)
-        
-        for line in lines:
-            auto_GUI(line)
+# ボタン作成
+button1 = tkinter.Button(text="参照", command=SetCtrlFileButton_Click, width=10)
+button1.place(x=390, y=7)
 
-            # 「ESC」キーで中断
-            if keyboard.is_pressed("escape"):
-                break
+button2 = tkinter.Button(text="参照", command=SetFuncFileButton_Click, width=10)
+button2.place(x=390, y=47)
 
-    elif option == "1":
-        record_pos()
+button3 = tkinter.Button(text="操作開始", command=StartCtrlButton_Click, width=10)
+button3.place(x=390, y=87)
 
-except Exception as e:
-    print(e)
-    
-finally:
-    g_f.close()
-    input("Press Enter key to close the app...")
+button4 = tkinter.Button(text="記録開始", command=StartRecordClickPosButton_Click, width=10)
+button4.place(x=390, y=127)
+
+button5 = tkinter.Button(text="閉じる", command=CloseButton_Click, width=10)
+button5.place(x=390, y=207)
+
+root.mainloop()
+
 #----------------------------------------------------------------------------------------------------#
-    
-

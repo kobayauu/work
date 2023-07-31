@@ -30,7 +30,7 @@
 ,Click,40,77,1,,メニューバーOpen選択
 ,Click,1272,314,1,,ファイル選択ダイアログのディレクトリ名入力ボックス選択
 ,KeyPress,delete,,,,
-,Input,C:\Users\kobayauu\OneDrive - Brother\work\GTXpro_特注GLB評価\結果用\Win10,,,,
+,Input,C:\Users\kobayauu\OneDrive - Brother\work\01_完了\GTXpro_特注GLB評価\印刷データ\結果用\Win10,,,,
 ,KeyPress,enter,,,,
 ,Click,1310,740,1,,ファイル選択ダイアログのファイル名入力ボックス選択
 ,,,,,,

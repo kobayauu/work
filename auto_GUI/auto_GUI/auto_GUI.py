@@ -14,22 +14,15 @@ from tkinter import scrolledtext
 import threading
 
 
-# グローバル変数
-global end_flag
-
 AUTO_GUI =0
-CHECK_FLAG = 1
-GET_POS = 2
+GET_POS = 1
 
 
 #----------------------------------------------------------------------------------------------------#
 # スレッド開始
 def start_thread(thread_num):
     if thread_num == AUTO_GUI:
-
         thread = threading.Thread(target=auto_GUI)
-    elif thread_num == CHECK_FLAG:
-        thread = threading.Thread(target=check_flag)
     elif thread_num == GET_POS:
         thread = threading.Thread(target=record_pos)
     
@@ -54,20 +47,18 @@ def auto_GUI():
             f.close()
         
         for line in lines:
-            if end_flag == True:
-                button_enable("normal")
-                button4["state"] = "normal"
+            if keyboard.is_pressed("escape"):
                 break
 
             ctrl_motion(line)
 
-        if end_flag == False:
-            messagebox.showinfo("確認", "操作が完了しました。")
-        else:
-            messagebox.showinfo("確認", "操作を中止しました。")
-
     except Exception as e:
         messagebox.showerror("エラー", e)
+
+    finally:
+        button_enable("normal")
+        button4["state"] = "normal"
+        messagebox.showinfo("確認", "操作を終了しました。")
 
 #----------------------------------------------------------------------------------------------------#
 
@@ -145,19 +136,6 @@ def ctrl_motion(array):
 #----------------------------------------------------------------------------------------------------#
 
 #----------------------------------------------------------------------------------------------------#
-# PC操作終了フラグチェック
-def check_flag():
-    global end_flag
-    
-    # 「ESC」キーで中断
-    while True:
-        if keyboard.is_pressed("escape"):
-            end_flag = True
-            break
-
-#----------------------------------------------------------------------------------------------------#
-
-#----------------------------------------------------------------------------------------------------#
 # マウス位置記録
 def record_pos():
     start_flag = False
@@ -180,7 +158,7 @@ def record_pos():
             else:
                 start_flag = True
 
-            time.sleep(0.1)
+            time.sleep(0.2)
 
 #----------------------------------------------------------------------------------------------------#
 
@@ -237,7 +215,6 @@ def StartCtrlButton_Click():
         text3.delete("1.0","end")
 
         start_thread(AUTO_GUI)
-        start_thread(CHECK_FLAG)
 
 #----------------------------------------------------------------------------------------------------#
 

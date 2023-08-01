@@ -1,16 +1,17 @@
 #! /usr/bin/env python
 # -*- coding: shift_jis -*-
+import os
 import pyautogui
 import time
 import keyboard
 import pyperclip
 import subprocess
+import threading
 import tkinter
 from tkinter import filedialog
 from tkinter import messagebox
 from tkinter import scrolledtext
 from pynput import mouse
-import threading
 
 
 AUTO_GUI =0
@@ -34,14 +35,16 @@ def start_thread(thread_num):
 def auto_GUI():
     try:
         # 操作ファイル読込
-        f = open(text1.get(), "r", encoding="UTF-8")
+        ctrl_file = text1.get()
+        f = open(ctrl_file, "r", encoding="UTF-8")
         lines = f.readlines()
         f.close()
         
         # 関数ファイル読込
         global g_lines
-        if text2.get() != "":
-            f = open(text2.get(), "r", encoding="UTF-8")
+        func_file = text2.get()
+        if func_file != "":
+            f = open(func_file, "r", encoding="UTF-8")
             g_lines = f.readlines()
             f.close()
         
@@ -49,7 +52,10 @@ def auto_GUI():
             if keyboard.is_pressed("ctrl+z"):
                 break
 
-            ctrl_motion(line)
+            if ctrl_motion(line) != 0:
+                break
+            
+        messagebox.showinfo("確認", "操作を終了しました。")
 
     except Exception as e:
         messagebox.showerror("エラー", e)
@@ -57,7 +63,6 @@ def auto_GUI():
     finally:
         button_enable("normal")
         button4["state"] = "normal"
-        messagebox.showinfo("確認", "操作を終了しました。")
 
 #----------------------------------------------------------------------------------------------------#
 
@@ -74,11 +79,16 @@ def ctrl_motion(array):
 
     # コメント行は処理しない
     if cmt != "":
-       return
+       return 0
         
     # 待機(Sleep)
     if cmd == "Sleep":
         time.sleep(float(arg1) / 1000)
+
+    # メッセージボックス表示
+    elif cmd == "Message":
+        if messagebox.askyesno("確認", arg1 + "\n操作を中断しますか？"):
+            return 1
 
     # 移動してクリック
     elif cmd == "Click":
@@ -132,6 +142,8 @@ def ctrl_motion(array):
             elif end_flag == True and func == "":
                 break
 
+    return 0
+
 #----------------------------------------------------------------------------------------------------#
 
 #----------------------------------------------------------------------------------------------------#
@@ -142,10 +154,10 @@ def record_pos():
     
     while True:
         # キャンセルボタンがクリックされたか調べる
-        if end_flag == True:
+        if stop_flag == True:
             # ボタン等を有効化
             mouse_listener.stop()
-            button4["text"] = "記録開始"
+            button4["text"] = "取得開始"
             button_enable("normal")
             
             break
@@ -168,7 +180,7 @@ def on_click(x, y, button, pressed):
 #----------------------------------------------------------------------------------------------------#
 # ファイルパス取得
 def get_file_path():
-    typ = [('テキストファイル','*.txt')] 
+    typ = [("テキストファイル","*txt;*.csv")] 
     fle = filedialog.askopenfilename(filetypes = typ)
     return fle
 
@@ -177,8 +189,8 @@ def get_file_path():
 #----------------------------------------------------------------------------------------------------#
 # ボタン有効/無効切替
 def button_enable(is_enabled):
-        global end_flag
-        end_flag = False
+        global stop_flag
+        stop_flag = False
 
         text1["state"] = is_enabled
         text2["state"] = is_enabled
@@ -214,11 +226,7 @@ def SetFuncFileButton_Click():
 #----------------------------------------------------------------------------------------------------#
 # 「操作開始」ボタンクリックイベント
 def StartCtrlButton_Click():
-    if text1.get() == "":
-        messagebox.showerror("エラー","操作ファイルを選択してください。")
-        return
-
-    if messagebox.askyesno("確認", "自動操作を開始しますか？\n(途中で中断する場合、「Ctrl+z」キーを押し続けてください)"):
+    if messagebox.askokcancel("確認", "自動操作を開始します。\n(中断する場合、「Ctrl(Command) + z」を押し続けてください)"):
         # ボタン等を無効化
         button_enable("disabled")
         button4["state"] = "disabled"
@@ -230,17 +238,17 @@ def StartCtrlButton_Click():
 #----------------------------------------------------------------------------------------------------#
 # 「記録開始」ボタンクリックイベント
 def StartRecordClickPosButton_Click():
-    if button4["text"] == "記録開始":
-        if messagebox.askyesno("確認", "マウスクリック位置の記録を開始しますか？\n(左クリックした座標を記録します)"):
+    if button4["text"] == "取得開始":
+        if messagebox.askokcancel("確認", "マウスクリック座標の取得を開始します。"):
             # ボタン等を無効化
             button_enable("disabled")
-            button4["text"] = "記録中断"
+            button4["text"] = "取得停止"
 
             start_thread(GET_POS)
 
-    elif button4["text"] == "記録中断":
-        global end_flag
-        end_flag = True
+    elif button4["text"] == "取得停止":
+        global stop_flag
+        stop_flag = True
 
 #----------------------------------------------------------------------------------------------------#
 
@@ -295,11 +303,11 @@ button2.place(x=390, y=47)
 button3 = tkinter.Button(text="操作開始", command=StartCtrlButton_Click, width=10)
 button3.place(x=390, y=87)
 
-button4 = tkinter.Button(text="記録開始", command=StartRecordClickPosButton_Click, width=10)
+button4 = tkinter.Button(text="取得開始", command=StartRecordClickPosButton_Click, width=10)
 button4.place(x=390, y=127)
 
 button5 = tkinter.Button(text="閉じる", command=CloseButton_Click, width=10)
-button5.place(x=390, y=207)
+button5.place(x=390, y=217)
 
 root.mainloop()
 

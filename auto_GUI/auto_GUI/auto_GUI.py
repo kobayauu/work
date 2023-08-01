@@ -5,12 +5,11 @@ import time
 import keyboard
 import pyperclip
 import subprocess
-import ctypes
-import sys
 import tkinter
 from tkinter import filedialog
 from tkinter import messagebox
 from tkinter import scrolledtext
+from pynput import mouse
 import threading
 
 
@@ -47,7 +46,7 @@ def auto_GUI():
             f.close()
         
         for line in lines:
-            if keyboard.is_pressed("escape"):
+            if keyboard.is_pressed("ctrl+z"):
                 break
 
             ctrl_motion(line)
@@ -63,7 +62,7 @@ def auto_GUI():
 #----------------------------------------------------------------------------------------------------#
 
 #----------------------------------------------------------------------------------------------------#
-# PC操作
+# マウス及びキーボード操作
 def ctrl_motion(array):
     buf = array.split(",")
     cmt = buf[0]
@@ -138,27 +137,31 @@ def ctrl_motion(array):
 #----------------------------------------------------------------------------------------------------#
 # マウス位置記録
 def record_pos():
-    start_flag = False
-
+    mouse_listener = mouse.Listener(on_click=on_click)
+    mouse_listener.start()
+    
     while True:
         # キャンセルボタンがクリックされたか調べる
         if end_flag == True:
             # ボタン等を有効化
+            mouse_listener.stop()
             button4["text"] = "記録開始"
             button_enable("normal")
+            
             break
 
-        if ctypes.windll.user32.GetAsyncKeyState(0x01) != 0:
-            if start_flag == True:
-                x, y = pyautogui.position()
-                text3.insert(tkinter.END, "X: " + str(x) + " Y: " + str(y) + "\n")
-                text3.see("end")
-                text3.update()
+        time.sleep(0.2)
 
-            else:
-                start_flag = True
+#----------------------------------------------------------------------------------------------------#
 
-            time.sleep(0.2)
+#----------------------------------------------------------------------------------------------------#
+# マウスクリック時のイベント
+def on_click(x, y, button, pressed):
+    if pressed:
+        x, y = pyautogui.position()
+        text3.insert(tkinter.END, "X: " + str(x).center(4) + " Y: " + str(y) + "\n")
+        text3.see("end")
+        text3.update()
 
 #----------------------------------------------------------------------------------------------------#
 
@@ -183,21 +186,28 @@ def button_enable(is_enabled):
         button2["state"] = is_enabled
         button3["state"] = is_enabled
         button5["state"] = is_enabled
+
+        if is_enabled == "disabled":
+            text3.delete("1.0","end")
     
 #----------------------------------------------------------------------------------------------------#
 
 
 #----------------------------------------------------------------------------------------------------#
-# 「参照」ボタンクリックイベント
+# 「参照」ボタンクリックイベント(操作ファイル)
 def SetCtrlFileButton_Click():
     text1.insert(tkinter.END, get_file_path())
+    text1.focus_set()
+    pyautogui.hotkey("right")
 
 #----------------------------------------------------------------------------------------------------#
 
 #----------------------------------------------------------------------------------------------------#
-# 「参照」ボタンクリックイベント
+# 「参照」ボタンクリックイベント(関数ファイル)
 def SetFuncFileButton_Click():
     text2.insert(tkinter.END, get_file_path())
+    text2.focus_set()
+    pyautogui.hotkey("right")
 
 #----------------------------------------------------------------------------------------------------#
 
@@ -208,11 +218,10 @@ def StartCtrlButton_Click():
         messagebox.showerror("エラー","操作ファイルを選択してください。")
         return
 
-    if messagebox.askokcancel("確認", "自動操作を開始します。"):
+    if messagebox.askyesno("確認", "自動操作を開始しますか？\n(途中で中断する場合、「Ctrl+z」キーを押し続けてください)"):
         # ボタン等を無効化
         button_enable("disabled")
         button4["state"] = "disabled"
-        text3.delete("1.0","end")
 
         start_thread(AUTO_GUI)
 
@@ -222,11 +231,10 @@ def StartCtrlButton_Click():
 # 「記録開始」ボタンクリックイベント
 def StartRecordClickPosButton_Click():
     if button4["text"] == "記録開始":
-        if messagebox.askokcancel("確認", "マウスクリック位置の記録を開始します。"):
+        if messagebox.askyesno("確認", "マウスクリック位置の記録を開始しますか？\n(左クリックした座標を記録します)"):
             # ボタン等を無効化
             button_enable("disabled")
             button4["text"] = "記録中断"
-            text3.delete("1.0","end")
 
             start_thread(GET_POS)
 
@@ -239,9 +247,16 @@ def StartRecordClickPosButton_Click():
 #----------------------------------------------------------------------------------------------------#
 # 「閉じる」ボタンクリックイベント
 def CloseButton_Click():
-    if messagebox.askokcancel("確認", "終了しますか？"):
+    if messagebox.askyesno("確認", "終了しますか？"):
         root.destroy()
     
+#----------------------------------------------------------------------------------------------------#
+
+#----------------------------------------------------------------------------------------------------#
+# 「×」ボタンの無効化
+def click_close():
+    pass
+
 #----------------------------------------------------------------------------------------------------#
 
 
@@ -252,6 +267,7 @@ root = tkinter.Tk()
 root.title("AutoGUI")
 root.geometry("480x250")
 root.resizable(False, False)
+root.protocol("WM_DELETE_WINDOW", click_close)
 
 # ラベル作成
 label1 = tkinter.Label(text="操作ファイル")

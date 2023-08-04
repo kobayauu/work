@@ -7,12 +7,12 @@ using System.Runtime.InteropServices;
 // アセンブリに関する一般情報は以下の属性セットをとおして制御されます。
 // アセンブリに関連付けられている情報を変更するには、
 // これらの属性値を変更してください。
-[assembly: AssemblyTitle("GTX-4 HotFolder")]
+[assembly: AssemblyTitle("GTX700PB HotFolder")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Brother Industries,Ltd.")]
-[assembly: AssemblyProduct("GTX-4 HotFolder")]
-[assembly: AssemblyCopyright("Copyright (C) 2017-2022 Brother Industries, Ltd. All Rights Reserved.")]
+[assembly: AssemblyProduct("GTX700PB HotFolder")]
+[assembly: AssemblyCopyright("Copyright (C) 2023 Brother Industries, Ltd. All Rights Reserved.")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -34,5 +34,5 @@ using System.Runtime.InteropServices;
 // すべての値を指定するか、下のように '*' を使ってビルドおよびリビジョン番号を 
 // 既定値にすることができます:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("3.7.0.1")]
-[assembly: AssemblyFileVersion("3.7.0.1")]
+[assembly: AssemblyVersion("0.2.0.1")]
+[assembly: AssemblyFileVersion("0.2.0.1")]

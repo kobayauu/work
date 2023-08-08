@@ -310,15 +310,10 @@ def click_close():
 # Main
 # ウィンドウ作成
 root = tkinter.Tk()
-scale_X = root.winfo_screenwidth() / 1920
-scale_Y = root.winfo_screenheight() / 1080
-GUI_width = str(int(480 * scale_X))
-GUI_height = str(int(250 * scale_Y))
 root.title("AutoGUI")
-root.geometry(GUI_width + "x" + GUI_height)
+root.geometry("480x250")
 root.resizable(False, False)
 root.protocol("WM_DELETE_WINDOW", click_close)
-
 
 # ラベル作成
 label1 = tkinter.Label(text="操作ファイル")

@@ -1,7 +1,4 @@
-#! /usr/bin/env python
-# -*- coding: shift_jis -*-
-import os
-import pyautogui
+ï»¿import pyautogui
 import time
 import keyboard
 import pyperclip
@@ -14,12 +11,11 @@ from tkinter import scrolledtext
 from pynput import mouse
 
 
-AUTO_GUI =0
+AUTO_GUI = 0
 GET_POS = 1
 
-
 #----------------------------------------------------------------------------------------------------#
-# ƒXƒŒƒbƒhŠJn
+# ã‚¹ãƒ¬ãƒƒãƒ‰é–‹å§‹
 def start_thread(thread_num):
     if thread_num == AUTO_GUI:
         thread = threading.Thread(target=auto_GUI)
@@ -31,16 +27,16 @@ def start_thread(thread_num):
 #----------------------------------------------------------------------------------------------------#
 
 #----------------------------------------------------------------------------------------------------#
-# PC‘€ì
+# PCæ“ä½œ
 def auto_GUI():
     try:
-        # ‘€ìƒtƒ@ƒCƒ‹“Ç
+        # æ“ä½œãƒ•ã‚¡ã‚¤ãƒ«èª­è¾¼
         ctrl_file = text1.get()
         f = open(ctrl_file, "r", encoding="UTF-8")
         lines = f.readlines()
         f.close()
         
-        # ŠÖ”ƒtƒ@ƒCƒ‹“Ç
+        # é–¢æ•°ãƒ•ã‚¡ã‚¤ãƒ«èª­è¾¼
         global g_lines
         func_file = text2.get()
         if func_file != "":
@@ -48,6 +44,10 @@ def auto_GUI():
             g_lines = f.readlines()
             f.close()
         
+        global pos_X
+        global pos_Y
+        pos_X = 0
+        pos_Y = 0
         for line in lines:
             if keyboard.is_pressed("ctrl+z"):
                 break
@@ -55,10 +55,10 @@ def auto_GUI():
             if ctrl_motion(line) != 0:
                 break
             
-        messagebox.showinfo("Šm”F", "‘€ì‚ğI—¹‚µ‚Ü‚µ‚½B")
+        messagebox.showinfo("ç¢ºèª", "æ“ä½œã‚’çµ‚äº†ã—ã¾ã—ãŸã€‚")
 
     except Exception as e:
-        messagebox.showerror("ƒGƒ‰[", e)
+        messagebox.showerror("ã‚¨ãƒ©ãƒ¼", e)
 
     finally:
         button_enable("normal")
@@ -67,8 +67,12 @@ def auto_GUI():
 #----------------------------------------------------------------------------------------------------#
 
 #----------------------------------------------------------------------------------------------------#
-# ƒ}ƒEƒX‹y‚ÑƒL[ƒ{[ƒh‘€ì
+# ãƒã‚¦ã‚¹åŠã³ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰æ“ä½œ
 def ctrl_motion(array):
+    global pos_X
+    global pos_Y
+    global click_flag
+
     buf = array.split(",")
     cmt = buf[0]
     cmd = buf[1]
@@ -77,45 +81,67 @@ def ctrl_motion(array):
     arg3 = buf[4]
     arg4 = buf[5]
 
-    # ƒRƒƒ“ƒgs‚Íˆ—‚µ‚È‚¢
+    # ã‚³ãƒ¡ãƒ³ãƒˆè¡Œã¯å‡¦ç†ã—ãªã„
     if cmt != "":
        return 0
         
-    # ‘Ò‹@(Sleep)
+    # å¾…æ©Ÿ(Sleep)
     if cmd == "Sleep":
         time.sleep(float(arg1) / 1000)
 
-    # ƒƒbƒZ[ƒWƒ{ƒbƒNƒX•\¦
+    # ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒœãƒƒã‚¯ã‚¹è¡¨ç¤º
     elif cmd == "Message":
-        if messagebox.askyesno("Šm”F", arg1 + "\n‘€ì‚ğ’†’f‚µ‚Ü‚·‚©H"):
+        if messagebox.askyesno("ç¢ºèª", arg1 + "\næ“ä½œã‚’ä¸­æ–­ã—ã¾ã™ã‹ï¼Ÿ"):
             return 1
 
-    # ˆÚ“®‚µ‚ÄƒNƒŠƒbƒN
+    # ç§»å‹•ã—ã¦ã‚¯ãƒªãƒƒã‚¯
     elif cmd == "Click":
-        pyautogui.moveTo(int(arg1), int(arg2))
+        pyautogui.moveTo(pos_X + int(arg1), pos_Y + int(arg2))
         pyautogui.click(button="left", clicks=int(arg3))
 
-    # •¶š“ü—Í
+    # æ–‡å­—å…¥åŠ›
     elif cmd == "Input":
         pyperclip.copy(arg1)
         time.sleep(0.1)
         pyautogui.hotkey("ctrl","v")
 
-    # “Á’èƒL[‰Ÿ‰º(2‚Â“¯‚Ü‚Å‰Â)
+    # ç‰¹å®šã‚­ãƒ¼æŠ¼ä¸‹(2ã¤åŒæ™‚ã¾ã§å¯)
     elif cmd == "KeyPress":
         pyautogui.hotkey(arg1, arg2)
 
-    # ƒhƒ‰ƒbƒO
+    # ãƒ‰ãƒ©ãƒƒã‚°
     elif cmd == "Drug":
-        pyautogui.moveTo(int(arg1), int(arg2))
+        pyautogui.moveTo(pos_X + int(arg1), pos_Y + int(arg2))
         time.sleep(0.05)
         pyautogui.mouseDown()
         time.sleep(0.05)
-        pyautogui.moveTo(int(arg3), int(arg4))
+        pyautogui.moveTo(pos_X + int(arg3), pos_Y + int(arg4))
         time.sleep(0.05)
         pyautogui.mouseUp()
 
-    # î•ñ‚ÌƒRƒs[
+    # åŸºæº–ç‚¹
+    elif cmd == "BasePos":
+        if arg1 == "1":
+            messagebox.showinfo("ç¢ºèª", "åŸºæº–ã¨ãªã‚‹ä½ç½®ã‚’ã‚¯ãƒªãƒƒã‚¯ã—ã¦ä¸‹ã•ã„ã€‚")
+            click_flag = False
+            mouse_listener = mouse.Listener(on_click=on_click)
+            mouse_listener.start()
+
+            while True:
+                # ã‚¯ãƒªãƒƒã‚¯ã•ã‚ŒãŸã‹èª¿ã¹ã‚‹
+                if click_flag == True:
+                    mouse_listener.stop()
+                    break
+
+                time.sleep(0.2)
+
+        elif arg1 == "0":
+            pos_X = 0
+            pos_Y = 0
+
+        time.sleep(0.5)
+
+    # æƒ…å ±ã®ã‚³ãƒ”ãƒ¼
     elif cmd == "Copy":
         pyautogui.hotkey("ctrl","c")
         time.sleep(0.1)
@@ -123,11 +149,11 @@ def ctrl_motion(array):
         text3.see("end")
         text3.update()
           
-    # ƒtƒ@ƒCƒ‹‚ÌƒI[ƒvƒ“
+    # ãƒ•ã‚¡ã‚¤ãƒ«ã®ã‚ªãƒ¼ãƒ—ãƒ³
     elif cmd == "OpenFile":
         subprocess.Popen(arg1)
 
-    # ŠÖ”(g‚¢‰ñ‚·ˆ—‚Ì‚Ü‚Æ‚Ü‚è‚Å•Êƒtƒ@ƒCƒ‹‚É‹LÚ)
+    # é–¢æ•°(ä½¿ã„å›ã™å‡¦ç†ã®ã¾ã¨ã¾ã‚Šã§åˆ¥ãƒ•ã‚¡ã‚¤ãƒ«ã«è¨˜è¼‰)
     elif cmd == "Func":
         end_flag = False
             
@@ -147,47 +173,59 @@ def ctrl_motion(array):
 #----------------------------------------------------------------------------------------------------#
 
 #----------------------------------------------------------------------------------------------------#
-# ƒ}ƒEƒXˆÊ’u‹L˜^
+# ãƒã‚¦ã‚¹ä½ç½®è¨˜éŒ²
 def record_pos():
+    global click_flag
+    click_flag = False
     mouse_listener = mouse.Listener(on_click=on_click)
     mouse_listener.start()
     
     while True:
-        # ƒLƒƒƒ“ƒZƒ‹ƒ{ƒ^ƒ“‚ªƒNƒŠƒbƒN‚³‚ê‚½‚©’²‚×‚é
+        # ã‚­ãƒ£ãƒ³ã‚»ãƒ«ãƒœã‚¿ãƒ³ãŒã‚¯ãƒªãƒƒã‚¯ã•ã‚ŒãŸã‹èª¿ã¹ã‚‹
         if stop_flag == True:
-            # ƒ{ƒ^ƒ““™‚ğ—LŒø‰»
+
+            # ãƒœã‚¿ãƒ³ç­‰ã‚’æœ‰åŠ¹åŒ–
             mouse_listener.stop()
-            button4["text"] = "æ“¾ŠJn"
-            button_enable("normal")
-            
+            button4["text"] = "å–å¾—é–‹å§‹"
+            button_enable("normal")        
             break
+
+        if click_flag == True:
+            text3.insert(tkinter.END, "X: " + str(pos_X).center(4) + " Y: " + str(pos_Y) + "\n")
+            text3.see("end")
+            text3.update()
+            click_flag = False
 
         time.sleep(0.2)
 
 #----------------------------------------------------------------------------------------------------#
 
 #----------------------------------------------------------------------------------------------------#
-# ƒ}ƒEƒXƒNƒŠƒbƒN‚ÌƒCƒxƒ“ƒg
+# ãƒã‚¦ã‚¹ã‚¯ãƒªãƒƒã‚¯æ™‚ã®ã‚¤ãƒ™ãƒ³ãƒˆ
 def on_click(x, y, button, pressed):
     if pressed:
         x, y = pyautogui.position()
-        text3.insert(tkinter.END, "X: " + str(x).center(4) + " Y: " + str(y) + "\n")
-        text3.see("end")
-        text3.update()
+        global pos_X
+        global pos_Y
+        global click_flag
+
+        pos_X = x
+        pos_Y = y
+        click_flag = True
 
 #----------------------------------------------------------------------------------------------------#
 
 #----------------------------------------------------------------------------------------------------#
-# ƒtƒ@ƒCƒ‹ƒpƒXæ“¾
+# ãƒ•ã‚¡ã‚¤ãƒ«ãƒ‘ã‚¹å–å¾—
 def get_file_path():
-    typ = [("ƒeƒLƒXƒgƒtƒ@ƒCƒ‹","*txt;*.csv")] 
+    typ = [("ãƒ†ã‚­ã‚¹ãƒˆãƒ•ã‚¡ã‚¤ãƒ«","*txt;*.csv")] 
     fle = filedialog.askopenfilename(filetypes = typ)
     return fle
 
 #----------------------------------------------------------------------------------------------------#
 
 #----------------------------------------------------------------------------------------------------#
-# ƒ{ƒ^ƒ“—LŒø/–³ŒøØ‘Ö
+# ãƒœã‚¿ãƒ³æœ‰åŠ¹/ç„¡åŠ¹åˆ‡æ›¿
 def button_enable(is_enabled):
         global stop_flag
         stop_flag = False
@@ -206,7 +244,7 @@ def button_enable(is_enabled):
 
 
 #----------------------------------------------------------------------------------------------------#
-# uQÆvƒ{ƒ^ƒ“ƒNƒŠƒbƒNƒCƒxƒ“ƒg(‘€ìƒtƒ@ƒCƒ‹)
+# ã€Œå‚ç…§ã€ãƒœã‚¿ãƒ³ã‚¯ãƒªãƒƒã‚¯ã‚¤ãƒ™ãƒ³ãƒˆ(æ“ä½œãƒ•ã‚¡ã‚¤ãƒ«)
 def SetCtrlFileButton_Click():
     text1.insert(tkinter.END, get_file_path())
     text1.focus_set()
@@ -215,7 +253,7 @@ def SetCtrlFileButton_Click():
 #----------------------------------------------------------------------------------------------------#
 
 #----------------------------------------------------------------------------------------------------#
-# uQÆvƒ{ƒ^ƒ“ƒNƒŠƒbƒNƒCƒxƒ“ƒg(ŠÖ”ƒtƒ@ƒCƒ‹)
+# ã€Œå‚ç…§ã€ãƒœã‚¿ãƒ³ã‚¯ãƒªãƒƒã‚¯ã‚¤ãƒ™ãƒ³ãƒˆ(é–¢æ•°ãƒ•ã‚¡ã‚¤ãƒ«)
 def SetFuncFileButton_Click():
     text2.insert(tkinter.END, get_file_path())
     text2.focus_set()
@@ -224,10 +262,10 @@ def SetFuncFileButton_Click():
 #----------------------------------------------------------------------------------------------------#
 
 #----------------------------------------------------------------------------------------------------#
-# u‘€ìŠJnvƒ{ƒ^ƒ“ƒNƒŠƒbƒNƒCƒxƒ“ƒg
+# ã€Œæ“ä½œé–‹å§‹ã€ãƒœã‚¿ãƒ³ã‚¯ãƒªãƒƒã‚¯ã‚¤ãƒ™ãƒ³ãƒˆ
 def StartCtrlButton_Click():
-    if messagebox.askokcancel("Šm”F", "©“®‘€ì‚ğŠJn‚µ‚Ü‚·B\n(’†’f‚·‚éê‡AuCtrl(Command) + zv‚ğ‰Ÿ‚µ‘±‚¯‚Ä‚­‚¾‚³‚¢)"):
-        # ƒ{ƒ^ƒ““™‚ğ–³Œø‰»
+    if messagebox.askokcancel("ç¢ºèª", "è‡ªå‹•æ“ä½œã‚’é–‹å§‹ã—ã¾ã™ã€‚\n(ä¸­æ–­ã™ã‚‹å ´åˆã€ã€ŒCtrl(Command) + zã€ã‚’æŠ¼ã—ç¶šã‘ã¦ãã ã•ã„)"):
+        # ãƒœã‚¿ãƒ³ç­‰ã‚’ç„¡åŠ¹åŒ–
         button_enable("disabled")
         button4["state"] = "disabled"
 
@@ -236,32 +274,32 @@ def StartCtrlButton_Click():
 #----------------------------------------------------------------------------------------------------#
 
 #----------------------------------------------------------------------------------------------------#
-# u‹L˜^ŠJnvƒ{ƒ^ƒ“ƒNƒŠƒbƒNƒCƒxƒ“ƒg
+# ã€Œè¨˜éŒ²é–‹å§‹ã€ãƒœã‚¿ãƒ³ã‚¯ãƒªãƒƒã‚¯ã‚¤ãƒ™ãƒ³ãƒˆ
 def StartRecordClickPosButton_Click():
-    if button4["text"] == "æ“¾ŠJn":
-        if messagebox.askokcancel("Šm”F", "ƒ}ƒEƒXƒNƒŠƒbƒNÀ•W‚Ìæ“¾‚ğŠJn‚µ‚Ü‚·B"):
-            # ƒ{ƒ^ƒ““™‚ğ–³Œø‰»
+    if button4["text"] == "å–å¾—é–‹å§‹":
+        if messagebox.askokcancel("ç¢ºèª", "ãƒã‚¦ã‚¹ã‚¯ãƒªãƒƒã‚¯åº§æ¨™ã®å–å¾—ã‚’é–‹å§‹ã—ã¾ã™ã€‚"):
+            # ãƒœã‚¿ãƒ³ç­‰ã‚’ç„¡åŠ¹åŒ–
             button_enable("disabled")
-            button4["text"] = "æ“¾’â~"
+            button4["text"] = "å–å¾—åœæ­¢"
 
             start_thread(GET_POS)
 
-    elif button4["text"] == "æ“¾’â~":
+    elif button4["text"] == "å–å¾—åœæ­¢":
         global stop_flag
         stop_flag = True
 
 #----------------------------------------------------------------------------------------------------#
 
 #----------------------------------------------------------------------------------------------------#
-# u•Â‚¶‚évƒ{ƒ^ƒ“ƒNƒŠƒbƒNƒCƒxƒ“ƒg
+# ã€Œé–‰ã˜ã‚‹ã€ãƒœã‚¿ãƒ³ã‚¯ãƒªãƒƒã‚¯ã‚¤ãƒ™ãƒ³ãƒˆ
 def CloseButton_Click():
-    if messagebox.askyesno("Šm”F", "I—¹‚µ‚Ü‚·‚©H"):
+    if messagebox.askyesno("ç¢ºèª", "çµ‚äº†ã—ã¾ã™ã‹ï¼Ÿ"):
         root.destroy()
     
 #----------------------------------------------------------------------------------------------------#
 
 #----------------------------------------------------------------------------------------------------#
-# u~vƒ{ƒ^ƒ“‚Ì–³Œø‰»
+# ã€ŒÃ—ã€ãƒœã‚¿ãƒ³ã®ç„¡åŠ¹åŒ–
 def click_close():
     pass
 
@@ -270,22 +308,27 @@ def click_close():
 
 #----------------------------------------------------------------------------------------------------#
 # Main
-# ƒEƒBƒ“ƒhƒEì¬
+# ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ä½œæˆ
 root = tkinter.Tk()
+scale_X = root.winfo_screenwidth() / 1920
+scale_Y = root.winfo_screenheight() / 1080
+GUI_width = str(int(480 * scale_X))
+GUI_height = str(int(250 * scale_Y))
 root.title("AutoGUI")
-root.geometry("480x250")
+root.geometry(GUI_width + "x" + GUI_height)
 root.resizable(False, False)
 root.protocol("WM_DELETE_WINDOW", click_close)
 
-# ƒ‰ƒxƒ‹ì¬
-label1 = tkinter.Label(text="‘€ìƒtƒ@ƒCƒ‹")
+
+# ãƒ©ãƒ™ãƒ«ä½œæˆ
+label1 = tkinter.Label(text="æ“ä½œãƒ•ã‚¡ã‚¤ãƒ«")
 label1.place(x=10, y=10)
-label2 = tkinter.Label(text="ŠÖ”ƒtƒ@ƒCƒ‹")
+label2 = tkinter.Label(text="é–¢æ•°ãƒ•ã‚¡ã‚¤ãƒ«")
 label2.place(x=10, y=50)
-label3 = tkinter.Label(text="o—ÍŒ‹‰Ê")
+label3 = tkinter.Label(text="å‡ºåŠ›çµæœ")
 label3.place(x=10, y=130)
 
-# ƒeƒLƒXƒgƒ{ƒbƒNƒXì¬
+# ãƒ†ã‚­ã‚¹ãƒˆãƒœãƒƒã‚¯ã‚¹ä½œæˆ
 text1 = tkinter.Entry(width=50)
 text1.place(x=80, y=10)
 text2 = tkinter.Entry(width=50)
@@ -293,20 +336,20 @@ text2.place(x=80, y=50)
 text3= scrolledtext.ScrolledText(root, width=40, height=6)
 text3.place(x=80, y=130)
 
-# ƒ{ƒ^ƒ“ì¬
-button1 = tkinter.Button(text="QÆ", command=SetCtrlFileButton_Click, width=10)
+# ãƒœã‚¿ãƒ³ä½œæˆ
+button1 = tkinter.Button(text="å‚ç…§", command=SetCtrlFileButton_Click, width=10)
 button1.place(x=390, y=7)
 
-button2 = tkinter.Button(text="QÆ", command=SetFuncFileButton_Click, width=10)
+button2 = tkinter.Button(text="å‚ç…§", command=SetFuncFileButton_Click, width=10)
 button2.place(x=390, y=47)
 
-button3 = tkinter.Button(text="‘€ìŠJn", command=StartCtrlButton_Click, width=10)
+button3 = tkinter.Button(text="æ“ä½œé–‹å§‹", command=StartCtrlButton_Click, width=10)
 button3.place(x=390, y=87)
 
-button4 = tkinter.Button(text="æ“¾ŠJn", command=StartRecordClickPosButton_Click, width=10)
+button4 = tkinter.Button(text="å–å¾—é–‹å§‹", command=StartRecordClickPosButton_Click, width=10)
 button4.place(x=390, y=127)
 
-button5 = tkinter.Button(text="•Â‚¶‚é", command=CloseButton_Click, width=10)
+button5 = tkinter.Button(text="é–‰ã˜ã‚‹", command=CloseButton_Click, width=10)
 button5.place(x=390, y=217)
 
 root.mainloop()

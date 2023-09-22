@@ -70,23 +70,23 @@ public:		//コンストラクタ
 	~CSplitArp(void);
 
 public:		//public関数
-	int Open(LPCTSTR szIn, LPCTSTR szOutW, LPCTSTR szOutC, LPCTSTR szOutF, LPCTSTR szOutW2);
+	int Open(LPCTSTR szIn, LPCTSTR szOutW1, LPCTSTR szOutW2, LPCTSTR szOutC, LPCTSTR szOutF);
 	int Close();
 	int Process();
 
 private:	//ARPコマンド
 	CArpCmd m_Split;
-	CArpCmd m_White;
-	CArpCmd m_Color;
-	CArpCmd m_Finishing;
+	CArpCmd m_White1;
 	CArpCmd m_White2;
+	CArpCmd m_Color;
+	CArpCmd m_FF;
 
 private:	//実行
 	int ProcessHeader(int& nGraphic);
 	//int ProcessGraphic(int nGraphic, int& nGraphicW, int& nGraphicC, int nSizeW[], int nSizeC[], int nStartW[], int nStartC[], int nLineW[], int nLineC[]);
-	int ProcessGraphic(int nGraphic, int& nGraphicW, int& nGraphicC, int& nGraphicF, int& nGraphicW2, int nSizeW[], int nSizeC[], int nSizeF[], int nSizeW2[], int nStartW[], int nStartC[], int nStartF[], int nStartW2[], int nLineW[], int nLineC[], int nLineF[], int nLineW2[]);
+	int ProcessGraphic(int nGraphic, int& nGraphicW1, int& nGraphicW2, int& nGraphicC, int& nGraphicFF, int nSizeW1[], int nSizeW2[], int nSizeC[], int nSizeFF[], int nStartW1[], int nStartW2[], int nStartC[], int nStartFF[], int nLineW1[], int nLineW2[], int nLineC[], int nLineFF[]);
 	//int ProcessFooter(int nGraphicW, int nGraphicC, int nSizeW[], int nSizeC[], int nStartW[], int nStartC[], int nLineW[], int nLineC[]);
-	int ProcessFooter(int nGraphicW, int nGraphicC, int nGraphicF, int nGraphicW2, int nSizeW[], int nSizeC[], int nSizeF[], int nSizeW2[], int nStartW[], int nStartC[], int nStartF[], int nStartW2[], int nLineW[], int nLineC[], int nLineF[], int nLineW2[]);
+	int ProcessFooter(int nGraphicW1, int nGraphicW2, int nGraphicC, int nGraphicFF, int nSizeW1[], int nSizeW2[], int nSizeC[], int nSizeFF[], int nStartW1[], int nStartW2[], int nStartC[], int nStartFF[], int nLineW1[], int nLineW2[], int nLineC[], int nLineFF[]);
 };
 
 //分割印刷の値を修正

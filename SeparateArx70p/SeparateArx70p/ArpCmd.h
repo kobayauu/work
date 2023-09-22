@@ -124,7 +124,7 @@ public:			//publicä÷êî
 	void SetParam(CArpCmd* pArpCmd);
 	void SetColor(CArpCmd* pArpCmd);
 	void SetWhite(CArpCmd* pArpCmd);
-	void SetFinishing(CArpCmd* pArpCmd);
+	void SetFF(CArpCmd* pArpCmd);
 
 private:		//ÉfÅ[É^
 	DWORD	dwDots[8][3];

@@ -704,47 +704,47 @@ CSplitArp::~CSplitArp(void)
 	Close();
 }
 
-int CSplitArp::Open(LPCTSTR szIn, LPCTSTR szOutW, LPCTSTR szOutC, LPCTSTR szOutF, LPCTSTR szOutW2)
+int CSplitArp::Open(LPCTSTR szIn, LPCTSTR szOutW1, LPCTSTR szOutW2, LPCTSTR szOutC, LPCTSTR szOutF)
 {
 	int	nRet = m_Split.Open( szIn  , FALSE );
 	if( nRet < 0 )	return -101;
 
-	nRet = m_White.Open( szOutW, TRUE  );
+	nRet = m_White1.Open( szOutW1, TRUE  );
 	if( nRet < 0 )	return -102;
+
+	nRet = m_White2.Open( szOutW2, TRUE  );
+	if (nRet < 0)	return -102;
 
 	nRet = m_Color.Open( szOutC, TRUE  );
 	if( nRet < 0 )	return -103;
 
-	nRet = m_Finishing.Open(szOutF, TRUE);
+	nRet = m_FF.Open( szOutF, TRUE  );
 	if (nRet < 0)	return -104;
-
-	nRet = m_White2.Open(szOutW2, TRUE);
-	if (nRet < 0)	return -105;
 
 	return	0;
 }
 int CSplitArp::Close()
 {
 	m_Split.Close();
-	m_White.Close();
-	m_Color.Close();
-	m_Finishing.Close();
+	m_White1.Close();
 	m_White2.Close();
+	m_Color.Close();
+	m_FF.Close();
 
 	return	0;
 }
 int CSplitArp::Process()
 {
-	int		nGraphic, nGraphicW, nGraphicC, nGraphicF, nGraphicW2;
-	int		nSizeW[32], nSizeC[32], nSizeF[32], nSizeW2[32];		//Graphics Size
-	int		nStartW[32], nStartC[32], nStartF[32], nStartW2[32];	//Start Line
-	int		nLineW[32], nLineC[32], nLineF[32], nLineW2[32];		//Line Count
+	int		nGraphic, nGraphicW1, nGraphicW2, nGraphicC, nGraphicFF;
+	int		nSizeW1[32], nSizeW2[32], nSizeC[32], nSizeFF[32];		//Graphics Size
+	int		nStartW1[32], nStartW2[32], nStartC[32], nStartFF[32];	//Start Line
+	int		nLineW1[32], nLineW2[32], nLineC[32], nLineFF[32];		//Line Count
 
 	int				nRet = ProcessHeader( nGraphic );
 	//if( nRet >= 0 )	nRet = ProcessGraphic( nGraphic, nGraphicW, nGraphicC, nSizeW, nSizeC, nStartW, nStartC, nLineW, nLineC );
-	if (nRet >= 0)	nRet = ProcessGraphic(nGraphic, nGraphicW, nGraphicC, nGraphicF, nGraphicW2, nSizeW, nSizeC, nSizeF, nSizeW2, nStartW, nStartC, nStartF, nStartW2, nLineW, nLineC, nLineF, nLineW2);
+	if (nRet >= 0)	nRet = ProcessGraphic(nGraphic, nGraphicW1, nGraphicW2, nGraphicC, nGraphicFF, nSizeW1, nSizeW2, nSizeC, nSizeFF, nStartW1, nStartW2, nStartC, nStartFF, nLineW1, nLineW2, nLineC, nLineFF);
 	//if( nRet >= 0 )	nRet = ProcessFooter( nGraphicW, nGraphicC, nSizeW, nSizeC, nStartW, nStartC, nLineW, nLineC );
-	if (nRet >= 0)	nRet = ProcessFooter(nGraphicW, nGraphicC, nGraphicF, nGraphicW2, nSizeW, nSizeC, nSizeF, nSizeW2, nStartW, nStartC, nStartF, nStartW2, nLineW, nLineC, nLineF, nLineW2);
+	if (nRet >= 0)	nRet = ProcessFooter(nGraphicW1, nGraphicW2, nGraphicC, nGraphicFF, nSizeW1, nSizeW2, nSizeC, nSizeFF, nStartW1, nStartW2, nStartC, nStartFF, nLineW1, nLineW2, nLineC, nLineFF);
 
 	return	nRet;
 }
@@ -759,16 +759,16 @@ int CSplitArp::ProcessHeader(int& nGraphic)
 	{
 		//コマンドのコピー
 		m_Color.Copy( &m_Split );
-		m_White.Copy( &m_Split );
-		m_Finishing.Copy(&m_Split);
-		m_White2.Copy(&m_Split);
+		m_White1.Copy( &m_Split );
+		m_White2.Copy( &m_Split );
+		m_FF.Copy( &m_Split );
 
 		//Job Start
 		if( CMD_KIND(m_Split) == 0x1B && JOB_TYPE(m_Split) == '@' )
 		{
 			if((GET_BYTE( m_Split, 0 ) != 0x0A && GET_BYTE( m_Split, 0 ) != 0x0B && GET_BYTE( m_Split, 0 ) != 0x0C)	//コマンドバージョン
 			||	GET_BYTE( m_Split, 1 ) != 0x50		//ジョブ種別
-			|| (GET_BYTE( m_Split, 7 ) != 0x12 && GET_BYTE( m_Split, 7 ) != 0x14) && GET_BYTE(m_Split, 7) != 0x24 && GET_BYTE(m_Split, 7) != 0x30 && GET_BYTE(m_Split, 7) != 0x34) {	//使用ヘッド
+			|| (GET_BYTE( m_Split, 7 ) != 0x12 && GET_BYTE( m_Split, 7 ) != 0x14) && GET_BYTE( m_Split, 7 ) != 0x24 && GET_BYTE( m_Split, 7 ) != 0x30 && GET_BYTE( m_Split, 7 ) != 0x34) {	//使用ヘッド
 				nRet = -301;
 				break;
 			}
@@ -783,34 +783,34 @@ int CSplitArp::ProcessHeader(int& nGraphic)
 				SET_BYTE( m_Color, 9, 1 );
 			}
 
-			//White
-			AND_BYTE( m_White,  7, ~0x70 );
-			SET_BYTE( m_White, 10,  0x00 );
+			//White1
+			AND_BYTE( m_White1,  7, ~0x70 );
+			SET_BYTE( m_White1, 10,  0x00 );
 			//NOTE: Support		"W+C" , "W+W+C"
 			//		Not support	"W+WC"
 			//		Except		"WC"
 			if( nGraphic > 1 ) {
-				SET_BYTE(  m_White, 8, 1 );
-				SET_BYTE(  m_White, 9, 1 );
-			}
-
-			//Finishing
-			AND_BYTE(m_Finishing, 7, ~0x6F);
-			SET_BYTE(m_Finishing, 10, 0x00);
-			if (nGraphic > 1) {
-				SET_BYTE(m_Finishing, 8, 1);
-				SET_BYTE(m_Finishing, 9, 1);
+				SET_BYTE(  m_White1, 8, 1 );
+				SET_BYTE(  m_White1, 9, 1 );
 			}
 
 			//White2
-			AND_BYTE(m_White2, 7, ~0x70);
-			SET_BYTE(m_White2, 10, 0x00);
+			AND_BYTE( m_White2, 7, ~0x70 );
+			SET_BYTE( m_White2, 10, 0x00 );
 			//NOTE: Support		"W+C" , "W+W+C"
 			//		Not support	"W+WC"
 			//		Except		"WC"
-			if (nGraphic > 1) {
-				SET_BYTE(m_White2, 8, 1);
-				SET_BYTE(m_White2, 9, 1);
+			if ( nGraphic > 1 ) {
+				SET_BYTE( m_White2, 8, 1 );
+				SET_BYTE( m_White2, 9, 1 );
+			}
+
+			//FF
+			AND_BYTE( m_FF , 7, ~0x1F );
+			SET_BYTE( m_FF , 10, 0x00 );
+			if ( nGraphic > 1 ) {
+				SET_BYTE( m_FF, 8, 1 );
+				SET_BYTE( m_FF, 9, 1 );
 			}
 		}
 
@@ -820,24 +820,24 @@ int CSplitArp::ProcessHeader(int& nGraphic)
 			SET_BYTE( m_Color, 14, 4 );	//Time	//NOTE: not support multipass.
 			SET_WORD( m_Color, 23, 0 );	//WMax
 
-			SET_BYTE(m_Finishing, 14, 0);	//Time	//NOTE: not support multipass.
-			SET_WORD(m_Finishing, 23, 0);	//WMax
+			SET_BYTE( m_FF, 14, 4 );	//Time	//NOTE: not support multipass.
+			SET_WORD( m_FF, 23, 0 );	//WMax
 		}
 
 		//前処理
-		if (CMD_KIND(m_Split) == '#' && CMD_TYPE(m_Split) == 0x002B)
+		if ( CMD_KIND(m_Split) == '#' && CMD_TYPE(m_Split) == 0x002B )
 		{
 			m_Color.Write();
-			m_White.Write();
+			m_White1.Write();
 			m_White2.Write();
 			continue;
 		}
 
 		//コマンド書き込み
 		m_Color.Write();
-		m_White.Write();
-		m_Finishing.Write();
+		m_White1.Write();
 		m_White2.Write();
+		m_FF.Write();
 
 		//ヘッド移動最適化モード指定		ヘッダの最終コマンド
 		if( CMD_KIND(m_Split) == '#' && CMD_TYPE(m_Split) == 0x0008 )
@@ -848,16 +848,16 @@ int CSplitArp::ProcessHeader(int& nGraphic)
 }
 
 //Grapicデータのセパレート
-int CSplitArp::ProcessGraphic(int nGraphic, int& nGraphicW, int& nGraphicC, int& nGraphicF, int& nGraphicW2, int nSizeW[], int nSizeC[], int nSizeF[], int nSizeW2[], int nStartW[], int nStartC[], int nStartF[], int nStartW2[], int nLineW[], int nLineC[], int nLineF[], int nLineW2[])
+int CSplitArp::ProcessGraphic(int nGraphic, int& nGraphicW1, int& nGraphicW2, int& nGraphicC, int& nGraphicFF, int nSizeW1[], int nSizeW2[], int nSizeC[], int nSizeFF[], int nStartW1[], int nStartW2[], int nStartC[], int nStartFF[], int nLineW1[], int nLineW2[], int nLineC[], int nLineFF[])
 {
 	int		nRet = 0;
-	int		nWhite = 0, nColor = 0, nFinishing = 0;
-	int		nPos = -1, nPosW = -1, nPosC = -1, nPosF = -1, nPosW2 = -1;		//画像行
-	int		nCmp = 1, nCmpW = -1, nCmpC = -1, nCmpF = -1, nCmpW2 = -1;		//圧縮方法
-	bool    bSecondLayer = FALSE;
+	int		nWhite = 0, nColor = 0, nFF = 0;
+	int		nPos = -1, nPosW1 = -1, nPosW2 = -1, nPosC = -1, nPosFF = -1;	//画像行
+	int		nCmp = 1, nCmpW1 = -1, nCmpW2 = -1, nCmpC = -1, nCmpFF = -1;	//圧縮方法
+	bool    bSecLayer = false;
 
-	ULONGLONG	nPosionW, nPosionC, nPosionF, nPosionW2;
-				nGraphicW = nGraphicC = nGraphicF = nGraphicW2 = 0;
+	ULONGLONG	nPosionW1, nPosionW2, nPosionC, nPosionFF;
+				nGraphicW1 = nGraphicW2 = nGraphicC = nGraphicFF = 0;
 
 	while( nGraphic-- )
 	{
@@ -868,31 +868,31 @@ int CSplitArp::ProcessGraphic(int nGraphic, int& nGraphicW, int& nGraphicC, int&
 			{
 				nWhite = GET_BYTE( m_Split, 1 );
 				if( nWhite ) {
-					if (!bSecondLayer) {
-						nStartW[nGraphicW] = -1;
-						nLineW[nGraphicW] = 0;
-						nPosionW = m_White.m_File.GetPosition();
-						m_White.Copy(&m_Split);
-						SET_BYTE(m_White, 0, 0x00);	//CMYK
-						AND_BYTE(m_White, 13, ~0x07);	//bits per dot
-						AND_BYTE(m_White, 14, ~0x01);	//devide
-						if (nGraphicW == 0) {
-							SET_BYTE(m_White, 11, 0x00);	//Wait
-							SET_BYTE(m_White, 12, 0x00);
+					if ( !bSecLayer ) {
+						nStartW1[nGraphicW1] = -1;
+						nLineW1[nGraphicW1] = 0;
+						nPosionW1 = m_White1.m_File.GetPosition();
+						m_White1.Copy( &m_Split );
+						SET_BYTE( m_White1, 0, 0x00 );		//CMYK
+						AND_BYTE( m_White1, 13, ~0x07 );	//bits per dot
+						AND_BYTE( m_White1, 14, ~0x01 );	//devide
+						if ( nGraphicW1 == 0 ) {
+							SET_BYTE( m_White1, 11, 0x00 );	//Wait
+							SET_BYTE( m_White1, 12, 0x00 );
 						}
-						m_White.Write();
+						m_White1.Write();
 					}
 					else {
 						nStartW2[nGraphicW2] = -1;
 						nLineW2[nGraphicW2] = 0;
 						nPosionW2 = m_White2.m_File.GetPosition();
-						m_White2.Copy(&m_Split);
-						SET_BYTE(m_White2, 0, 0x00);	//CMYK
-						AND_BYTE(m_White2, 13, ~0x07);	//bits per dot
-						AND_BYTE(m_White2, 14, ~0x01);	//devide
-						if (nGraphicW2 == 0) {
-							SET_BYTE(m_White2, 11, 0x00);	//Wait
-							SET_BYTE(m_White2, 12, 0x00);
+						m_White2.Copy( &m_Split );
+						SET_BYTE( m_White2, 0, 0x00 );		//CMYK
+						AND_BYTE( m_White2, 13, ~0x07 );	//bits per dot
+						AND_BYTE( m_White2, 14, ~0x01 );	//devide
+						if ( nGraphicW2 == 0 ) {
+							SET_BYTE( m_White2, 11, 0x00 );	//Wait
+							SET_BYTE( m_White2, 12, 0x00 );
 						}
 						m_White2.Write();
 					}
@@ -915,24 +915,24 @@ int CSplitArp::ProcessGraphic(int nGraphic, int& nGraphicW, int& nGraphicC, int&
 					m_Color.Write();
 				}
 
-				if (!nWhite && !nColor) {
-					nStartF[nGraphicF] = -1;
-					nLineF[nGraphicF] = 0;
-					nPosionF = m_Finishing.m_File.GetPosition();
-					m_Finishing.Copy(&m_Split);
-					SET_BYTE(m_Finishing, 0, 0x00);	//CMYK
-					SET_BYTE(m_Finishing, 1, 0x00);	//White
-					SET_BYTE(m_Finishing, 3, 0x01);	//Count
-					AND_BYTE(m_Finishing, 13, 0x00);	//bits per dot
-					AND_BYTE(m_Finishing, 14, 0x00);	//devide
-					if (nGraphicF == 0 && GET_BYTE(m_Finishing, 14) == 0) {
-						SET_BYTE(m_Finishing, 11, 0x00);	//Wait
-						SET_BYTE(m_Finishing, 12, 0x00);
+				if ( !nWhite && !nColor ) {
+					nStartFF[nGraphicFF] = -1;
+					nLineFF[nGraphicFF] = 0;
+					nPosionFF = m_FF.m_File.GetPosition();
+					m_FF.Copy( &m_Split );
+					SET_BYTE( m_FF, 0, 0x00 );	//CMYK
+					SET_BYTE( m_FF, 1, 0x00 );	//White
+					SET_BYTE( m_FF, 3, 0x01 );	//Count
+					AND_BYTE( m_FF, 13, ~0x07 );//bits per dot
+					AND_BYTE( m_FF, 14, ~0x01 );//devide
+					if (nGraphicFF == 0 && GET_BYTE(m_FF, 14) == 0) {
+						SET_BYTE( m_FF, 11, 0x00 );	//Wait
+						SET_BYTE( m_FF, 12, 0x00 );
 					}
-					m_Finishing.Write();
+					m_FF.Write();
 				}
 
-				nCmpW = nCmpC = nCmpF = -1;
+				nCmpW1= nCmpW2 = nCmpC = nCmpFF = -1;
 			}
 
 			//圧縮モード
@@ -949,37 +949,37 @@ int CSplitArp::ProcessGraphic(int nGraphic, int& nGraphicW, int& nGraphicC, int&
 			//ラスタグラフィックス転送 (白)
 			if( nWhite && CMD_KIND(m_Split) == '#' && 0x005B <= CMD_TYPE(m_Split) && CMD_TYPE(m_Split) <= 0x0064 )
 			{
-				if (!bSecondLayer) {
-					if (nStartW[nGraphicW] == -1) {
-						nStartW[nGraphicW] = nPos;
+				if ( !bSecLayer ) {
+					if ( nStartW1[nGraphicW1] == -1 ) {
+						nStartW1[nGraphicW1] = nPos;
 					}
 
-					if (nCmpW != nCmp) {
-						nCmpW = nCmp;
-						m_White.WriteCompMode(nCmp);	//圧縮モード
+					if ( nCmpW1 != nCmp ) {
+						nCmpW1 = nCmp;
+						m_White1.WriteCompMode( nCmp );	//圧縮モード
 					}
-					if (nPosW != nPos) {
-						nPosW = nPos;
-						m_White.WriteLineNo(nPos);	//画像行番号指定
-						++nLineW[nGraphicW];
+					if ( nPosW1 != nPos ) {
+						nPosW1 = nPos;
+						m_White1.WriteLineNo( nPos );	//画像行番号指定
+						++nLineW1[nGraphicW1];
 					}
-					m_White.Write(&m_Split);			//ラスタグラフィックス
+					m_White1.Write( &m_Split );			//ラスタグラフィックス
 				}
 				else {
 					if (nStartW2[nGraphicW2] == -1) {
 						nStartW2[nGraphicW2] = nPos;
 					}
 
-					if (nCmpW != nCmp) {
-						nCmpW = nCmp;
-						m_White2.WriteCompMode(nCmp);	//圧縮モード
+					if ( nCmpW2 != nCmp ) {
+						nCmpW2 = nCmp;
+						m_White2.WriteCompMode( nCmp );	//圧縮モード
 					}
-					if (nPosW != nPos) {
-						nPosW = nPos;
-						m_White2.WriteLineNo(nPos);	//画像行番号指定
+					if ( nPosW2 != nPos ) {
+						nPosW2 = nPos;
+						m_White2.WriteLineNo( nPos );	//画像行番号指定
 						++nLineW2[nGraphicW2];
 					}
-					m_White2.Write(&m_Split);			//ラスタグラフィックス
+					m_White2.Write( &m_Split );			//ラスタグラフィックス
 				}
 			}
 
@@ -1005,40 +1005,40 @@ int CSplitArp::ProcessGraphic(int nGraphic, int& nGraphicW, int& nGraphicC, int&
 			//ラスタグラフィックス転送 (FF)
 			if (!nColor && !nWhite && CMD_KIND(m_Split) == '#' && 0x0093 <= CMD_TYPE(m_Split) && CMD_TYPE(m_Split) <= 0x0096 )
 			{
-				if (nStartF[nGraphicF] == -1) {
-					nStartF[nGraphicF] = nPos;
+				if ( nStartFF[nGraphicFF] == -1 ) {
+					nStartFF[nGraphicFF] = nPos;
 				}
 
-				if (nCmpF != nCmp) {
-					nCmpF = nCmp;
-					m_Finishing.WriteCompMode(nCmp);	//圧縮モード
+				if ( nCmpFF != nCmp ) {
+					nCmpFF = nCmp;
+					m_FF.WriteCompMode( nCmp );	//圧縮モード
 				}
-				if (nPosF != nPos) {
-					nPosF = nPos;
-					m_Finishing.WriteLineNo(nPos);	//画像行番号指定
-					++nLineF[nGraphicF];
+				if ( nPosFF != nPos ) {
+					nPosFF = nPos;
+					m_FF.WriteLineNo( nPos );	//画像行番号指定
+					++nLineFF[nGraphicFF];
 				}
-				m_Finishing.Write(&m_Split);			//ラスタグラフィックス転送
+				m_FF.Write( &m_Split );			//ラスタグラフィックス転送
 			}
 
 			//Graphic End
 			if( CMD_KIND(m_Split) == '#' && CMD_TYPE(m_Split) == 0x0051 )
 			{
 				if( nWhite ) {
-					if (!bSecondLayer) {
-						SET_DWORD(m_Split, 0, nStartW[nGraphicW]);
-						m_White.Write(&m_Split);
+					if ( !bSecLayer ) {
+						SET_DWORD( m_Split, 0, nStartW1[nGraphicW1] );
+						m_White1.Write( &m_Split );
 						//
-						nSizeW[nGraphicW] = (int)(m_White.m_File.GetPosition() - nPosionW);
-						++nGraphicW;
+						nSizeW1[nGraphicW1] = (int)( m_White1.m_File.GetPosition() - nPosionW1 );
+						++nGraphicW1;
 
-						bSecondLayer = TRUE;
+						bSecLayer = true;
 					}
 					else {
-						SET_DWORD(m_Split, 0, nStartW2[nGraphicW2]);
-						m_White2.Write(&m_Split);
+						SET_DWORD( m_Split, 0, nStartW2[nGraphicW2] );
+						m_White2.Write( &m_Split );
 						//
-						nSizeW2[nGraphicW2] = (int)(m_White2.m_File.GetPosition() - nPosionW2);
+						nSizeW2[nGraphicW2] = (int)( m_White2.m_File.GetPosition() - nPosionW2 );
 						++nGraphicW2;
 					}				
 				}
@@ -1051,12 +1051,12 @@ int CSplitArp::ProcessGraphic(int nGraphic, int& nGraphicW, int& nGraphicC, int&
 					++nGraphicC;
 				}
 
-				if (!nWhite && !nColor) {
-					SET_DWORD(m_Split, 0, nStartF[nGraphicF]);
-					m_Finishing.Write(&m_Split);
+				if ( !nWhite && !nColor ) {
+					SET_DWORD( m_Split, 0, nStartFF[nGraphicFF] );
+					m_FF.Write( &m_Split );
 					//
-					nSizeF[nGraphicF] = (int)(m_Finishing.m_File.GetPosition() - nPosionF );
-					++nGraphicF;
+					nSizeFF[nGraphicFF] = (int)( m_FF.m_File.GetPosition() - nPosionFF );
+					++nGraphicFF;
 				}
 
 				break;
@@ -1074,14 +1074,16 @@ int CSplitArp::ProcessGraphic(int nGraphic, int& nGraphicW, int& nGraphicC, int&
 }
 
 //フッタのセパレート
-int CSplitArp::ProcessFooter(int nGraphicW, int nGraphicC, int nGraphicF, int nGraphicW2, int nSizeW[], int nSizeC[], int nSizeF[], int nSizeW2[], int nStartW[], int nStartC[], int nStartF[], int nStartW2[], int nLineW[], int nLineC[], int nLineF[], int nLineW2[])
+int CSplitArp::ProcessFooter(int nGraphicW1, int nGraphicW2, int nGraphicC, int nGraphicFF, int nSizeW1[], int nSizeW2[], int nSizeC[], int nSizeFF[], int nStartW1[], int nStartW2[], int nStartC[], int nStartFF[], int nLineW1[], int nLineW2[], int nLineC[], int nLineFF[])
 {
 	int		nRet = 0;
 
-	ULONGLONG	nPosionW = m_White.m_File.GetPosition();
-	ULONGLONG	nPosionC = m_Color.m_File.GetPosition();
-	ULONGLONG	nPosionF = m_Finishing.m_File.GetPosition();
+	ULONGLONG	nPosionW1 = m_White1.m_File.GetPosition();
 	ULONGLONG	nPosionW2 = m_White2.m_File.GetPosition();
+	ULONGLONG	nPosionC = m_Color.m_File.GetPosition();
+	ULONGLONG	nPosionFF = m_FF.m_File.GetPosition();
+
+	bool    bSecLayer = FALSE;
 
 	//コマンド読み込み
 	while( ( nRet = m_Split.Read() ) > 0 )
@@ -1095,68 +1097,73 @@ int CSplitArp::ProcessFooter(int nGraphicW, int nGraphicC, int nGraphicF, int nG
 		//インク使用量(特色)
 		if (CMD_KIND(m_Split) == '#' && CMD_TYPE(m_Split) == 0x00A6 )
 		{
-			//m_Finishing.Copy(&m_Split);
-			//m_Finishing.Write();
+			m_FF.Copy( &m_Split );
+			m_FF.Write();
 			continue;
 		}
 
-		m_White.Copy( &m_Split );
+		m_White1.Copy( &m_Split );
+		m_White2.Copy(&m_Split);
 		m_Color.Copy( &m_Split );
-		m_Finishing.Copy( &m_Split );
-		m_White2.Copy( &m_Split );
+		m_FF.Copy( &m_Split );
 
 		//ジョブレイアウト
 		if( CMD_KIND(m_Split) == '#' && CMD_TYPE(m_Split) == 0x0054 )
 		{
 			//確保
-			m_White.m_baHead[ 7 ] = nGraphicW * 32;
-			m_White.m_baParam.SetSize( nGraphicW * 32 );
+			m_White1.m_baHead[ 7 ] = nGraphicW1 * 32;
+			m_White1.m_baParam.SetSize( nGraphicW1 * 32 );
+			m_White2.m_baHead[ 7 ] = nGraphicW2 * 32;
+			m_White2.m_baParam.SetSize( nGraphicW2 * 32 );
 			m_Color.m_baHead[ 7 ] = nGraphicC * 32;
 			m_Color.m_baParam.SetSize( nGraphicC * 32 );
-			m_Finishing.m_baHead[7] = nGraphicF * 32;
-			m_Finishing.m_baParam.SetSize(nGraphicF * 32);
-			m_White2.m_baHead[7] = nGraphicW2 * 32;
-			m_White2.m_baParam.SetSize(nGraphicW2 * 32);
+			m_FF.m_baHead[ 7 ] = nGraphicFF * 32;
+			m_FF.m_baParam.SetSize( nGraphicFF * 32 );
+
 
 			//レイヤーでループ
 			int nLayer = m_Split.m_baHead[ 7 ] / 32;
-			int nWhite = 0, nWhite2 = 0;
+			int nWhite1 = 0, nWhite2 = 0;
 			int nColor = 0;
-			int nFinishing = 0;
+			int nFF = 0;
 			for( int i = 0; i < nLayer; ++ i ) {
 				//白あり
 				if( m_Split.m_baParam[i * 32 +  1] ) {
-					UINT	nOffset = nWhite * 32;
-					memcpy( &m_White.m_baParam[nOffset], &m_Split.m_baParam[i * 32], 32);
-					SET_BYTE( m_White, nOffset +  0,  0x00 );		//CMYK
-					AND_BYTE( m_White, nOffset + 13, ~0x07 );		//bits per dot
-					AND_BYTE( m_White, nOffset + 14, ~0x01 );		//devide
-					if( nWhite == 0 ) {
-						SET_BYTE( m_White, nOffset + 11,  0x00 );	//Wait
-						SET_BYTE( m_White, nOffset + 12,  0x00 );
+					if ( !bSecLayer ) {
+						UINT	nOffsetW1 = nWhite1 * 32;
+						memcpy( &m_White1.m_baParam[nOffsetW1], &m_Split.m_baParam[i * 32], 32);
+						SET_BYTE( m_White1, nOffsetW1 + 0, 0x00 );		//CMYK
+						AND_BYTE( m_White1, nOffsetW1 + 13, ~0x07 );	//bits per dot
+						AND_BYTE( m_White1, nOffsetW1 + 14, ~0x01 );	//devide
+						if (nWhite1 == 0) {
+							SET_BYTE( m_White1, nOffsetW1 + 11, 0x00 );	//Wait
+							SET_BYTE( m_White1, nOffsetW1 + 12, 0x00 );
+						}
+						if ( nWhite1 < nGraphicW1 ) {
+							SET_DWORD( m_White1, nOffsetW1 + 16, nSizeW1[nWhite1] );	//Graphicコマンド長
+							SET_DWORD( m_White1, nOffsetW1 + 20, nStartW1[nWhite1] );	//ラスタデータの開始行
+							SET_DWORD( m_White1, nOffsetW1 + 24, nLineW1[nWhite1] );	//ライン数
+						}
+						++nWhite1;
+						bSecLayer = TRUE;
 					}
-					if( nWhite < nGraphicW ) {
-						SET_DWORD( m_White, nOffset + 16, nSizeW[nWhite]  );	//Graphicコマンド長
-						SET_DWORD( m_White, nOffset + 20, nStartW[nWhite] );	//ラスタデータの開始行
-						SET_DWORD( m_White, nOffset + 24, nLineW[nWhite]  );	//ライン数
+					else {
+						UINT	nOffsetW2 = nWhite2 * 32;
+						memcpy( &m_White2.m_baParam[nOffsetW2], &m_Split.m_baParam[i * 32], 32);
+						SET_BYTE( m_White2, nOffsetW2 + 0, 0x00 );		//CMYK
+						AND_BYTE( m_White2, nOffsetW2 + 13, ~0x07 );	//bits per dot
+						AND_BYTE( m_White2, nOffsetW2 + 14, ~0x01 );	//devide
+						if ( nWhite2 == 0 ) {
+							SET_BYTE( m_White2, nOffsetW2 + 11, 0x00 );	//Wait
+							SET_BYTE( m_White2, nOffsetW2 + 12, 0x00 );
+						}
+						if ( nWhite2 < nGraphicW2 ) {
+							SET_DWORD( m_White2, nOffsetW2 + 16, nSizeW2[nWhite2] );	//Graphicコマンド長
+							SET_DWORD( m_White2, nOffsetW2 + 20, nStartW2[nWhite2] );	//ラスタデータの開始行
+							SET_DWORD( m_White2, nOffsetW2 + 24, nLineW2[nWhite2] );	//ライン数
+						}
+						++nWhite2;
 					}
-					++nWhite;
-
-					UINT	nOffset2 = nWhite2 * 32;
-					memcpy(&m_White2.m_baParam[nOffset2], &m_Split.m_baParam[i * 32], 32);
-					SET_BYTE(m_White2, nOffset2 + 0, 0x00);		//CMYK
-					AND_BYTE(m_White2, nOffset2 + 13, ~0x07);		//bits per dot
-					AND_BYTE(m_White2, nOffset2 + 14, ~0x01);		//devide
-					if (nWhite2 == 0) {
-						SET_BYTE(m_White2, nOffset2 + 11, 0x00);	//Wait
-						SET_BYTE(m_White2, nOffset2 + 12, 0x00);
-					}
-					if (nWhite2 < nGraphicW2) {
-						SET_DWORD(m_White2, nOffset2 + 16, nSizeW[nWhite2]);	//Graphicコマンド長
-						SET_DWORD(m_White2, nOffset2 + 20, nStartW[nWhite2]);	//ラスタデータの開始行
-						SET_DWORD(m_White2, nOffset2 + 24, nLineW[nWhite2]);	//ライン数
-					}
-					++nWhite2;
 				}
 
 				//カラーあり
@@ -1177,23 +1184,27 @@ int CSplitArp::ProcessFooter(int nGraphicW, int nGraphicC, int nGraphicF, int nG
 						SET_DWORD( m_Color, nOffset + 24, nLineC[nColor]  );	//ライン数
 					}
 					++nColor;
+				}
 
-					UINT	nOffsetF = nFinishing * 32;
-					memcpy(&m_Finishing.m_baParam[nOffsetF], &m_Split.m_baParam[i * 32], 32);
-					SET_BYTE(m_Finishing, nOffsetF + 1, 0x00);		//White
-					SET_BYTE(m_Finishing, nOffsetF + 3, 0x01);		//Count
-					AND_BYTE(m_Finishing, nOffsetF + 13, 0x03);		//bits per dot
-					AND_BYTE(m_Finishing, nOffsetF + 14, 0x01);		//devide
-					if (nColor == 0 && GET_BYTE(m_Finishing, 14) == 0) {
-						SET_BYTE(m_Finishing, nOffsetF + 11, 0x00);	//Wait
-						SET_BYTE(m_Finishing, nOffsetF + 12, 0x00);
+				//FFあり
+				if ( !m_Split.m_baParam[i * 32 + 0] && !m_Split.m_baParam[i * 32 + 1] ) {
+					UINT	nOffset = nFF * 32;
+					memcpy( &m_FF.m_baParam[nOffset], &m_Split.m_baParam[i * 32], 32);
+					SET_BYTE( m_FF, nOffset + 0, 0x00 );		//CMYK
+					SET_BYTE( m_FF, nOffset + 1, 0x00 );		//White
+					SET_BYTE( m_FF, nOffset + 3, 0x01 );		//Count
+					AND_BYTE( m_FF, nOffset + 13, ~0x07 );		//bits per dot
+					AND_BYTE( m_FF, nOffset + 14, ~0x01 );		//devide
+					if (nFF == 0 && GET_BYTE(m_FF, 14) == 0 ) {
+						SET_BYTE( m_FF, nOffset + 11, 0x00 );	//Wait
+						SET_BYTE( m_FF, nOffset + 12, 0x00 );
 					}
-					if (nFinishing < nGraphicF) {
-						SET_DWORD(m_Finishing, nOffsetF + 16, nSizeF[nFinishing]);	//Graphicコマンド長
-						SET_DWORD(m_Finishing, nOffsetF + 20, nStartF[nFinishing]);	//ラスタデータの開始行
-						SET_DWORD(m_Finishing, nOffsetF + 24, nLineF[nFinishing]);	//ライン数
+					if ( nFF < nGraphicFF ) {
+						SET_DWORD( m_FF, nOffset + 16, nSizeFF[nFF] );	//Graphicコマンド長
+						SET_DWORD( m_FF, nOffset + 20, nStartFF[nFF] );	//ラスタデータの開始行
+						SET_DWORD( m_FF, nOffset + 24, nLineFF[nFF] );	//ライン数
 					}
-					++nFinishing;
+					++nFF;
 				}
 			}
 		}
@@ -1204,41 +1215,41 @@ int CSplitArp::ProcessFooter(int nGraphicW, int nGraphicC, int nGraphicF, int nG
 			CCmdInk	cmdInk;
 
 			cmdInk.GetParam( &m_Split );
-			cmdInk.SetWhite( &m_White );
-			cmdInk.SetColor( &m_Color );
-			cmdInk.SetFinishing( &m_Finishing );
+			cmdInk.SetWhite( &m_White1 );
 			cmdInk.SetWhite( &m_White2 );
+			cmdInk.SetColor( &m_Color );
+			cmdInk.SetFF( &m_FF );
 		}
 
 		//Job End
 		if( CMD_KIND(m_Split) == 0x1B && JOB_TYPE(m_Split) == '$' )
 		{
 			//Footerデータのサイズ
-			int	nFooterW = (int)( m_White.m_File.GetPosition() - nPosionW );
-			int	nFooterC = (int)( m_Color.m_File.GetPosition() - nPosionC );
-			int	nFooterF = (int)( m_Finishing.m_File.GetPosition() - nPosionF );
+			int	nFooterW1 = (int)( m_White1.m_File.GetPosition() - nPosionW1 );
 			int	nFooterW2 = (int)( m_White2.m_File.GetPosition() - nPosionW2 );
-			SET_DWORD( m_White, 7, nFooterW );
-			SET_DWORD( m_Color, 7, nFooterC );
-			SET_DWORD( m_Finishing, 7, nFooterF);
+			int	nFooterC = (int)( m_Color.m_File.GetPosition() - nPosionC );
+			int	nFooterFF = (int)( m_FF.m_File.GetPosition() - nPosionFF );
+			SET_DWORD( m_White1, 7, nFooterW1 );
 			SET_DWORD( m_White2, 7, nFooterW2 );
+			SET_DWORD( m_Color, 7, nFooterC );
+			SET_DWORD( m_FF, 7, nFooterFF);
 
-			m_White.Write();
-			m_Color.Write();
-			m_Finishing.Write();
+			m_White1.Write();
 			m_White2.Write();
-			m_White.WriteLast();
-			m_Color.WriteLast();
-			m_Finishing.WriteLast();
+			m_Color.Write();
+			m_FF.Write();
+			m_White1.WriteLast();
 			m_White2.WriteLast();
+			m_Color.WriteLast();
+			m_FF.WriteLast();
 			break;
 		}
 
 		//コマンド書き込み
-		m_White.Write();
-		m_Color.Write();
-		m_Finishing.Write();
+		m_White1.Write();
 		m_White2.Write();
+		m_Color.Write();
+		m_FF.Write();
 	}
 
 	return	nRet;

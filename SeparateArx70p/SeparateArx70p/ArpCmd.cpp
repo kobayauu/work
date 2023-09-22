@@ -622,24 +622,24 @@ void CCmdInk::SetWhite(CArpCmd* pArpCmd)
 	SET_DWORD( *pArpCmd, 128, dwInkW );
 }
 
-void CCmdInk::SetFinishing(CArpCmd* pArpCmd)
+void CCmdInk::SetFF(CArpCmd* pArpCmd)
 {
-	pArpCmd->m_baHead.Copy(sizeof(CMD_INK_HEAD), CMD_INK_HEAD);
-	pArpCmd->m_baParam.SetSize(CMD_INK_SIZE);
+	pArpCmd->m_baHead.Copy( sizeof(CMD_INK_HEAD), CMD_INK_HEAD );
+	pArpCmd->m_baParam.SetSize( CMD_INK_SIZE );
 	pArpCmd->m_baParam.Clear();
 
-	for (int i = 0; i < 4; ++i)
+	for ( int i = 0; i < 4; ++i )
 	{
 		SET_BYTE(*pArpCmd, i * 16, i);
 	}
-	for (int i = 4; i < 8; ++i)
+	for ( int i = 4; i < 8; ++i )
 	{
-		SET_BYTE(*pArpCmd, i * 16, i);
-		SET_DWORD(*pArpCmd, i * 16 + 4, dwDots[i][0]);
-		SET_DWORD(*pArpCmd, i * 16 + 8, dwDots[i][1]);
-		SET_DWORD(*pArpCmd, i * 16 + 12, dwDots[i][2]);
+		SET_BYTE(  *pArpCmd, i * 16, i				    );
+		SET_DWORD( *pArpCmd, i * 16 + 4,  dwDots[i][0]  );
+		SET_DWORD( *pArpCmd, i * 16 + 8,  dwDots[i][1]  );
+		SET_DWORD( *pArpCmd, i * 16 + 12, dwDots[i][2]  );
 	}
-	SET_DWORD(*pArpCmd, 132, dwInkC);
+	SET_DWORD( *pArpCmd, 132, dwInkC );
 }
 
 

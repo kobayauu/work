@@ -149,7 +149,7 @@ int CSeparateArx70pDlg::SeparateArx70polor(CString FileName)
 {
 	CSplitArp	ArpData;
 
-	ArpData.Open( FileName, FileName + "_w.arx70p", FileName + "_c.arx70p", FileName + "_f.arx70p", FileName + "_w2.arx70p");
+	ArpData.Open( FileName, FileName + "_w1.arx70p", FileName + "_w2.arx70p", FileName + "_c.arx70p", FileName + "_ff.arx70p");
 	ArpData.Process();
 	ArpData.Close();
 

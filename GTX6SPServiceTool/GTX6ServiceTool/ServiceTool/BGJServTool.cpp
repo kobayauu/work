@@ -99,7 +99,6 @@ BOOL CBGJServToolApp::InitInstance()
 		m_Prn.m_bUnitTest = true;
 	}	*/
 
-	m_bOffTest = true;
 	if( csCmdLine.Find( _T("-demo") ) >= 0 ){
 		m_bOffTest = true;
 	}

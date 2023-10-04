@@ -102,7 +102,7 @@ LRESULT CInitInkState::OnWizardNext()
 			iErr1 = pApp->SetInitInkState(0, 0, 0, 0);
 		}
 		else if (m_rdbtnInkStateSelect == 1) {
-			iErr1 = pApp->SetInitInkState(1, 1, 0, 0);
+			iErr1 = pApp->SetInitInkState(1, 1, 1, 1);
 		}
 
 		iErr2 = pApp->SetAssembleFlag(0x05);

@@ -151,7 +151,7 @@ int LangAfxMsgBox( int nStrID , int iErrNo /* = 0 */ )
 			st1 = st;
 		}
 		//AfxMessageBox( st1 );
-		MessageBox(NULL, st1, _T("Brother GTX-6 Extra Colors ORGR Reset HumidFanFilter Tool"), MB_OK | MB_ICONEXCLAMATION);
+		MessageBox(NULL, st1, _T("Brother GTX-6 Extra Colors ORGR Reset HumidifierInfo Tool"), MB_OK | MB_ICONEXCLAMATION);
 	}
 	return iRet;
 }

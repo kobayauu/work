@@ -1,0 +1,78 @@
+﻿  comm.cpp
+C:\Users\kobayauu\Documents\github\work\GTX6ResetHumidifierInfoTool\gtlib\gtlib\gtlib\string.hpp(29,17): warning C4996: 'wcsncpy': This function or variable may be unsafe. Consider using wcsncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\kobayauu\Documents\github\work\GTX6ResetHumidifierInfoTool\gtlib\gtlib\gtlib\string.hpp(74,17): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\kobayauu\Documents\github\work\GTX6ResetHumidifierInfoTool\gtlib\gtlib\gtlib\comm.cpp(158,3): warning C4996: 'wcscpy': This function or variable may be unsafe. Consider using wcscpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\kobayauu\Documents\github\work\GTX6ResetHumidifierInfoTool\gtlib\gtlib\gtlib\comm.cpp(274,13): warning C4018: '<': signed と unsigned の数値を比較しようとしました。
+C:\Users\kobayauu\Documents\github\work\GTX6ResetHumidifierInfoTool\gtlib\gtlib\gtlib\comm.cpp(349,9): warning C4996: '_wfopen': This function or variable may be unsafe. Consider using _wfopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  info_6.cpp
+C:\Users\kobayauu\Documents\github\work\GTX6ResetHumidifierInfoTool\gtlib\gtlib\gtx\info_6.cpp(116,2): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\kobayauu\Documents\github\work\GTX6ResetHumidifierInfoTool\gtlib\gtlib\gtx\info_6.cpp(184,2): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  info_6sp.cpp
+C:\Users\kobayauu\Documents\github\work\GTX6ResetHumidifierInfoTool\gtlib\gtlib\gtx\info_6sp.cpp(118,2): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\kobayauu\Documents\github\work\GTX6ResetHumidifierInfoTool\gtlib\gtlib\gtx\info_6sp.cpp(189,2): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  option_6.cpp
+C:\Users\kobayauu\Documents\github\work\GTX6ResetHumidifierInfoTool\gtlib\gtlib\gtx\option_6.cpp(202,20): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  option_6sp.cpp
+C:\Users\kobayauu\Documents\github\work\GTX6ResetHumidifierInfoTool\gtlib\gtlib\gtx\option_6sp.cpp(220,20): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  sendmain.cpp
+C:\Users\kobayauu\Documents\github\work\GTX6ResetHumidifierInfoTool\gtlib\gtlib\gtlib\string.hpp(29,17): warning C4996: 'wcsncpy': This function or variable may be unsafe. Consider using wcsncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\kobayauu\Documents\github\work\GTX6ResetHumidifierInfoTool\gtlib\gtlib\gtlib\string.hpp(74,17): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\kobayauu\Documents\github\work\GTX6ResetHumidifierInfoTool\gtlib\gtlib\gtx\sendmain.cpp(20,20): warning C4018: '<': signed と unsigned の数値を比較しようとしました。
+C:\Users\kobayauu\Documents\github\work\GTX6ResetHumidifierInfoTool\gtlib\gtlib\gtx\sendmain.cpp(35,10): warning C4996: '_wfopen': This function or variable may be unsafe. Consider using _wfopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\kobayauu\Documents\github\work\GTX6ResetHumidifierInfoTool\gtlib\gtlib\gtx\sendmain.cpp(208,2): warning C4996: 'wcscpy': This function or variable may be unsafe. Consider using wcscpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  driver.cpp
+C:\Users\kobayauu\Documents\github\work\GTX6ResetHumidifierInfoTool\gtlib\gtlib\win\driver.cpp(12,2): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\kobayauu\Documents\github\work\GTX6ResetHumidifierInfoTool\gtlib\gtlib\win\driver.cpp(22,2): warning C4996: 'wcscat': This function or variable may be unsafe. Consider using wcscat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  environ.cpp
+C:\Users\kobayauu\Documents\github\work\GTX6ResetHumidifierInfoTool\gtlib\gtlib\win\environ.cpp(43,28): warning C4996: 'wcscat': This function or variable may be unsafe. Consider using wcscat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\kobayauu\Documents\github\work\GTX6ResetHumidifierInfoTool\gtlib\gtlib\win\environ.cpp(44,30): warning C4996: 'wcscat': This function or variable may be unsafe. Consider using wcscat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\kobayauu\Documents\github\work\GTX6ResetHumidifierInfoTool\gtlib\gtlib\win\environ.cpp(45,28): warning C4996: 'wcscat': This function or variable may be unsafe. Consider using wcscat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\kobayauu\Documents\github\work\GTX6ResetHumidifierInfoTool\gtlib\gtlib\win\environ.cpp(46,28): warning C4996: 'wcscat': This function or variable may be unsafe. Consider using wcscat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\kobayauu\Documents\github\work\GTX6ResetHumidifierInfoTool\gtlib\gtlib\win\environ.cpp(47,28): warning C4996: 'wcscat': This function or variable may be unsafe. Consider using wcscat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  printer.cpp
+C:\Users\kobayauu\Documents\github\work\GTX6ResetHumidifierInfoTool\gtlib\gtlib\gtlib\string.hpp(29,17): warning C4996: 'wcsncpy': This function or variable may be unsafe. Consider using wcsncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\kobayauu\Documents\github\work\GTX6ResetHumidifierInfoTool\gtlib\gtlib\gtlib\string.hpp(74,17): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  sendsub.cpp
+C:\Users\kobayauu\Documents\github\work\GTX6ResetHumidifierInfoTool\gtlib\gtlib\gtlib\string.hpp(29,17): warning C4996: 'wcsncpy': This function or variable may be unsafe. Consider using wcsncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\kobayauu\Documents\github\work\GTX6ResetHumidifierInfoTool\gtlib\gtlib\gtlib\string.hpp(74,17): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  png.c
+  pngerror.c
+  pngget.c
+  pngmem.c
+  pngpread.c
+  pngread.c
+C:\Users\kobayauu\Documents\github\work\GTX6ResetHumidifierInfoTool\gtlib\libpng\pngread.c(1508,21): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\kobayauu\Documents\github\work\GTX6ResetHumidifierInfoTool\gtlib\libpng\pngread.c(1524,43): warning C4996: 'strerror': This function or variable may be unsafe. Consider using strerror_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  pngrio.c
+  pngrtran.c
+  pngrutil.c
+  pngset.c
+  pngtrans.c
+  pngwio.c
+  pngwrite.c
+C:\Users\kobayauu\Documents\github\work\GTX6ResetHumidifierInfoTool\gtlib\libpng\pngwrite.c(491,11): warning C4996: 'gmtime': This function or variable may be unsafe. Consider using gmtime_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\kobayauu\Documents\github\work\GTX6ResetHumidifierInfoTool\gtlib\libpng\pngwrite.c(2337,21): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\kobayauu\Documents\github\work\GTX6ResetHumidifierInfoTool\gtlib\libpng\pngwrite.c(2365,46): warning C4996: 'strerror': This function or variable may be unsafe. Consider using strerror_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\kobayauu\Documents\github\work\GTX6ResetHumidifierInfoTool\gtlib\libpng\pngwrite.c(2378,43): warning C4996: 'strerror': This function or variable may be unsafe. Consider using strerror_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  pngwtran.c
+  pngwutil.c
+  adler32.c
+  compress.c
+  crc32.c
+  deflate.c
+  gzio.c
+C:\Users\kobayauu\Documents\github\work\GTX6ResetHumidifierInfoTool\gtlib\zlib\gzio.c(131,5): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\kobayauu\Documents\github\work\GTX6ResetHumidifierInfoTool\gtlib\zlib\gzio.c(181,24): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\kobayauu\Documents\github\work\GTX6ResetHumidifierInfoTool\gtlib\zlib\gzio.c(226,5): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\kobayauu\Documents\github\work\GTX6ResetHumidifierInfoTool\gtlib\zlib\gzio.c(627,11): warning C4996: '_vsnprintf': This function or variable may be unsafe. Consider using _vsnprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\kobayauu\Documents\github\work\GTX6ResetHumidifierInfoTool\gtlib\zlib\gzio.c(1008,5): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\kobayauu\Documents\github\work\GTX6ResetHumidifierInfoTool\gtlib\zlib\gzio.c(1009,5): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\kobayauu\Documents\github\work\GTX6ResetHumidifierInfoTool\gtlib\zlib\gzio.c(1010,5): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\kobayauu\Documents\github\work\GTX6ResetHumidifierInfoTool\gtlib\zlib\gzio.c(1001,38): warning C4996: 'strerror': This function or variable may be unsafe. Consider using strerror_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  コンパイル中...
+  inffast.c
+  inflate.c
+  inftrees.c
+  trees.c
+  zutil.c
+  gtlib.vcxproj -> C:\Users\kobayauu\Documents\github\work\GTX6ResetHumidifierInfoTool\GTX6ResetHumidifierInfoTool\Release\gtlib.lib

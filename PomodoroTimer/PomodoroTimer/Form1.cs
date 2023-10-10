@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -13,11 +14,14 @@ namespace PomodoroTimer
 {
     public partial class Form1 : Form
     {
-        System.Timers.Timer timer;
+        // ステータス
+        const int STATUS_STOP  = 0;
+        const int STATUS_START = 1;
+        const int STATUS_REST  = 2;
+
+        Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
+        System.Timers.Timer timer = new System.Timers.Timer(500);
         delegate void UpdateDisplayTimeLabelDelegate();
-        int workSeconds = 0;
-        int workMinutes = 0;
-        bool isWorkTime = false;
 
         public Form1()
         {
@@ -26,48 +30,105 @@ namespace PomodoroTimer
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            int w = System.Windows.Forms.Screen.PrimaryScreen.Bounds.Width;
-            this.Left = w - 460;
+            // 画面の右上に表示
+            this.Left = System.Windows.Forms.Screen.PrimaryScreen.Bounds.Width - 450;
             this.Top = 0;
 
+            // コンボボックスに値を追加
             for (int i = 1; i <= 60; i++) {
                 WorkTimeComboBox.Items.Add(i);
                 RestTimeComboBox.Items.Add(i);
             }
-
             WorkTimeComboBox.SelectedIndex = 24;
             RestTimeComboBox.SelectedIndex = 4;
 
-            timer = new System.Timers.Timer(1000);
+            // タイマーの設定
             timer.Elapsed += new System.Timers.ElapsedEventHandler(OnElapsed);
         }
 
         private void StartButton_Click(object sender, EventArgs e)
         {
+            DialogResult ret;
+
             if (StartButton.Text == "スタート") {
-                if (MessageBox.Show(this, "スタートしますか？", "Pomodoro Timer", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No) {
-                    return;
+                ret = MessageBox.Show(this, "スタートしますか？", "Pomodoro Timer", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                if (ret == DialogResult.Yes) {
+                    InitStatus(STATUS_START);
                 }
-
-                workMinutes = 0;
-                workSeconds = 0;
-                isWorkTime = true;
-                timer.Start();
-                StartButton.Text = "ストップ";
-                DisplayStatusLabel.Text = "作業中";
-                DisplayStatusLabel.ForeColor = Color.Red;
-
-                WorkTimeComboBox.Enabled = false;
-                RestTimeComboBox.Enabled = false;
-                CloseButton.Enabled = false;
+                
             }
             else if (StartButton.Text == "ストップ") {
-                if (MessageBox.Show(this, "ストップしますか？", "Pomodoro Timer", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
-                {
+                ret = MessageBox.Show(this, "ストップしますか？", "Pomodoro Timer", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                if (ret == DialogResult.Yes) {
+                    InitStatus(STATUS_STOP);
+                }
+            }
+
+        }
+
+        // タイマーのイベント
+        private void OnElapsed(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            this.Invoke(new UpdateDisplayTimeLabelDelegate(this.UpdateDisplayTimeLabel));
+        }
+
+        private void UpdateDisplayTimeLabel()
+        {
+            DialogResult ret;
+            TimeSpan spendTime = stopwatch.Elapsed;
+
+            DisplayTimeLabel.Text = spendTime.ToString(@"mm\:ss");
+
+            // 作業時間になったら休憩時間にする
+            if (DisplayStatusLabel.Text == "作業中") {
+                if (spendTime.Minutes.ToString() != WorkTimeComboBox.SelectedItem.ToString()) {
                     return;
                 }
+                stopwatch.Stop();
+                timer.Stop();
 
-                isWorkTime = false;
+                ret = MessageBox.Show(this, "休憩開始です", "Pomodoro Timer", MessageBoxButtons.OKCancel, MessageBoxIcon.Information);
+                if (ret == DialogResult.OK) {
+                    InitStatus(STATUS_REST);
+                }
+                else {
+                    InitStatus(STATUS_STOP);
+                    return;
+                }              
+            }
+            // 休憩時間になったら作業時間にする
+            else if (DisplayStatusLabel.Text == "休憩中") {   
+                if (spendTime.Minutes.ToString() != RestTimeComboBox.SelectedItem.ToString()) {
+                    return;
+                }
+                stopwatch.Stop();
+                timer.Stop();
+
+                ret = MessageBox.Show(this, "作業開始です", "Pomodoro Timer", MessageBoxButtons.OKCancel, MessageBoxIcon.Information);
+                if (ret == DialogResult.OK) {
+                    InitStatus(STATUS_START);
+                }
+                else {
+                    InitStatus(STATUS_STOP);
+                    return;
+                }
+            }
+        }
+
+        private void CloseButton_Click(object sender, EventArgs e)
+        {
+            DialogResult ret;
+            ret = MessageBox.Show(this, "アプリを閉じますか？", "Pomodoro Timer", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+            if (ret == DialogResult.Yes) {
+                this.Close();
+            }
+        }
+
+        private void InitStatus(int nStatus)
+        {
+            if (nStatus == STATUS_STOP) {
+                stopwatch.Stop();
                 timer.Stop();
                 StartButton.Text = "スタート";
                 DisplayStatusLabel.Text = "停止";
@@ -77,59 +138,24 @@ namespace PomodoroTimer
                 RestTimeComboBox.Enabled = true;
                 CloseButton.Enabled = true;
             }
+            else if (nStatus == STATUS_START) {
+                stopwatch.Restart();
+                timer.Start();
+                StartButton.Text = "ストップ";
+                DisplayStatusLabel.Text = "作業中";
+                DisplayStatusLabel.ForeColor = Color.Red;
 
-        }
-
-        private void OnElapsed(object sender, System.Timers.ElapsedEventArgs e)
-        {
-            this.Invoke(new UpdateDisplayTimeLabelDelegate(this.UpdateDisplayTimeLabel));
-        }
-
-        private void UpdateDisplayTimeLabel()
-        {
-            // 作業時間になったら休憩時間にする
-            if (isWorkTime == true) {
-                if (workMinutes.ToString() == WorkTimeComboBox.SelectedItem.ToString()) {
-                    timer.Stop();
-                    isWorkTime = false;                
-                    MessageBox.Show(this, "休憩開始です", "Pomodoro Timer", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    DisplayStatusLabel.Text = "休憩中";
-                    DisplayStatusLabel.ForeColor = Color.Lime;
-                    workMinutes = 0;
-                    workSeconds = 0;
-                    timer.Start();
-                }
+                WorkTimeComboBox.Enabled = false;
+                RestTimeComboBox.Enabled = false;
+                CloseButton.Enabled = false;
             }
-            else {
-                // 休憩時間になったら作業時間にする
-                if (workMinutes.ToString() == WorkTimeComboBox.SelectedItem.ToString()) {
-                    timer.Stop();
-                    isWorkTime = true;                    
-                    MessageBox.Show(this, "作業開始です", "Pomodoro Timer", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    DisplayStatusLabel.Text = "作業中";
-                    DisplayStatusLabel.ForeColor = Color.Red;
-                    workMinutes = 0;
-                    workSeconds = 0;
-                    timer.Start();
-                }
+            else if (nStatus == STATUS_REST) {
+                stopwatch.Restart();
+                timer.Start();
+                DisplayStatusLabel.Text = "休憩中";
+                DisplayStatusLabel.ForeColor = Color.Lime;
             }
 
-            // 60秒経過したら分を加算
-            if (workSeconds == 60) {
-                workSeconds = 0;
-                workMinutes++;
-            }
-
-            DisplayTimeLabel.Text = workMinutes.ToString("00") + ":"+ workSeconds.ToString("00");
-            workSeconds++;
-        }
-
-        private void CloseButton_Click(object sender, EventArgs e)
-        {
-            if (MessageBox.Show(this, "アプリを閉じますか？", "Pomodoro Timer", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
-            {
-                this.Close();
-            }
         }
     }
 }

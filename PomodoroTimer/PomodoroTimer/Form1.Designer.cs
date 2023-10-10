@@ -53,6 +53,7 @@
             // 
             // WorkTimeComboBox
             // 
+            this.WorkTimeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.WorkTimeComboBox.Font = new System.Drawing.Font("MS UI Gothic", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.WorkTimeComboBox.FormattingEnabled = true;
             this.WorkTimeComboBox.Location = new System.Drawing.Point(143, 63);
@@ -62,6 +63,7 @@
             // 
             // RestTimeComboBox
             // 
+            this.RestTimeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.RestTimeComboBox.Font = new System.Drawing.Font("MS UI Gothic", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.RestTimeComboBox.FormattingEnabled = true;
             this.RestTimeComboBox.Location = new System.Drawing.Point(143, 96);
@@ -159,7 +161,7 @@
             this.Controls.Add(this.StartButton);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Name = "Form1";
-            this.Opacity = 0.6D;
+            this.Opacity = 0.5D;
             this.Text = "Pomodoro Timer";
             this.TopMost = true;
             this.Load += new System.EventHandler(this.Form1_Load);

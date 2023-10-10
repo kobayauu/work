@@ -49,24 +49,6 @@ namespace PomodoroTimer
                     return;
                 }
 
-                // 作業時間と休憩時間が選択されていなかったらエラー
-                if (WorkTimeComboBox.SelectedItem == null || RestTimeComboBox.SelectedItem == null) {
-                    MessageBox.Show(this, "作業時間と休憩時間を選択してください", "Pomodoro Timer", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
-
-                // 作業時間に数値以外が入力されていたらエラー
-                if (int.TryParse(WorkTimeComboBox.SelectedItem.ToString(), out int workTime) == false) {
-                    MessageBox.Show(this, "作業時間には数値を入力してください", "Pomodoro Timer", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
-
-                // 休憩時間に数値以外が入力されていたらエラー
-                if (int.TryParse(RestTimeComboBox.SelectedItem.ToString(), out int restTime) == false) {
-                    MessageBox.Show(this, "休憩時間には数値を入力してください", "Pomodoro Timer", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
-
                 workMinutes = 0;
                 workSeconds = 0;
                 isWorkTime = true;

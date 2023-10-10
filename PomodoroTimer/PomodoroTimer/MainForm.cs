@@ -12,7 +12,7 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace PomodoroTimer
 {
-    public partial class Form1 : Form
+    public partial class MainForm : Form
     {
         // ステータス
         const int STATUS_STOP  = 0;
@@ -21,9 +21,11 @@ namespace PomodoroTimer
 
         Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
         System.Timers.Timer timer = new System.Timers.Timer(500);
+        int SettingWorkTime = 25;
+        int SettingRestTime = 5;
         delegate void UpdateDisplayTimeLabelDelegate();
 
-        public Form1()
+        public MainForm()
         {
             InitializeComponent();
         }
@@ -31,16 +33,8 @@ namespace PomodoroTimer
         private void Form1_Load(object sender, EventArgs e)
         {
             // 画面の右上に表示
-            this.Left = System.Windows.Forms.Screen.PrimaryScreen.Bounds.Width - 450;
-            this.Top = 0;
-
-            // コンボボックスに値を追加
-            for (int i = 1; i <= 60; i++) {
-                WorkTimeComboBox.Items.Add(i);
-                RestTimeComboBox.Items.Add(i);
-            }
-            WorkTimeComboBox.SelectedIndex = 24;
-            RestTimeComboBox.SelectedIndex = 4;
+            this.Left = System.Windows.Forms.Screen.PrimaryScreen.Bounds.Width - 745;
+            this.Top = System.Windows.Forms.Screen.PrimaryScreen.Bounds.Height - 40;
 
             // タイマーの設定
             timer.Elapsed += new System.Timers.ElapsedEventHandler(OnElapsed);
@@ -63,7 +57,36 @@ namespace PomodoroTimer
                     InitStatus(STATUS_STOP);
                 }
             }
+        }
 
+        private void SettingButton_Click(object sender, EventArgs e)
+        {
+            // 設定画面を表示
+            SettingForm form2 = new SettingForm();
+            form2.SettingWorkTime = SettingWorkTime;
+            form2.SettingRestTime = SettingRestTime;
+            form2.SettingFormBorderStyle = (int)this.FormBorderStyle;
+            form2.ShowDialog();
+
+            // 設定値を反映
+            SettingWorkTime = form2.SettingWorkTime;
+            SettingRestTime = form2.SettingRestTime;
+            if (form2.SettingFormBorderStyle == 0) {
+                this.FormBorderStyle = FormBorderStyle.None;
+            }
+            else {
+                this.FormBorderStyle = FormBorderStyle.FixedSingle;
+            }
+        }
+
+        private void CloseButton_Click(object sender, EventArgs e)
+        {
+            DialogResult ret;
+            ret = MessageBox.Show(this, "アプリを閉じますか？", "Pomodoro Timer", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+            if (ret == DialogResult.Yes) {
+                this.Close();
+            }
         }
 
         // タイマーのイベント
@@ -81,7 +104,7 @@ namespace PomodoroTimer
 
             // 作業時間になったら休憩時間にする
             if (DisplayStatusLabel.Text == "作業中") {
-                if (spendTime.Minutes.ToString() != WorkTimeComboBox.SelectedItem.ToString()) {
+                if (spendTime.Minutes.ToString() != SettingWorkTime.ToString()) {
                     return;
                 }
                 stopwatch.Stop();
@@ -93,12 +116,11 @@ namespace PomodoroTimer
                 }
                 else {
                     InitStatus(STATUS_STOP);
-                    return;
                 }              
             }
             // 休憩時間になったら作業時間にする
             else if (DisplayStatusLabel.Text == "休憩中") {   
-                if (spendTime.Minutes.ToString() != RestTimeComboBox.SelectedItem.ToString()) {
+                if (spendTime.Minutes.ToString() != SettingRestTime.ToString()) {
                     return;
                 }
                 stopwatch.Stop();
@@ -110,18 +132,7 @@ namespace PomodoroTimer
                 }
                 else {
                     InitStatus(STATUS_STOP);
-                    return;
                 }
-            }
-        }
-
-        private void CloseButton_Click(object sender, EventArgs e)
-        {
-            DialogResult ret;
-            ret = MessageBox.Show(this, "アプリを閉じますか？", "Pomodoro Timer", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-
-            if (ret == DialogResult.Yes) {
-                this.Close();
             }
         }
 
@@ -133,9 +144,7 @@ namespace PomodoroTimer
                 StartButton.Text = "スタート";
                 DisplayStatusLabel.Text = "停止";
                 DisplayStatusLabel.ForeColor = default;
-
-                WorkTimeComboBox.Enabled = true;
-                RestTimeComboBox.Enabled = true;
+                SettingButton.Enabled = true;
                 CloseButton.Enabled = true;
             }
             else if (nStatus == STATUS_START) {
@@ -145,9 +154,7 @@ namespace PomodoroTimer
                 DisplayStatusLabel.Text = "作業中";
                 DisplayTimeLabel.Text = "00:00";
                 DisplayStatusLabel.ForeColor = Color.Red;
-
-                WorkTimeComboBox.Enabled = false;
-                RestTimeComboBox.Enabled = false;
+                SettingButton.Enabled = false;
                 CloseButton.Enabled = false;
             }
             else if (nStatus == STATUS_REST) {
@@ -159,5 +166,7 @@ namespace PomodoroTimer
             }
 
         }
+
+
     }
 }

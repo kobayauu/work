@@ -143,6 +143,7 @@ namespace PomodoroTimer
                 timer.Start();
                 StartButton.Text = "ストップ";
                 DisplayStatusLabel.Text = "作業中";
+                DisplayTimeLabel.Text = "00:00";
                 DisplayStatusLabel.ForeColor = Color.Red;
 
                 WorkTimeComboBox.Enabled = false;
@@ -153,6 +154,7 @@ namespace PomodoroTimer
                 stopwatch.Restart();
                 timer.Start();
                 DisplayStatusLabel.Text = "休憩中";
+                DisplayTimeLabel.Text = "00:00";
                 DisplayStatusLabel.ForeColor = Color.Lime;
             }
 

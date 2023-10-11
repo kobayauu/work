@@ -12,6 +12,7 @@ IMPLEMENT_DYNAMIC(CInitInkState, CPropertyPage)
 
 CInitInkState::CInitInkState()
 	: CPropertyPage(CInitInkState::IDD)
+	, m_rdbtnInkStateSelect(0)
 {
 
 }
@@ -27,6 +28,7 @@ void CInitInkState::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_COMBO2, m_cmbbxYCM);
 	DDX_Control(pDX, IDC_COMBO3, m_cmbbxW1);
 	DDX_Control(pDX, IDC_COMBO4, m_cmbbxW2W4);
+	DDX_Radio(pDX, IDC_RADIO1, m_rdbtnInkStateSelect);
 }
 
 
@@ -41,7 +43,7 @@ BOOL CInitInkState::OnInitDialog()
 	CPropertyPage::OnInitDialog();
 
 	// TODO:  ここに初期化を追加してください
-	InitComboBox();
+	//InitComboBox();
 	return TRUE;  // return TRUE unless you set the focus to a control
 	// 例外 : OCX プロパティ ページは必ず FALSE を返します。
 }
@@ -57,11 +59,17 @@ BOOL CInitInkState::OnSetActive()
 	CBGJServToolApp* pApp = (CBGJServToolApp*)AfxGetApp();
 	pApp->SetPrevIDD( IDD_INIT_INK_STATE );
 
-	LangSetWndTxt( GetDlgItem( IDC__INIT_INK_STATE ) , IDS_INIT_INK_STATE1 );
+
+	LangSetWndTxt(GetDlgItem(IDC__INIT_INK_STATE), IDS_INIT_INK_STATE1);
+/*
 	LangSetWndTxt( GetDlgItem( IDC_INIT_INK_K ) , IDS_INIT_INK_STATE2 );
 	LangSetWndTxt( GetDlgItem( IDC_INIT_INK_YCM ) , IDS_INIT_INK_STATE3 );
 	LangSetWndTxt( GetDlgItem( IDC_INIT_INK_W1 ) , IDS_INIT_INK_STATE4 );
 	LangSetWndTxt( GetDlgItem( IDC_INIT_INK_W2W4 ) , IDS_INIT_INK_STATE5 );
+*/
+
+	LangSetWndTxt(GetDlgItem( IDC_RADIO1 ) , IDS_INK_STATE6 );
+	LangSetWndTxt(GetDlgItem( IDC_RADIO2 ) , IDS_INK_STATE7 );
 
 
 	return CPropertyPage::OnSetActive();
@@ -77,7 +85,8 @@ LRESULT CInitInkState::OnWizardBack()
 LRESULT CInitInkState::OnWizardNext()
 {
 	// TODO: ここに特定なコードを追加するか、もしくは基本クラスを呼び出してください。
-	int nNextID = IDD_WHITE_HALT2;
+	//int nNextID = IDD_WHITE_HALT2;
+	int nNextID = IDD_IP_CLEAR;
 	CBGJServToolApp* pApp = (CBGJServToolApp*)AfxGetApp();
 	bool bRet = TRUE;
 	bool bRet2 = TRUE;
@@ -88,7 +97,13 @@ LRESULT CInitInkState::OnWizardNext()
 
 	if (pApp->IsOnline())
 	{
-		iErr1 = pApp->SetInitInkState(m_cmbbxK.GetCurSel(), m_cmbbxYCM.GetCurSel(), m_cmbbxW1.GetCurSel(), m_cmbbxW2W4.GetCurSel());
+		//iErr1 = pApp->SetInitInkState(m_cmbbxK.GetCurSel(), m_cmbbxYCM.GetCurSel(), m_cmbbxW1.GetCurSel(), m_cmbbxW2W4.GetCurSel());
+		if (m_rdbtnInkStateSelect == 0) {
+			iErr1 = pApp->SetInitInkState(0, 0, 0, 0);
+		}
+		else if (m_rdbtnInkStateSelect == 1) {
+			iErr1 = pApp->SetInitInkState(1, 1, 1, 1);
+		}
 
 		iErr2 = pApp->SetAssembleFlag(0x05);
 

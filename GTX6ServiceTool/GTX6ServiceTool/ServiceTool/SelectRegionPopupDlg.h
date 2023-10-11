@@ -12,6 +12,7 @@ class SelectRegionPopupDlg : public CDialog
 	CString m_str15Code;
 	CString m_strRegion;
 	CString m_strModel;
+	CString m_strAttach;
 
 public:
 	SelectRegionPopupDlg(CWnd* pParent = NULL); //標準コンストラクタ
@@ -35,5 +36,6 @@ protected:
 
 	void SetRegion();
 	void SetModel();
+	void SetAttach();
 };
 

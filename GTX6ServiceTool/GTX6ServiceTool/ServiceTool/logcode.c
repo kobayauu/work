@@ -852,6 +852,20 @@ LOGCODE	s_LogCode[] =
     { 0x00009153, "吸引してもメインタンクの残量が減らない(プリンター4:W)", "Sucking doesn't decrease tank remaining on printer(prn4:W)" },
     { 0x00009300, "インクサーバーに対応したLCDファームバージョンと不一致", "Mismatch with LCD firm version for ink server" },
 
+    { 0x17680000, "ノーマルクリーニング(ALL Color + SP)", "Normal Cleaning(ALL Color + SP)" },
+    { 0x17780000, "パワフルクリーニング(ALL Color + SP)", "Powerful Cleaning(ALL Color + SP)" },
+    { 0x17880000, "スーパークリーニング(ALL Color + SP)", "Super Cleaning(ALL Color + SP)" },
+    { 0x73200000, "印刷時間計算", "Print time calculation" },
+    { 0x00005954, "プラテンサーボモーター動力遮断", "Cut off the power of platen servo motor" },
+    { 0x00006154, "キャリッジ サーボモーター動力遮断", "Cut off the power of CR servo motor" },
+    { 0x00006170, "サーボモーター動力遮断からの復帰", "Recovery from servo motor power cutoff" },
+    { 0x00006261, "カラーヘッドＡ ヘッド電圧48V確認エラー", "Color A Head Voltage 48V Failure" },
+    { 0x00006262, "カラーヘッドB ヘッド電圧48V確認エラー", "Color B Head Voltage 48V Failure" },
+    { 0x00006263, "白ヘッドＡ ヘッド電圧48V確認エラー", "White A Head Voltage 48V Failure" },
+    { 0x00006264, "白ヘッドB ヘッド電圧48V確認エラー", "White B Head Voltage 48V Failure" },
+    { 0x00006265, "ExtraヘッドＡ ヘッド電圧48V確認エラー", "Extra A Head Voltage 48V Failure" },
+    { 0x00006266, "ExtraヘッドB ヘッド電圧48V確認エラー", "Extra B Head Voltage 48V Failure" },
+
 	{ 0x99990000, "Unknown LogCode", "Unknown LogCode" }
 };
 

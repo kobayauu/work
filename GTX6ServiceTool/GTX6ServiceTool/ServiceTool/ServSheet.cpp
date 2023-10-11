@@ -61,6 +61,7 @@ CServSheet::CServSheet(UINT nIDCaption, CWnd* pParentWnd, UINT iSelectPage)
 	AddPageNoHelp( &m_WhiteHalt		 );
 	AddPageNoHelp( &m_PlatenFeeding	 );
 	AddPageNoHelp( &m_RTCSetAndBattery);
+	AddPageNoHelp( &m_PlatenHeight	 );
 
 	m_psh.dwFlags &= (~PSH_HASHELP);
 	m_psh.dwFlags |= PSH_USEHICON;

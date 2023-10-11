@@ -40,6 +40,7 @@
 #include "WhiteHalt.h"
 #include "PlatenFeeding.h"
 #include "RTCSetAndBattery.h"
+#include "PlatenHeight.h"
 
 #if _MSC_VER > 1000
 #pragma once
@@ -118,6 +119,7 @@ public:
 	CWhiteHalt		  m_WhiteHalt;
 	CPlatenFeeding	  m_PlatenFeeding;
 	CRTCSetAndBattery m_RTCSetAndBattery;
+	CPlatenHeight	  m_PlatenHeight;
 
 	virtual ~CServSheet();
 

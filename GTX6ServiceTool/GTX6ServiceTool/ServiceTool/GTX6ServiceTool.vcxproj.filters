@@ -261,6 +261,9 @@
     <ClCompile Include="HumidFanFilter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="PlatenHeight.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BGJServTool.rc">
@@ -521,6 +524,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="HumidFanFilter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PlatenHeight.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -29,6 +29,7 @@ private:
 	CComboBox m_cmbbxYCM;
 	CComboBox m_cmbbxW1;
 	CComboBox m_cmbbxW2W4;
+	int m_rdbtnInkStateSelect;
 public:
 	virtual BOOL OnInitDialog();
 };

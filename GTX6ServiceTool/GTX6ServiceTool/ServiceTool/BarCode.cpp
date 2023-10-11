@@ -46,6 +46,10 @@ END_MESSAGE_MAP()
 BOOL CBarCode::OnSetActive()
 {
 	// TODO: ここに特定なコードを追加するか、もしくは基本クラスを呼び出してください。
+
+	CPropertySheet* pSheet = (CPropertySheet*)GetParent();
+	pSheet->SetWizardButtons(PSWIZB_BACK | PSWIZB_NEXT);
+
 	m_edtctrl18Code.SetWindowText(_T(""));
 	m_edtctrlSerialCode.SetWindowText(_T(""));
 	UpdateData(FALSE);
@@ -71,7 +75,8 @@ LRESULT CBarCode::OnWizardBack()
 LRESULT CBarCode::OnWizardNext()
 {
 	// TODO: ここに特定なコードを追加するか、もしくは基本クラスを呼び出してください。
-	int nNextID = IDD_SERV_ADJ_CR_SPEED1;
+	//int nNextID = IDD_SERV_ADJ_CR_SPEED1;
+	int nNextID = IDD_PLANTEN_HEIGHT;
 	CBGJServToolApp* pApp = (CBGJServToolApp*)AfxGetApp();
 	CString csCode;
 	bool bRet = TRUE;
@@ -147,7 +152,7 @@ LRESULT CBarCode::OnWizardNext()
 }
 
 int CBarCode::Chk18Code(CString csCode){
-	if (csCode.GetLength() == 0){
+	if (csCode.GetLength() == 0) {
 		//
 		// 入力がない場合は、エラー判定しない
 		//
@@ -162,29 +167,29 @@ int CBarCode::Chk18Code(CString csCode){
 	// 
 	// 15桁の各桁の入力情報のエラー判定
 	//
-	for(int i = 0; i < 15; i++){
-		// ASCIIコード 33～126が有効値
-		if(csCode[i] < 33 && 126 < csCode[i]){
-			return -204;
-		}
+	CString csModelCode = csCode.Left(8);
+	if (csModelCode != "BGT60SBJ") {
+		return -204;
+	}
 
-		// 7桁目の入力域が正しいことを判断する（テクニカル保守点検のデフォルト設定に用いるため）
-		if (i == 6)
-		{
-			if (!ChkModelValue(csCode[i]))
-			{
-				return -204;
-			}
-		}
+	// 9桁目の入力域が正しいことを判断する(仕向け特別仕様)
+	CString csRegionCode = csCode.Mid(8, 1);
+	int nRegionCode = _ttoi(csRegionCode);
+	if (1 > nRegionCode || nRegionCode > 5) {
+		return -204;
+	}
 
-		// 9桁目の入力域が正しいことを判断する（テクニカル保守点検のデフォルト設定に用いるため）
-		if (i == 8)
-		{
-			if (!ChkRegionValue(csCode[i]))
-			{
-				return -204;
-			}
-		}
+	// 10～14桁目の入力域が正しいことを判断する
+	CString csOptionCode = csCode.Mid(9, 5);
+	if (csOptionCode != "00004") {
+		return -204;
+	}
+
+	// 15桁目の入力域が正しいことを判断する(付属区分)
+	CString csAttachCode = csCode.Mid(14, 1);
+	int nAttachCode = _ttoi(csAttachCode);
+	if (1 > nAttachCode || nAttachCode > 2) {
+		return -204;
 	}
 
 	return 0;

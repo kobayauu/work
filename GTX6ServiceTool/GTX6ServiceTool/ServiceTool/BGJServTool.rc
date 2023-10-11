@@ -52,7 +52,7 @@ BEGIN
     GROUPBOX        "Select menu",IDC_SELECTMENU,9,24,177,138
     CONTROL         "Heads",IDC_RADIO_HEAD,"Button",BS_AUTORADIOBUTTON,17,37,115,14
     CONTROL         "Carriage Belt or tension adjustment",IDC_RADIO_CR_ADJ,
-                    "Button",BS_AUTORADIOBUTTON,17,58,135,14
+                    "Button",BS_AUTORADIOBUTTON | NOT WS_VISIBLE,17,58,135,14
     CONTROL         "Lithium Battery",IDC_RADIO_BATTERY,"Button",BS_AUTORADIOBUTTON,17,79,96,14
     CONTROL         "Main PCB",IDC_RADIO_MAIN_BOARD,"Button",BS_AUTORADIOBUTTON,17,100,93,14
     CONTROL         "Humidifier Fan Filter",IDC_RADIO_HUMID_FAN,"Button",BS_AUTORADIOBUTTON,17,121,97,14
@@ -412,7 +412,7 @@ CAPTION "White/Color Alignment"
 FONT 10, "MS Sans Serif", 400, 0, 0x0
 BEGIN
     LTEXT           "白とカラーの位置合わせを行います。",IDC_SETPOS_1,9,8,120,8
-    LTEXT           "左プラテン\n\n右プラテン",IDC_SETPOS_2,20,28,268,56
+    LTEXT           "左プラテン\n\n右プラテン",IDC_SETPOS_2,20,28,268,56,NOT WS_VISIBLE
     LTEXT           "に対してGTX-6 MaintenanceToolを用いて白とカラーの位置合わせを行って下さい。",IDC_SETPOS_3,11,95,277,31
     PUSHBUTTON      "GTX-6 MaintenanceTool を起動する",IDC_BTN_OPEN_GTMAINTE,20,127,151,14
     CONTROL         "白とカラーの位置合わせを行いました。",IDC_CHECK_SETPOS_DONE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,20,157,268,10
@@ -591,14 +591,16 @@ CAPTION "Initial Ink Introduction"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     LTEXT           "スタティック",IDC__INIT_INK_STATE,6,6,306,66
-    LTEXT           "スタティック",IDC_INIT_INK_K,24,86,33,8,0,WS_EX_RIGHT
-    COMBOBOX        IDC_COMBO1,66,84,78,48,CBS_DROPDOWN | CBS_SORT | WS_VSCROLL | WS_TABSTOP
-    LTEXT           "スタティック",IDC_INIT_INK_YCM,156,87,33,8,0,WS_EX_RIGHT
-    COMBOBOX        IDC_COMBO2,198,84,78,48,CBS_DROPDOWN | CBS_SORT | WS_VSCROLL | WS_TABSTOP
-    LTEXT           "スタティック",IDC_INIT_INK_W1,24,140,33,8,0,WS_EX_RIGHT
-    COMBOBOX        IDC_COMBO3,66,138,78,48,CBS_DROPDOWN | CBS_SORT | WS_VSCROLL | WS_TABSTOP
-    LTEXT           "スタティック",IDC_INIT_INK_W2W4,156,140,33,8,0,WS_EX_RIGHT
-    COMBOBOX        IDC_COMBO4,198,138,78,48,CBS_DROPDOWN | CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "スタティック",IDC_INIT_INK_K,24,86,33,8,NOT WS_VISIBLE,WS_EX_RIGHT
+    COMBOBOX        IDC_COMBO1,66,84,78,48,CBS_DROPDOWN | CBS_SORT | NOT WS_VISIBLE | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "スタティック",IDC_INIT_INK_YCM,156,87,33,8,NOT WS_VISIBLE,WS_EX_RIGHT
+    COMBOBOX        IDC_COMBO2,198,84,78,48,CBS_DROPDOWN | CBS_SORT | NOT WS_VISIBLE | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "スタティック",IDC_INIT_INK_W1,24,140,33,8,NOT WS_VISIBLE,WS_EX_RIGHT
+    COMBOBOX        IDC_COMBO3,66,138,78,48,CBS_DROPDOWN | CBS_SORT | NOT WS_VISIBLE | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "スタティック",IDC_INIT_INK_W2W4,156,140,33,8,NOT WS_VISIBLE,WS_EX_RIGHT
+    COMBOBOX        IDC_COMBO4,198,138,78,48,CBS_DROPDOWN | CBS_SORT | NOT WS_VISIBLE | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "導入前",IDC_RADIO1,"Button",BS_AUTORADIOBUTTON | BS_MULTILINE | WS_GROUP,70,137,50,14
+    CONTROL         "導入後",IDC_RADIO2,"Button",BS_AUTORADIOBUTTON | BS_MULTILINE,145,137,50,14
 END
 
 IDD_VRATING DIALOGEX 0, 0, 351, 186
@@ -706,7 +708,18 @@ BEGIN
     CONTROL         "China Model",IDC_RADIO_REGION_CHN,"Button",BS_AUTORADIOBUTTON,8,58,133,10
     DEFPUSHBUTTON   "OK",IDOK,174,80,50,14
     PUSHBUTTON      "キャンセル",IDCANCEL,227,80,50,14
+    CONTROL         "1. GTX pro",IDC_RADIO_MODEL_PRO,"Button",BS_AUTORADIOBUTTON | NOT WS_VISIBLE | WS_GROUP,149,7,129,10
+    CONTROL         "2. GTX pro Bulk",IDC_RADIO_MODEL_PROB,"Button",BS_AUTORADIOBUTTON | NOT WS_VISIBLE,149,19,129,10
     LTEXT           "",IDC_STATIC,145,10,1,70,WS_BORDER,WS_EX_STATICEDGE
+END
+
+IDD_PLANTEN_HEIGHT DIALOGEX 0, 0, 345, 201
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Adjust platen height"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "プラテン高さのAポジ指定・高さ調節を実施しました。",IDC_CHECK_PLATEN_HEIGHT_DONE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,23,157,313,10
+    LTEXT           "本体パネルを操作して、プラテンの高さのAポジ指定及び高さ調整を実施してください。",IDC_PLATEN_HEIGHT_MSG1,11,8,325,76
 END
 
 
@@ -824,6 +837,244 @@ END
 
 #endif    // APSTUDIO_INVOKED
 
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO
+BEGIN
+    IDD_ABOUTBOX, DIALOG
+    BEGIN
+    END
+
+    IDD_SERV_FIRST, DIALOG
+    BEGIN
+    END
+
+    IDD_SERV_PARTS_CHG, DIALOG
+    BEGIN
+    END
+
+    IDD_SERV_ADJ_THERMIS01, DIALOG
+    BEGIN
+    END
+
+    IDD_VIEW_EEP, DIALOG
+    BEGIN
+    END
+
+    IDD_SERV_HEAD_VOLT05, DIALOG
+    BEGIN
+    END
+
+    IDD_SERV_ADJ_THERMIS03, DIALOG
+    BEGIN
+    END
+
+    IDD_SERV_ADJ_CR_SPEED1, DIALOG
+    BEGIN
+    END
+
+    IDD_SERV_ADJ_CR_SPEED2, DIALOG
+    BEGIN
+    END
+
+    IDD_SERV_SEL_OPE, DIALOG
+    BEGIN
+    END
+
+    IDD_SERV_SET_DATE, DIALOG
+    BEGIN
+    END
+
+    IDD_SERV_SET_DATE2, DIALOG
+    BEGIN
+    END
+
+    IDD_SERV_CHNAGE_BATTERY1, DIALOG
+    BEGIN
+    END
+
+    IDD_SERV_CHNAGE_BATTERY2, DIALOG
+    BEGIN
+    END
+
+    IDD_SERV_LOG_CHECK1, DIALOG
+    BEGIN
+    END
+
+    IDD_SERV_CR_CHANGE, DIALOG
+    BEGIN
+    END
+
+    IDD_SERV_PSEL, DIALOG
+    BEGIN
+    END
+
+    IDD_SERV_VIEW_LOG, DIALOG
+    BEGIN
+    END
+
+    IDD_LOG_VIEW, DIALOG
+    BEGIN
+    END
+
+    IDD_DLG_LOGTXT_PROGRESS, DIALOG
+    BEGIN
+    END
+
+    IDD_LOG_ANALYZE, DIALOG
+    BEGIN
+    END
+
+    IDD_SERV_HEAD_VOLT00, DIALOG
+    BEGIN
+    END
+
+    IDD_SERV_VIEW_STAT, DIALOG
+    BEGIN
+    END
+
+    IDD_FIRE1, DIALOG
+    BEGIN
+    END
+
+    IDD_IN_ADVANCE_MAIN, DIALOG
+    BEGIN
+    END
+
+    IDD_SET_POS, DIALOG
+    BEGIN
+    END
+
+    IDD_SET_IP, DIALOG
+    BEGIN
+    END
+
+    IDD_RESET_VOLTAGE, DIALOG
+    BEGIN
+    END
+
+    IDD_SERV_RESET_TUBE1, DIALOG
+    BEGIN
+    END
+
+    IDD_SERV_CR_ORIGIN, DIALOG
+    BEGIN
+    END
+
+    IDD_SERV_CHNAGE_PUMP1, DIALOG
+    BEGIN
+    END
+
+    IDD_SERV_CHNAGE_PUMP2, DIALOG
+    BEGIN
+    END
+
+    IDD_MAIN_BOARD_BRANCH, DIALOG
+    BEGIN
+    END
+
+    IDD_EEPROM_RESTORE1, DIALOG
+    BEGIN
+    END
+
+    IDD_BACKUP, DIALOG
+    BEGIN
+    END
+
+    IDD_HUMIDFAN, DIALOG
+    BEGIN
+    END
+
+    IDD_RTC_SET_AND_RESET_EEPROM, DIALOG
+    BEGIN
+    END
+
+    IDD_IP_CLEAR, DIALOG
+    BEGIN
+    END
+
+    IDD_BARCODE, DIALOG
+    BEGIN
+    END
+
+    IDD_INIT_INK_STATE, DIALOG
+    BEGIN
+    END
+
+    IDD_VRATING, DIALOG
+    BEGIN
+    END
+
+    IDD_PLANTEN_FEEDING, DIALOG
+    BEGIN
+    END
+
+    IDD_RTC_AND_BATTERY, DIALOG
+    BEGIN
+    END
+
+    IDD_BACKUP2, DIALOG
+    BEGIN
+    END
+
+    IDD_VIEW_HEAD, DIALOG
+    BEGIN
+    END
+
+    IDD_VIEW_HEADCHECK, DIALOG
+    BEGIN
+    END
+
+    IDD_WHITE_HALT2, DIALOG
+    BEGIN
+    END
+
+    IDD_BARCODE_REGION, DIALOG
+    BEGIN
+    END
+    
+    IDD_PLANTEN_HEIGHT, DIALOG
+    BEGIN
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// AFX_DIALOG_LAYOUT
+//
+
+IDD_SERV_PARTS_CHG AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+IDD_PLANTEN_HEIGHT AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+IDD_VRATING AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+IDD_SET_POS AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+IDD_FIRE1 AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
 #endif    // ニュートラル resources
 /////////////////////////////////////////////////////////////////////////////
 
@@ -898,7 +1149,7 @@ END
 STRINGTABLE
 BEGIN
     IDS_EEPROM_BACKUP1_2    "基板の設定値をバックアップします。\n\n- このバックアップで、基板交換は完了です。"
-    IDS_EXAM1               "例： BGTX422H1000021"
+    IDS_EXAM1               "例： BGT60NBJ1000031"
     IDS_EXAM2               "例： 07922455"
     IDS_RADIO_REGION_JPN    "1. 日本仕様"
     IDS_RADIO_REGION_US     "2. アメリカ/アジア仕様"
@@ -907,13 +1158,17 @@ BEGIN
     IDS_RADIO_REGION_CHN    "5. 中国仕様"
     IDS_OPERATIONS          "印刷動作回数"
     IDS_HUMID_FAN           "加湿器ファンフィルター"
-    IDS_HUMIDFAN_MSG1       "加湿器ファンフィルターかえるお～"
+    IDS_HUMIDFAN_MSG1       "加湿器ファンフィルター交換の情報をセットします。"
 END
 
 STRINGTABLE
 BEGIN
-    IDS_LOG_CHECK1_1        "- プリンターログの内容を確認します。\n\n- ログはGTX-6 MaintenanceToolで取得済みである必要があります。\n\n- 取得済みのログファイル名を入力してください。\n\n- ""次へ""をクリックしてください。"
+    IDS_PLATEN_HEIGHT1      "本体パネルを操作して、プラテンの高さのAポジ指定及び高さ調整を実施してください。"
+    IDS_PLATEN_HEGIHT2      "プラテン高さのAポジ指定・高さ調節を実施しました。"
+    IDS_INK_STATE6          "導入前"
+    IDS_LOG_CHECK1_1        "- プリンターログの内容を確認します。\n\n- ログはGTX-6 ORGR MaintenanceToolで取得済みである必要があります。\n\n- 取得済みのログファイル名を入力してください。\n\n- ""次へ""をクリックしてください。"
     IDS_LOG_CHECK2_1        "- 表示したいログ種別を指定してください。\n\n- 「Convert to Text File」をクリックして、保存するテキストファイル名を指定してください。\n\n- しばらく待つと、変換されたテキストが表示されます。"
+    IDS_INK_STATE7          "導入後"
 END
 
 STRINGTABLE
@@ -1053,7 +1308,7 @@ BEGIN
     IDS_BOTH                "両方"
     IDS_FIRE_1_1_LEFT       "左プラテン　カラーヘッド\n\n右プラテン　カラーヘッド"
     IDS_FIRE_1_1_RIGHT      "左プラテン　白ヘッド\n\n右プラテン　白ヘッド"
-    IDS_FIRE_1_1_BOTH       "1200dpi x 1200dpi　カラーヘッド\n\n1200dpi x 1200dpi　白ヘッド"
+    IDS_FIRE_1_1_BOTH       "カラーヘッドAB\n\n白ヘッドAB"
     IDS_FIRE_1_2            "に対してGTX-6 MaintenanceToolを用いて吐出タイミングの調整を行ってください。"
     IDS_BTN_OPEN_GTMAINTE   "GTX-6 MaintenanceTool を起動する"
     IDS_CHECK_FIRE_DONE     "吐出タイミングの調整を行いました。"
@@ -1102,7 +1357,7 @@ BEGIN
     IDS_BARCODE3            "シリアルナンバー:"
     IDS_WHITE_HALT1         "白インクを使用していたかどうかを選択します（白インク休止モードの確認）。\n\n- 白インクを使用していた場合は「使用する」を、\n\n- 白インクの使用を休止していた場合は「使用しない」を選択してください。\n\n- 選択したら、""次へ""をクリックしてください。"
     IDS_WHITE_HALT2         "白インクの使用:"
-    IDS_INIT_INK_STATE1     "初期インク導入状態を設定します。\n\n- K、CYM、W1、W2-W4のそれぞれに対して、インクがチューブを\n    通っている場合は、「導入後」、\n    通っていない場合は、「導入前」\n  を選択してください。\n\n- 選択したら、""次へ""をクリックしてください。"
+    IDS_INIT_INK_STATE1     "初期インク導入状態を設定します。\n\n- すべてのインクに対して、インクがチューブを\n    通っている場合は、「導入後」、\n    通っていない場合は、「導入前」\n  を選択してください。\n\n- 選択したら、""次へ""をクリックしてください。"
     IDS_INIT_INK_STATE2     "K :"
     IDS_INIT_INK_STATE3     "YCM :"
     IDS_INIT_INK_STATE4     "W1 :"
@@ -1112,7 +1367,7 @@ STRINGTABLE
 BEGIN
     IDS_INIT_INK_STATE5     "W2-W4 :"
     IDS_VRATING1            "V-ratingの設定を行います。"
-    IDS_VRATING2            "白ヘッド\n\nカラーヘッド"
+    IDS_VRATING2            "白ヘッドAB\n\nカラーヘッドAB"
     IDS_VRATING3            "に対して、GTX-6 MaintenanceToolを用いて、V-ratingの設定を行ってください。"
     IDS_VRATING4            "V-ratingの設定を行いました。"
     IDS_INIT_INK_STATE6     "導入前"
@@ -1216,13 +1471,17 @@ BEGIN
     IDS_RADIO_REGION_CHN    "5. China Model"
     IDS_OPERATIONS          "Operations"
     IDS_HUMID_FAN           "Humidifier Fan Filter"
-    IDS_HUMIDFAN_MSG1       "abc"
+    IDS_HUMIDFAN_MSG1       "Set humidifier fan filter replacement information."
 END
 
 STRINGTABLE
 BEGIN
+    IDS_PLATEN_HEIGHT1      "Select position A Platen height  and  Adjust the Platen height."
+    IDS_PLATEN_HEGIHT2      "Position A Platen height selection and Platen height Adjustment have been completed."
+    IDS_INK_STATE6          "Before introduction"
     IDS_LOG_CHECK1_1        "Display Printer Log and Settings.\n- Input Printer Log file name below.\n- Log file is made by ""Check Printer Log and Settings"" process.\n- Click ""Next""."
     IDS_LOG_CHECK2_1        "- Check Log Type.\n- Click ""Convert to Text"".\n- After a few second, Log Text will be displayed."
+    IDS_INK_STATE7          "After introduction"
 END
 
 STRINGTABLE
@@ -1362,7 +1621,7 @@ BEGIN
     IDS_BOTH                "Both"
     IDS_FIRE_1_1_LEFT       "CMYK Print Heads on Left Platen \n\nCMYK Print Heads on Right Platen"
     IDS_FIRE_1_1_RIGHT      "White Print Heads on Left Platen \n\nWhite Print Heads on Right Platen"
-    IDS_FIRE_1_1_BOTH       "1200dpi x 1200dpi  Color Head\n\n1200dpi x 1200dpi  White Head"
+    IDS_FIRE_1_1_BOTH       "Color Head AB\n\nWhite Head AB"
     IDS_FIRE_1_2            "Start the GTX-6 Maintenance Tool in order to complete the firing adjustments for the print heads and settings listed above."
     IDS_BTN_OPEN_GTMAINTE   "Start the GTX-6 Maintenance Tool"
     IDS_CHECK_FIRE_DONE     "The Firing Adjustments have been completed."
@@ -1383,6 +1642,17 @@ END
 
 STRINGTABLE
 BEGIN
+    IDS_INIT_INK_STATE5     "W2-W4:"
+    IDS_VRATING1            "Set V-rating for each Print Head"
+    IDS_VRATING2            "Color Head AB\n\nWhite Head AB\n\nOR/GR Head AB"
+    IDS_VRATING3            "Note:  This Process will utilize GTX-6 ORGR MaintenanceTool in order to set the V-rating for each print head."
+    IDS_VRATING4            "Finished setting the V-rating for both of the print heads."
+    IDS_INIT_INK_STATE6     "Before introduction"
+    IDS_INIT_INK_STATE7     "After introduction"
+END
+
+STRINGTABLE
+BEGIN
     IDS_SET_LR1_1           "Set the LR of the both main PCB. "
     IDS_CLICK_NEXT          "Click ""Next""."
     IDS_SET_LR2_1           "Done the LR of the both main PCB. \n\nTurn OFF and ON the GTX-6 Printer. "
@@ -1394,7 +1664,7 @@ BEGIN
     IDS_RESET_TUBE_2_1      "The reset of warning ""Clean Tube W"" is finished."
     IDS_LCD_BOARD           "LCD Board"
     IDS_MAIN_BOARD_BRANCH1_1 
-                            "To reset the main panel settings that were previously set on this machine you will need to choose one of the below options and then click ""Next""..\n\n- Restore saved setting - Use the last settings saved for this machine from a backup file saved within the panel.  For example the white/color alignment configuration will be the same as before replacing the Main PCB. ""Next""."
+                            "To reset the main panel settings that were previously set on this machine you will need to choose one of the below options and then click ""Next"".\n\n- Restore saved setting - Use the last settings saved for this machine from a backup file saved within the panel.  For example the white/color alignment configuration will be the same as before replacing the Main PCB. ""Next""."
     IDS_MAIN_BOARD_BRANCH1_2 
                             "Restore saved setting - Use the last settings saved for this machine from a backup file saved within the panel.  For example the white/color alignment configuration will be the same as before replacing the Main PCB."
 END
@@ -1413,21 +1683,10 @@ BEGIN
     IDS_BARCODE3            "Serial number:"
     IDS_WHITE_HALT1         "White Ink Current Mode Setting\n\n- If white ink has already been introduced and is being used in the printer; Choose ""Normal Mode""\n\n- If white ink will not be utilized or the machine is currently utilizing White Pause Mode then select ""White Pause Mode"".\n\n- Then click ""Next""."
     IDS_WHITE_HALT2         "White ink Mode:        Normal Mode"
-    IDS_INIT_INK_STATE1     "Set Initial Ink Introduction Requirement\n- For each of K,CYM,W1,W2-W4, if ink is already in the tubes, select ""After introduction"".\n If ink is not already in the tubes select ""Before introduction""\n- Then Click ""Next""."
+    IDS_INIT_INK_STATE1     "Set Initial Ink Introduction Requirement\n- For all inks, if all inks are already in the tubes, select ""After introduction"".\n If all inks are not already in the tubes select ""Before introduction""\n- Then Click ""Next""."
     IDS_INIT_INK_STATE2     "K:"
     IDS_INIT_INK_STATE3     "YCM:"
     IDS_INIT_INK_STATE4     "W1:"
-END
-
-STRINGTABLE
-BEGIN
-    IDS_INIT_INK_STATE5     "W2-W4:"
-    IDS_VRATING1            "Set V-rating for each Print Head"
-    IDS_VRATING2            "White Head\n\nColor Head"
-    IDS_VRATING3            "Note:  This Process will utilize GTX-6 MaintenanceTool in order to set the V-rating for each print head."
-    IDS_VRATING4            "Finished setting the V-rating for both of the print heads."
-    IDS_INIT_INK_STATE6     "Before introduction"
-    IDS_INIT_INK_STATE7     "After introduction"
 END
 
 STRINGTABLE

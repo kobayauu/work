@@ -1,0 +1,42 @@
+﻿  comm.cpp
+C:\Users\kobayauu\Documents\github\work\GTX6SPServiceTool\gtlib\gtlib\gtlib\string.hpp(29,17): warning C4996: 'wcsncpy': This function or variable may be unsafe. Consider using wcsncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\kobayauu\Documents\github\work\GTX6SPServiceTool\gtlib\gtlib\gtlib\string.hpp(74,17): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\kobayauu\Documents\github\work\GTX6SPServiceTool\gtlib\gtlib\gtlib\comm.cpp(158,3): warning C4996: 'wcscpy': This function or variable may be unsafe. Consider using wcscpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\kobayauu\Documents\github\work\GTX6SPServiceTool\gtlib\gtlib\gtlib\comm.cpp(274,13): warning C4018: '<': signed と unsigned の数値を比較しようとしました。
+C:\Users\kobayauu\Documents\github\work\GTX6SPServiceTool\gtlib\gtlib\gtlib\comm.cpp(349,9): warning C4996: '_wfopen': This function or variable may be unsafe. Consider using _wfopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  info_6.cpp
+C:\Users\kobayauu\Documents\github\work\GTX6SPServiceTool\gtlib\gtlib\gtx\info_6.cpp(116,2): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\kobayauu\Documents\github\work\GTX6SPServiceTool\gtlib\gtlib\gtx\info_6.cpp(184,2): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  info_6sp.cpp
+C:\Users\kobayauu\Documents\github\work\GTX6SPServiceTool\gtlib\gtlib\gtx\info_6sp.cpp(118,2): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\kobayauu\Documents\github\work\GTX6SPServiceTool\gtlib\gtlib\gtx\info_6sp.cpp(189,2): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  option_6.cpp
+C:\Users\kobayauu\Documents\github\work\GTX6SPServiceTool\gtlib\gtlib\gtx\option_6.cpp(202,20): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  option_6sp.cpp
+C:\Users\kobayauu\Documents\github\work\GTX6SPServiceTool\gtlib\gtlib\gtx\option_6sp.cpp(220,20): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  sendmain.cpp
+C:\Users\kobayauu\Documents\github\work\GTX6SPServiceTool\gtlib\gtlib\gtlib\string.hpp(29,17): warning C4996: 'wcsncpy': This function or variable may be unsafe. Consider using wcsncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\kobayauu\Documents\github\work\GTX6SPServiceTool\gtlib\gtlib\gtlib\string.hpp(74,17): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\kobayauu\Documents\github\work\GTX6SPServiceTool\gtlib\gtlib\gtx\sendmain.cpp(35,10): warning C4996: '_wfopen': This function or variable may be unsafe. Consider using _wfopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\kobayauu\Documents\github\work\GTX6SPServiceTool\gtlib\gtlib\gtx\sendmain.cpp(208,2): warning C4996: 'wcscpy': This function or variable may be unsafe. Consider using wcscpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  driver.cpp
+C:\Users\kobayauu\Documents\github\work\GTX6SPServiceTool\gtlib\gtlib\win\driver.cpp(10,2): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\kobayauu\Documents\github\work\GTX6SPServiceTool\gtlib\gtlib\win\driver.cpp(20,2): warning C4996: 'wcscat': This function or variable may be unsafe. Consider using wcscat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  environ.cpp
+C:\Users\kobayauu\Documents\github\work\GTX6SPServiceTool\gtlib\gtlib\win\environ.cpp(43,28): warning C4996: 'wcscat': This function or variable may be unsafe. Consider using wcscat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\kobayauu\Documents\github\work\GTX6SPServiceTool\gtlib\gtlib\win\environ.cpp(44,30): warning C4996: 'wcscat': This function or variable may be unsafe. Consider using wcscat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\kobayauu\Documents\github\work\GTX6SPServiceTool\gtlib\gtlib\win\environ.cpp(45,28): warning C4996: 'wcscat': This function or variable may be unsafe. Consider using wcscat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\kobayauu\Documents\github\work\GTX6SPServiceTool\gtlib\gtlib\win\environ.cpp(46,28): warning C4996: 'wcscat': This function or variable may be unsafe. Consider using wcscat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\kobayauu\Documents\github\work\GTX6SPServiceTool\gtlib\gtlib\win\environ.cpp(47,28): warning C4996: 'wcscat': This function or variable may be unsafe. Consider using wcscat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  printer.cpp
+C:\Users\kobayauu\Documents\github\work\GTX6SPServiceTool\gtlib\gtlib\gtlib\string.hpp(29,17): warning C4996: 'wcsncpy': This function or variable may be unsafe. Consider using wcsncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\kobayauu\Documents\github\work\GTX6SPServiceTool\gtlib\gtlib\gtlib\string.hpp(74,17): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  sendsub.cpp
+C:\Users\kobayauu\Documents\github\work\GTX6SPServiceTool\gtlib\gtlib\gtlib\string.hpp(29,17): warning C4996: 'wcsncpy': This function or variable may be unsafe. Consider using wcsncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\kobayauu\Documents\github\work\GTX6SPServiceTool\gtlib\gtlib\gtlib\string.hpp(74,17): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\kobayauu\Documents\github\work\GTX6SPServiceTool\gtlib\gtlib\win\sendsub.cpp(80,15): warning C4267: 'return': 'size_t' から 'int' に変換しました。データが失われているかもしれません。
+C:\Users\kobayauu\Documents\github\work\GTX6SPServiceTool\gtlib\gtlib\win\sendsub.cpp(87,12): warning C4267: '=': 'size_t' から 'DWORD' に変換しました。データが失われているかもしれません。
+  コードを生成中...
+  png.c
+  pngerror.c
+  pngget.c

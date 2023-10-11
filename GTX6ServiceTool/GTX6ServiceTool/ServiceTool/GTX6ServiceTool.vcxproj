@@ -566,6 +566,7 @@
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Release|x64'">MaxSpeed</Optimization>
     </ClCompile>
     <ClCompile Include="PlatenFeeding.cpp" />
+    <ClCompile Include="PlatenHeight.cpp" />
     <ClCompile Include="PumpChg1.cpp" />
     <ClCompile Include="PumpChg2.cpp" />
     <ClCompile Include="ResetTube.cpp" />
@@ -871,6 +872,7 @@
     <ClInclude Include="MemEntry.h" />
     <ClInclude Include="mesString.h" />
     <ClInclude Include="PlatenFeeding.h" />
+    <ClInclude Include="PlatenHeight.h" />
     <ClInclude Include="PumpChg1.h" />
     <ClInclude Include="PumpChg2.h" />
     <ClInclude Include="ResetTube.h" />

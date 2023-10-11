@@ -81,12 +81,14 @@ void SelectRegionPopupDlg::OnBnClickedOk()
 {
 	SetModel();
 	SetRegion();
+	SetAttach();
 
-	m_str15Code = _T("      ");
-	m_str15Code += m_strModel;
-	m_str15Code += _T(" ");
+	m_str15Code = _T("BGT60NBJ");
+	//m_str15Code += m_strModel;
+	//m_str15Code += _T(" ");
 	m_str15Code += m_strRegion;
-	m_str15Code += _T("      ");
+	m_str15Code += _T("00003");
+	m_str15Code += m_strAttach;
 
 	OnOK();
 }
@@ -128,5 +130,19 @@ void SelectRegionPopupDlg::SetModel()
 	else if (IsDlgButtonChecked(IDC_RADIO_MODEL_PROB) == BST_CHECKED)
 	{
 		m_strModel = _T("4");
+	}
+}
+
+void SelectRegionPopupDlg::SetAttach()
+{
+	m_strAttach = _T("");
+
+	if (IsDlgButtonChecked(IDC_RADIO_REGION_JPN) == BST_CHECKED)
+	{
+		m_strAttach = _T("1");
+	}
+	else
+	{
+		m_strAttach = _T("2");
 	}
 }

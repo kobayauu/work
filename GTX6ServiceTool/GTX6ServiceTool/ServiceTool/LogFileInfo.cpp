@@ -59,7 +59,7 @@ BOOL CLogFileInfo::OnInitDialog()
 	if( iRet == 1 ){
 		m_Edit.Empty();
 		CString cs;
-		BYTE b[36];
+		BYTE b[64];
 		long dwSize;
 		//顧客名 & コメント & PC情報
 		if( cfLog.ReadTagString(_T("Cust"), cs ) )
@@ -89,14 +89,19 @@ BOOL CLogFileInfo::OnInitDialog()
 			m_Edit += cs;
 		}
 		//バージョン情報
-		if( cfLog.ReadTagData(_T("Vers"), 40, b, &dwSize ) && dwSize >= 40 )
+		if( cfLog.ReadTagData(_T("Vers"), 48, b, &dwSize ) && dwSize >= 48 )
 		{
-			cs.Format(_T("Versions :\t\t\tMain=%X.%02X.%04X, Mainte=%X.%02X.%04X,\r\n"
-								   "\t\t\tMessage=%X.%02X.%04X, Font=%X.%02X.%04X, TestData=%X.%02X.%04X\r\n"
-								   "\t\t\tHead=%X.%02X.%04X, LCD=%X.%02X.%04X, Bottle=%X.%02X.%04X\r\n"),
-						b[ 0],b[ 1],(b[ 2]<<8)|b[ 3], b[ 4],b[ 5],(b[ 6]<<8)|b[ 7],
-						b[12],b[13],(b[14]<<8)|b[15], b[16],b[17],(b[18]<<8)|b[19], b[20],b[21],(b[22]<<8)|b[23],
-						b[24],b[25],(b[26]<<8)|b[27], b[32],b[33],(b[34]<<8)|b[35], b[36], b[37], (b[38] << 8)|b[39] );
+#define VERS(x) b[x],b[x+1],(b[x+2]<<8)|b[x+3]
+			cs.Format( _T("Versions :"
+				"\t\t\tMain=%X.%02X.%04X, Actuator=%X.%02X.%04X, LCD=%X.%02X.%04X,\r\n"
+				"\t\t\tHead C=%X.%02X.%04X,%X.%02X.%04X,\r\n"
+				"\t\t\tHead W=%X.%02X.%04X,%X.%02X.%04X,\r\n"
+				"\t\t\tMessage=%X.%02X.%04X, Font=%X.%02X.%04X, TestData=%X.%02X.%04X\r\n"),
+					VERS( 0), VERS( 4), VERS(44),
+					VERS(20), VERS(24),
+					VERS(28), VERS(32),
+					VERS( 8), VERS(12), VERS(16));
+#undef VERS
 			m_Edit += cs;
 		}
 		//製品番号 & ISM統一コード & MACアドレス

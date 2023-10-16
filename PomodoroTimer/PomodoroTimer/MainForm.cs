@@ -170,7 +170,6 @@ namespace PomodoroTimer
                 DisplayStatusLabel.ForeColor = default;
                 WorkTimeComboBox.Enabled = true;
                 RestTimeComboBox.Enabled = true;
-                SettingButton.Enabled = true;
                 CloseButton.Enabled = true; 
             }
             else if (nStatus == STATUS_START) {
@@ -185,7 +184,6 @@ namespace PomodoroTimer
                 DisplayStatusLabel.ForeColor = Color.Red;
                 WorkTimeComboBox.Enabled = false;
                 RestTimeComboBox.Enabled = false;
-                SettingButton.Enabled = false;
                 CloseButton.Enabled = false;
             }
             else if (nStatus == STATUS_REST) {
@@ -213,7 +211,6 @@ namespace PomodoroTimer
 
                 WorkTimeComboBox.Enabled = false;
                 RestTimeComboBox.Enabled = false;
-                SettingButton.Enabled = false;
                 CloseButton.Enabled = false;
             }
         }

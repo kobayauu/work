@@ -38,6 +38,7 @@
             this.group1 = this.Factory.CreateRibbonGroup();
             this.StartBtn = this.Factory.CreateRibbonButton();
             this.timeStatusBtn = this.Factory.CreateRibbonButton();
+            this.homeWorkBtn = this.Factory.CreateRibbonButton();
             this.group2 = this.Factory.CreateRibbonGroup();
             this.workMinutesList = this.Factory.CreateRibbonDropDown();
             this.restMinutesList = this.Factory.CreateRibbonDropDown();
@@ -58,6 +59,7 @@
             // 
             this.group1.Items.Add(this.StartBtn);
             this.group1.Items.Add(this.timeStatusBtn);
+            this.group1.Items.Add(this.homeWorkBtn);
             this.group1.Label = "タイマー開始・停止";
             this.group1.Name = "group1";
             // 
@@ -75,6 +77,14 @@
             this.timeStatusBtn.Name = "timeStatusBtn";
             this.timeStatusBtn.ShowImage = true;
             this.timeStatusBtn.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.timeStatusBtn_Click);
+            // 
+            // homeWorkBtn
+            // 
+            this.homeWorkBtn.Image = global::OutlookAddIn1.Properties.Resources.ie_mark_ikkai;
+            this.homeWorkBtn.Label = "在宅開始";
+            this.homeWorkBtn.Name = "homeWorkBtn";
+            this.homeWorkBtn.ShowImage = true;
+            this.homeWorkBtn.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.HomeWorkBtn_Click);
             // 
             // group2
             // 
@@ -119,6 +129,7 @@
         internal Microsoft.Office.Tools.Ribbon.RibbonDropDown workMinutesList;
         internal Microsoft.Office.Tools.Ribbon.RibbonDropDown restMinutesList;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton timeStatusBtn;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton homeWorkBtn;
     }
 
     partial class ThisRibbonCollection

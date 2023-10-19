@@ -63,6 +63,16 @@ namespace OutlookAddIn1.Properties {
         /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
+        internal static System.Drawing.Bitmap ie_mark_ikkai {
+            get {
+                object obj = ResourceManager.GetObject("ie_mark_ikkai", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
         internal static System.Drawing.Bitmap player_button01_saisei {
             get {
                 object obj = ResourceManager.GetObject("player_button01_saisei", resourceCulture);

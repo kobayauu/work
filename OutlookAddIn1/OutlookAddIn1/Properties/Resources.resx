@@ -118,22 +118,25 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="player_button04_teishi1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\player_button04_teishi.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="player_button01_saisei1" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\player_button01_saisei.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="player_button01_saisei" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\player_button01_saisei.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="player_button04_teishi" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\player_button04_teishi.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="player_button04_teishi1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\player_button04_teishi.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="player_button06_tsugi" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\player_button06_tsugi.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="player_button05_ichijiteishi" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\player_button05_ichijiteishi.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="player_button06_tsugi" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\player_button06_tsugi.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="player_button04_teishi" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\player_button04_teishi.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ie_mark_ikkai" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\ie_mark_ikkai.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

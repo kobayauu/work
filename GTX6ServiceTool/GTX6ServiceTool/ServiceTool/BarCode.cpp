@@ -50,7 +50,7 @@ BOOL CBarCode::OnSetActive()
 	CPropertySheet* pSheet = (CPropertySheet*)GetParent();
 	pSheet->SetWizardButtons(PSWIZB_BACK | PSWIZB_NEXT);
 
-	m_edtctrl18Code.SetWindowText(_T(""));
+	m_edtctrl18Code.SetWindowText(_T("BGT60NBJ2000032"));
 	m_edtctrlSerialCode.SetWindowText(_T(""));
 	UpdateData(FALSE);
 
@@ -96,7 +96,7 @@ LRESULT CBarCode::OnWizardNext()
 
 		if (csCode.GetLength() != 0){
 			iErr = pApp->SetEighteenCode(csCode);
-			if (iErr < 0){
+			if (iErr != 0){
 				LangAfxMsgBox(IDS_EER_COMMUNICATION, -191);
 				return -1;
 			}
@@ -168,7 +168,7 @@ int CBarCode::Chk18Code(CString csCode){
 	// 15Œ…‚ÌŠeŒ…‚Ì“ü—Íî•ñ‚ÌƒGƒ‰[”»’è
 	//
 	CString csModelCode = csCode.Left(8);
-	if (csModelCode != "BGT60SBJ") {
+	if (csModelCode != "BGT60NBJ") {
 		return -204;
 	}
 
@@ -181,7 +181,7 @@ int CBarCode::Chk18Code(CString csCode){
 
 	// 10`14Œ…–Ú‚Ì“ü—Íˆæ‚ª³‚µ‚¢‚±‚Æ‚ð”»’f‚·‚é
 	CString csOptionCode = csCode.Mid(9, 5);
-	if (csOptionCode != "00004") {
+	if (csOptionCode != "00003") {
 		return -204;
 	}
 

@@ -151,24 +151,13 @@ namespace OutlookAddIn1
             timer.Stop();
 
             if (status == STATUS_WORK) {
-                ShowMessageBox("休憩を開始します", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("休憩を開始します", WINDOW_TITLE, MessageBoxButtons.OK, MessageBoxIcon.Information);
                 InitStatus(STATUS_REST);
             }
             else if (status == STATUS_REST) {
-                ShowMessageBox("作業を開始します", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("作業を開始します", WINDOW_TITLE, MessageBoxButtons.OK, MessageBoxIcon.Information);
                 InitStatus(STATUS_START);
             }
-        }
-
-        private DialogResult ShowMessageBox(string message, MessageBoxButtons btn, MessageBoxIcon icon) {
-            DialogResult ret = DialogResult.None;
-
-            MessgeForm messageForm = new MessgeForm(message, btn, icon);
-            messageForm.ShowDialog();
-            ret = messageForm.ret;
-            messageForm.Dispose();
-
-            return ret;
         }
 
         private void workMinutesList_SelectionChanged(object sender, RibbonControlEventArgs e)

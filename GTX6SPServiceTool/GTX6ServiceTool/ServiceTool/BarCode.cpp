@@ -50,7 +50,7 @@ BOOL CBarCode::OnSetActive()
 	CPropertySheet* pSheet = (CPropertySheet*)GetParent();
 	pSheet->SetWizardButtons(PSWIZB_BACK | PSWIZB_NEXT);
 
-	m_edtctrl18Code.SetWindowText(_T(""));
+	m_edtctrl18Code.SetWindowText(_T("BGT60SBJ2000042"));
 	m_edtctrlSerialCode.SetWindowText(_T(""));
 	UpdateData(FALSE);
 
@@ -89,14 +89,14 @@ LRESULT CBarCode::OnWizardNext()
 	{
 		m_edtctrl18Code.GetWindowText(csCode);
 		iErr = Chk18Code(csCode);
-		if (iErr < 0){
+		if (iErr != 0){
 			LangAfxMsgBox(IDS_ERR_EIGHTEEN_CODE, iErr);
 			return -1;
 		}
 
 		if (csCode.GetLength() != 0){
 			iErr = pApp->SetEighteenCode(csCode);
-			if (iErr < 0){
+			if (iErr != 0){
 				LangAfxMsgBox(IDS_EER_COMMUNICATION, -191);
 				return -1;
 			}

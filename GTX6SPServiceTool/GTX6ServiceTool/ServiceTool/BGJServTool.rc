@@ -604,8 +604,8 @@ BEGIN
     EDITTEXT        IDC_BARCODE_EDIT2,69,60,204,14,ES_AUTOHSCROLL
     LTEXT           "exam： 07922455",IDC_BARCODE_MSG5,69,76,204,8
     LTEXT           "18桁コード :",IDC_BARCODE_MSG2,25,105,40,8,0,WS_EX_RIGHT
-    EDITTEXT        IDC_BARCODE_EDIT1,68,102,204,14,ES_AUTOHSCROLL
-    LTEXT           "exam： BGTX422H1000021",IDC_BARCODE_MSG4,68,120,204,8
+    EDITTEXT        IDC_BARCODE_EDIT1,68,102,204,14,ES_AUTOHSCROLL | ES_READONLY
+    LTEXT           "exam： BGTX422H1000021",IDC_BARCODE_MSG4,68,120,204,8,NOT WS_VISIBLE
     PUSHBUTTON      "Button1",IDC_BUTTON1,18,150,50,14,NOT WS_VISIBLE
 END
 
@@ -960,6 +960,11 @@ BEGIN
     0
 END
 
+IDD_BARCODE AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
 #endif    // ニュートラル resources
 /////////////////////////////////////////////////////////////////////////////
 
@@ -1245,7 +1250,8 @@ BEGIN
     IDS_RESET_TUBE_2_1      """Clean Tube W"" の警告をリセットしました。"
     IDS_LCD_BOARD           "LCD基板"
     IDS_MAIN_BOARD_BRANCH1_1 
-                            "メイン基板の設定値を再設定します。\n\n- パネル基板にバックアップされている設定に戻すか（設定値のリストア）、新規に設定をやり直すか（新規設定）を選択し、”次へ”をクリックしてください。"    IDS_MAIN_BOARD_BRANCH1_2 "設定値のリストア"
+                            "メイン基板の設定値を再設定します。\n\n- パネル基板にバックアップされている設定に戻すか（設定値のリストア）、新規に設定をやり直すか（新規設定）を選択し、”次へ”をクリックしてください。"
+    IDS_MAIN_BOARD_BRANCH1_2 "設定値のリストア"
 END
 
 STRINGTABLE
@@ -1565,8 +1571,8 @@ BEGIN
     IDS_RESET_TUBE_1        "The warning ""Clean Tube W"" is reset. "
     IDS_RESET_TUBE_2_1      "The reset of warning ""Clean Tube W"" is finished."
     IDS_LCD_BOARD           "LCD Board"
-        IDS_MAIN_BOARD_BRANCH1_1
-        "To reset the main panel settings that were previously set on this machine you will need to choose one of the below options and then click ""Next"".\n\n- Restore saved setting - Use the last settings saved for this machine from a backup file saved within the panel.  For example the white/color alignment configuration will be the same as before replacing the Main PCB. ""Next""."
+    IDS_MAIN_BOARD_BRANCH1_1 
+                            "To reset the main panel settings that were previously set on this machine you will need to choose one of the below options and then click ""Next"".\n\n- Restore saved setting - Use the last settings saved for this machine from a backup file saved within the panel.  For example the white/color alignment configuration will be the same as before replacing the Main PCB. ""Next""."
     IDS_MAIN_BOARD_BRANCH1_2 
                             "Restore saved setting - Use the last settings saved for this machine from a backup file saved within the panel.  For example the white/color alignment configuration will be the same as before replacing the Main PCB."
 END

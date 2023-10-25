@@ -39,19 +39,16 @@
             this.StartBtn = this.Factory.CreateRibbonButton();
             this.timeStatusBtn = this.Factory.CreateRibbonButton();
             this.homeWorkBtn = this.Factory.CreateRibbonButton();
-            this.group2 = this.Factory.CreateRibbonGroup();
             this.workMinutesList = this.Factory.CreateRibbonDropDown();
             this.restMinutesList = this.Factory.CreateRibbonDropDown();
             this.tab1.SuspendLayout();
             this.group1.SuspendLayout();
-            this.group2.SuspendLayout();
             this.SuspendLayout();
             // 
             // tab1
             // 
             this.tab1.ControlId.ControlIdType = Microsoft.Office.Tools.Ribbon.RibbonControlIdType.Office;
             this.tab1.Groups.Add(this.group1);
-            this.tab1.Groups.Add(this.group2);
             this.tab1.Label = "TabAddIns";
             this.tab1.Name = "tab1";
             // 
@@ -60,6 +57,8 @@
             this.group1.Items.Add(this.StartBtn);
             this.group1.Items.Add(this.timeStatusBtn);
             this.group1.Items.Add(this.homeWorkBtn);
+            this.group1.Items.Add(this.restMinutesList);
+            this.group1.Items.Add(this.workMinutesList);
             this.group1.Label = "タイマー開始・停止";
             this.group1.Name = "group1";
             // 
@@ -86,13 +85,6 @@
             this.homeWorkBtn.ShowImage = true;
             this.homeWorkBtn.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.HomeWorkBtn_Click);
             // 
-            // group2
-            // 
-            this.group2.Items.Add(this.workMinutesList);
-            this.group2.Items.Add(this.restMinutesList);
-            this.group2.Label = "設定";
-            this.group2.Name = "group2";
-            // 
             // workMinutesList
             // 
             this.workMinutesList.Label = "作業時間[分]";
@@ -114,8 +106,6 @@
             this.tab1.PerformLayout();
             this.group1.ResumeLayout(false);
             this.group1.PerformLayout();
-            this.group2.ResumeLayout(false);
-            this.group2.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -125,7 +115,6 @@
         internal Microsoft.Office.Tools.Ribbon.RibbonTab tab1;
         internal Microsoft.Office.Tools.Ribbon.RibbonGroup group1;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton StartBtn;
-        internal Microsoft.Office.Tools.Ribbon.RibbonGroup group2;
         internal Microsoft.Office.Tools.Ribbon.RibbonDropDown workMinutesList;
         internal Microsoft.Office.Tools.Ribbon.RibbonDropDown restMinutesList;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton timeStatusBtn;

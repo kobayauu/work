@@ -63,7 +63,7 @@ LRESULT CIPClear::OnWizardNext()
 	{
 		iErr = pApp->ResetIpAddress();
 
-		if (iErr < 0)
+		if (iErr != 0)
 		{
 			nNextID = -1;
 			LangAfxMsgBox(IDS_EER_COMMUNICATION, -191);

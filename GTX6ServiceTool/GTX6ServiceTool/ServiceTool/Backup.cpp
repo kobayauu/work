@@ -67,7 +67,7 @@ LRESULT CBackup::OnWizardNext()
 
 	if (pApp->IsOnline()) {
 		iErr = pApp->BackupEEPROM();
-		if (iErr < 0) {
+		if (iErr != 0) {
 			nNextID = -1;
 			LangAfxMsgBox(IDS_EER_COMMUNICATION, -191);
 		}

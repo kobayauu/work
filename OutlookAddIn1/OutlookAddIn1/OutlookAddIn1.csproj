@@ -159,18 +159,9 @@
     can be found.
   -->
   <ItemGroup>
-    <Compile Include="MessgeForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="MessgeForm.Designer.cs">
-      <DependentUpon>MessgeForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <EmbeddedResource Include="MessgeForm.resx">
-      <DependentUpon>MessgeForm.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

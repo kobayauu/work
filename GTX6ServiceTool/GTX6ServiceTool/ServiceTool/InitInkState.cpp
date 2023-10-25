@@ -107,7 +107,7 @@ LRESULT CInitInkState::OnWizardNext()
 
 		iErr2 = pApp->SetAssembleFlag(0x05);
 
-		if (iErr1 < 0  && iErr2 < 0){
+		if (iErr1 != 0  || iErr2 != 0){
 			nNextID = -1;
 			LangAfxMsgBox(IDS_EER_COMMUNICATION, -191);
 		}

@@ -69,10 +69,11 @@ namespace OutlookAddIn1
             // PJ No.の設定
             categoryComboBox.Items.Add("");
             for (int i = 0; i < arrCategories.Length; i++) {
-                if ( (arrCategories[i] != "その他") && (arrCategories[i] != "休日") && (arrCategories[i] != "重要") ) {
+                //if ( (arrCategories[i] != "その他") && (arrCategories[i] != "休日") && (arrCategories[i] != "重要") ) {
                     categoryComboBox.Items.Add(arrCategories[i]);
-                }
+                //}
             }
+            categoryComboBox.Sorted = true;
         }
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -185,12 +186,18 @@ namespace OutlookAddIn1
             //    return;
             //}
 
+            if (subjectComboBox.Text == "") {
+                MessageBox.Show("件名を入力してください", WINDOW_TITLE, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
             if (status == STATUS_RECORD_START) {
                 recordFlag = true;
                 workStartTime = DateTime.Now;
                 recordButton.Text = STATUS_RECORD_STOP;
                 recordButton.ForeColor = Color.White;
                 recordButton.BackColor = Color.Red;
+                subjectComboBox.Enabled = false;
                 return;
             }
             else {
@@ -198,6 +205,7 @@ namespace OutlookAddIn1
                 recordButton.Text = STATUS_RECORD_START;
                 recordButton.ForeColor = default;
                 recordButton.BackColor = default;
+                subjectComboBox.Enabled = true;
 
                 Microsoft.Office.Interop.Outlook.Application app = new Microsoft.Office.Interop.Outlook.Application();
                 NameSpace oNamespase = app.GetNamespace("MAPI");
@@ -230,7 +238,7 @@ namespace OutlookAddIn1
         private void scheduleButton_Click(object sender, EventArgs e)
         {
             ScheduleForm scheduleForm = new ScheduleForm();
-            scheduleForm.Show();
+            scheduleForm.ShowDialog();
         }
 
         // ポモードロタイマーのイベント

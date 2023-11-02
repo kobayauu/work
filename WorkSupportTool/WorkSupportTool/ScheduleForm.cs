@@ -26,6 +26,7 @@ namespace WorkSupportTool
 
         // 情報保存ファイル
         public string SCHEDULE_FILE = @"C:\Users\kobayauu\OneDrive - Brother\schedule.csv";
+        public string SETTING_FILE  = @"C:\Users\kobayauu\OneDrive - Brother\setting.csv";
 
         // 表の行列番号識別
         public const int MAX_ROW      = 14;
@@ -42,13 +43,15 @@ namespace WorkSupportTool
 
         // 予定・実績
         public const string PLAN_BTN             = "計画";
-        public const string ACIEVE_BTN           = "実績";
+        public const string ACHIEVE_BTN          = "実績";
         public const string RESULT_FOLDER_NAME   = "実績";
         public System.Drawing.Color RESULT_COLOR = Color.LightGreen;
+        public System.Drawing.Color REST_COLOR   = Color.Gray;
         public const string PLAN_MARK            = "→";
         public const string PLAN_STR             = "1";
         public const string ACHEIVE_STR          = "2";
         public const string AS_PLANED_STR        = "3";
+        public const string REST_STR             = "4";
 
         //
         public const int MODE_ROW = 0;
@@ -78,6 +81,7 @@ namespace WorkSupportTool
             for (int i = TIME_COL; i < dataGridView1.ColumnCount; i++) {
                 dataGridView1.Columns[i].ReadOnly = true;
             }
+            dataGridView1[CATEGORY_COL, HEADER_ROW2].ReadOnly = false;
 
             // ヘッダーの背景色設定
             dataGridView1.Rows[HEADER_ROW1].DefaultCellStyle.BackColor = Color.LightCyan;
@@ -110,12 +114,15 @@ namespace WorkSupportTool
                             dataGridView1[j - 1, i].Value = PLAN_MARK;
                             dataGridView1[j - 1, i].Style.BackColor = RESULT_COLOR;
                         }
+                        else if (values[j] == REST_STR) {
+                            dataGridView1[j - 1, i].Style.BackColor = REST_COLOR;
+                        }
                     }
                 }
             }
 
             ctrlOutlook.GetCategory(ref arrCategory);
-            for (int i = 2; i < MAX_ROW;i++) {
+            for (int i = 1; i < MAX_ROW;i++) {
                 int selectIndex = 0;
                 string tmp = dataGridView1[CATEGORY_COL, i].Value.ToString();
 
@@ -125,18 +132,25 @@ namespace WorkSupportTool
                 //既に入っているテキストデータがエラーの原因となるため初期化
                 dataGridView1[CATEGORY_COL, i].Value = null;
 
-                //データコンボボックスのリストの内容を追加
-                ((DataGridViewComboBoxCell)dataGridView1[CATEGORY_COL, i]).Items.Add("");
-                for (int j = 0; j < arrCategory.Length; j++) {
-                    ((DataGridViewComboBoxCell)dataGridView1[CATEGORY_COL, i]).Items.Add(arrCategory[j]);
-
-                    if (tmp == arrCategory[j]) {
-                        selectIndex = j + 1;
-                    }
+                if (i == 1) {
+                    ((DataGridViewComboBoxCell)dataGridView1[CATEGORY_COL, i]).Items.Add(PLAN_BTN);
+                    ((DataGridViewComboBoxCell)dataGridView1[CATEGORY_COL, i]).Items.Add(ACHIEVE_BTN);
+                    dataGridView1[CATEGORY_COL, i].Value = ((DataGridViewComboBoxCell)dataGridView1[CATEGORY_COL, i]).Items[0];
                 }
+                else {
+                    //データコンボボックスのリストの内容を追加
+                    ((DataGridViewComboBoxCell)dataGridView1[CATEGORY_COL, i]).Items.Add("");
+                    for (int j = 0; j < arrCategory.Length; j++) {
+                        ((DataGridViewComboBoxCell)dataGridView1[CATEGORY_COL, i]).Items.Add(arrCategory[j]);
 
-                //データコンボボックスの初期値を設定
-                dataGridView1[CATEGORY_COL, i].Value = ((DataGridViewComboBoxCell)dataGridView1[CATEGORY_COL, i]).Items[selectIndex];            
+                        if (tmp == arrCategory[j]) {
+                            selectIndex = j + 1;
+                        }
+                    }
+
+                    //データコンボボックスの初期値を設定
+                    dataGridView1[CATEGORY_COL, i].Value = ((DataGridViewComboBoxCell)dataGridView1[CATEGORY_COL, i]).Items[selectIndex];
+                }
             }
 
         }
@@ -148,7 +162,7 @@ namespace WorkSupportTool
             string tmp = "";
 
             // 1行目
-            for (int i = TIME_COL; i <= dataGridView1.ColumnCount; i++) {
+            for (int i = TIME_COL; i < dataGridView1.ColumnCount; i++) {
                 if ( (i != TIME_COL) && (i % TIME_COL == 0) ) {
                     time++;
                 }
@@ -183,6 +197,9 @@ namespace WorkSupportTool
                         else if ( (cell == PLAN_MARK) && (dataGridView1[j, i].Style.BackColor == default) ) {
                             tmp = tmp + "," + PLAN_STR;
                         }
+                        else if ((cell == "") && (dataGridView1[j, i].Style.BackColor == REST_COLOR)) {
+                            tmp = tmp + "," + REST_STR;
+                        }
                         else {
                             tmp = tmp + ",";
                         }
@@ -215,10 +232,12 @@ namespace WorkSupportTool
                 dataGridView1[SUBJECT_COL, MTG_ROW].Value = "以下MTG";
 
                 for (int j = TIME_COL; j < dataGridView1.ColumnCount; j++) {
+                    dataGridView1[j, i].Value = "";
                     dataGridView1[j, i].Style.BackColor = default;
                 }
             }
-       
+
+            // 予定表読込
             ctrlOutlook.GetSchedule(date, ref gettingSchedule);
             for (int i = 0; i < gettingSchedule.Length; i++) {
                 if (gettingSchedule[i].categories != "その他" && gettingSchedule[i].allDayEvent != true) {
@@ -268,6 +287,45 @@ namespace WorkSupportTool
                         dataGridView1[endCol, n].Value = PLAN_MARK;
                     }
                     n++;
+                }
+            }
+
+            // 休憩時間
+            // ファイル読込
+            string[] lines = new string[0];
+            function.ReadCSVFile(SETTING_FILE, ref lines);
+            for (int i = 0; i < lines.Length; i++) {
+                string[] values = lines[i].Split(',');
+
+                if (values[0] == "休み時間") {
+                    for (int j = 1; j < values.Length; j++) {
+                        for (int k = TIME_COL; k < dataGridView1.ColumnCount; k++) {
+                            if (dataGridView1[k, 0].Value != null) {
+                                hours = dataGridView1[k, 0].Value.ToString();
+                            }
+                            minutes = dataGridView1[k, 1].Value.ToString();
+                            if (minutes.Length == 1) {
+                                minutes = "0" + minutes;
+                            }
+
+                            if (values[j] == hours + ":" + minutes) {
+                                for (int l = 2; l < MAX_ROW; l++) {
+                                    dataGridView1[k, l].Style.BackColor = REST_COLOR;
+                                }
+                                break;
+                            }
+                        }
+                    }
+                }
+                else if (values[0] == "定例会") {
+                    for (int j = MTG_ROW + 1; j < MAX_ROW; j++) {
+                        if (dataGridView1[SUBJECT_COL, j].Value != null) {
+                            if (values[1] == dataGridView1[SUBJECT_COL, j].Value.ToString()) {
+                                dataGridView1[CATEGORY_COL, j].Value = values[2];
+                                break;
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -354,26 +412,45 @@ namespace WorkSupportTool
         private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             string cell = "";
+            string mode = "";
 
             if ((e.RowIndex < SCHEDULE_ROW) || (e.ColumnIndex < TIME_COL) ) {
                 return;
             }
-           
-            if (dataGridView1[e.ColumnIndex, e.RowIndex].Value != null) {
-                cell = dataGridView1[e.ColumnIndex, e.RowIndex].Value.ToString();
+
+            if (dataGridView1[CATEGORY_COL, HEADER_ROW2].Value != null) {
+                mode = dataGridView1[CATEGORY_COL, HEADER_ROW2].Value.ToString();
             }
 
-            if ( (cell == "") && (dataGridView1[e.ColumnIndex, e.RowIndex].Style.BackColor == default) ) {
-                dataGridView1[e.ColumnIndex, e.RowIndex].Value = PLAN_MARK;
+            // 休憩は計画・実績入力不可
+            if (dataGridView1[e.ColumnIndex, e.RowIndex].Style.BackColor == REST_COLOR) {
+                return;
             }
-            else if ( (cell == "→") && (dataGridView1[e.ColumnIndex, e.RowIndex].Style.BackColor == default) ) {
-                dataGridView1[e.ColumnIndex, e.RowIndex].Style.BackColor = RESULT_COLOR;
-            }
-            else if ( (cell == "→") && (dataGridView1[e.ColumnIndex, e.RowIndex].Style.BackColor == RESULT_COLOR) ) {
-                dataGridView1[e.ColumnIndex, e.RowIndex].Value = "";
-            }
-            else if ((cell == "") && (dataGridView1[e.ColumnIndex, e.RowIndex].Style.BackColor == RESULT_COLOR)) {
-                dataGridView1[e.ColumnIndex, e.RowIndex].Style.BackColor = default;
+
+            for (int i = 0; i < dataGridView1.SelectedCells.Count; i++) {
+                int row = dataGridView1.SelectedCells[i].RowIndex;
+                int col = dataGridView1.SelectedCells[i].ColumnIndex;
+
+                if (dataGridView1[col, row].Value != null) {
+                    cell = dataGridView1[col, row].Value.ToString();
+                }
+
+                if (mode == PLAN_BTN) {
+                    if (cell == "") {
+                        dataGridView1[col, row].Value = PLAN_MARK;
+                    }
+                    else {
+                        dataGridView1[col, row].Value = "";
+                    }
+                }
+                else if (mode == ACHIEVE_BTN) {
+                    if (dataGridView1[col, row].Style.BackColor == default) {
+                        dataGridView1[col, row].Style.BackColor = RESULT_COLOR;
+                    }
+                    else {
+                        dataGridView1[col, row].Style.BackColor = default;
+                    }
+                }
             }
         }
 

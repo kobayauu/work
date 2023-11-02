@@ -76,6 +76,10 @@ namespace WorkSupportTool
                 string[] values = lines[i].Split(',');
 
                 if (values[SUBJECT_COL] != "") {
+                    if (values[SUBJECT_COL] == "以下MTG") {
+                        continue;
+                    }
+
                     item = Factory.CreateRibbonDropDownItem();
                     item.Label = values[SUBJECT_COL];
                     subjectComboBox.Items.Add(item);
@@ -142,7 +146,7 @@ namespace WorkSupportTool
             for (int i = SCHEDULE_ROW; i < MAX_ROW; i++) {
                 string[] values = lines[i].Split(',');
 
-                if (values[SUBJECT_COL] != "") {
+                if ( (values[SUBJECT_COL] != "") || (values[SUBJECT_COL] != "以下MTG") ) {
                     item = Factory.CreateRibbonDropDownItem();
                     item.Label = values[SUBJECT_COL];
                     subjectComboBox.Items.Add(item);
@@ -316,6 +320,7 @@ namespace WorkSupportTool
                 recordButton.Label = STATUS_RECORD_STOP;
                 recordButton.Image = OutlookAddIn1.Properties.Resources.record;
                 subjectComboBox.Enabled = false;
+                categoryList.Enabled = false;
                 return;
             }
             else {
@@ -323,6 +328,7 @@ namespace WorkSupportTool
                 recordButton.Label = STATUS_RECORD_START;
                 recordButton.Image = OutlookAddIn1.Properties.Resources.startRecord;
                 subjectComboBox.Enabled = true;
+                categoryList.Enabled = true;
 
                 // ファイル読込
                 function.ReadCSVFile(SCHEDULE_FILE, ref lines);

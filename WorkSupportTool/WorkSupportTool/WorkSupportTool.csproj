@@ -162,9 +162,18 @@
   <ItemGroup>
     <Compile Include="CtrlOutlook.cs" />
     <Compile Include="Function.cs" />
+    <Compile Include="MessageForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MessageForm.Designer.cs">
+      <DependentUpon>MessageForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <EmbeddedResource Include="MessageForm.resx">
+      <DependentUpon>MessageForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
@@ -211,6 +220,24 @@
       <DependentUpon>ThisAddIn.Designer.xml</DependentUpon>
     </Compile>
     <AppDesigner Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="startRecord.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="record.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="home.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="startTimer.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="stop.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="schedule.png" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

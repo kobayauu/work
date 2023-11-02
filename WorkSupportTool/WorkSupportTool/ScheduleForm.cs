@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using static System.Net.Mime.MediaTypeNames;
 using Microsoft.VisualBasic;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 
 namespace WorkSupportTool
 {
@@ -22,7 +23,6 @@ namespace WorkSupportTool
 
         /****************************************************************************************************/
         // マクロ定義
-        public string WINDOW_TITLE = "予定表";
 
         // 情報保存ファイル
         public string SCHEDULE_FILE = @"C:\Users\kobayauu\OneDrive - Brother\schedule.csv";
@@ -53,6 +53,8 @@ namespace WorkSupportTool
         //
         public const int MODE_ROW = 0;
         public const int MODE_COL = 1;
+
+        string[] arrCategory = new string[0];
         /****************************************************************************************************/
 
 
@@ -93,7 +95,7 @@ namespace WorkSupportTool
                         continue;
                     }
 
-                    if ( (i < SCHEDULE_ROW) || (j < TIME_COL) ) {
+                    if ( (i < SCHEDULE_ROW) || (j <= TIME_COL) ) {
                         dataGridView1[j - 1, i].Value = values[j];
                     }
                     else {
@@ -111,6 +113,32 @@ namespace WorkSupportTool
                     }
                 }
             }
+
+            ctrlOutlook.GetCategory(ref arrCategory);
+            for (int i = 2; i < MAX_ROW;i++) {
+                int selectIndex = 0;
+                string tmp = dataGridView1[CATEGORY_COL, i].Value.ToString();
+
+                //指定セルにデータコンボボックスを作成
+                dataGridView1[CATEGORY_COL, i] = new DataGridViewComboBoxCell();
+
+                //既に入っているテキストデータがエラーの原因となるため初期化
+                dataGridView1[CATEGORY_COL, i].Value = null;
+
+                //データコンボボックスのリストの内容を追加
+                ((DataGridViewComboBoxCell)dataGridView1[CATEGORY_COL, i]).Items.Add("");
+                for (int j = 0; j < arrCategory.Length; j++) {
+                    ((DataGridViewComboBoxCell)dataGridView1[CATEGORY_COL, i]).Items.Add(arrCategory[j]);
+
+                    if (tmp == arrCategory[j]) {
+                        selectIndex = j + 1;
+                    }
+                }
+
+                //データコンボボックスの初期値を設定
+                dataGridView1[CATEGORY_COL, i].Value = ((DataGridViewComboBoxCell)dataGridView1[CATEGORY_COL, i]).Items[selectIndex];            
+            }
+
         }
 
         private void ScheduleForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -174,7 +202,7 @@ namespace WorkSupportTool
             string hours = "";
             string minutes = "";
 
-            if (MessageBox.Show("クリアしますか？", WINDOW_TITLE, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No) {
+            if (MessageBox.Show("クリアしますか？", "", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No) {
                 return;
             }
 
@@ -247,18 +275,79 @@ namespace WorkSupportTool
         private void PostButton_Click(object sender, EventArgs e)
         {
             CtrlOutlook.scheduleSetting settingSchedule = new CtrlOutlook.scheduleSetting();
+            string body = "";
+            string todayDate = DateTime.Today.ToString("yyyy/MM/dd");
+            int[] arrWorkTime = new int[arrCategory.Length]; 
 
-            if (MessageBox.Show(this, "Outlookに転記しますか？", WINDOW_TITLE, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No) {
+            if (MessageBox.Show(this, "Outlookに転記しますか？", "", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No) {
                 return;
             }
 
-            settingSchedule.subject = "日報";
-            settingSchedule.body = ""; // ここに色々と書かないといけない
+            // 各種設定
+            settingSchedule.subject = "日報_" + todayDate;
             settingSchedule.start = DateTime.Now;
             settingSchedule.end = DateTime.Now;
             settingSchedule.allDayEvent = true;
             settingSchedule.importance = OlImportance.olImportanceNormal;
+
+            // 本文
+            for (int i = 2; i < MAX_ROW; i++) {
+                string subject = "";
+                string category = "";
+                string achieve = "";
+                string memo = "";
+                string time = "";
+                int workTime = 0;
+
+                if (i == SPLIT_ROW || i == MTG_ROW) {
+                    continue;
+                }
+
+                for (int j = TIME_COL; j < dataGridView1.ColumnCount; j++) {
+                    if (dataGridView1[j, i].Style.BackColor != default) {
+                        workTime++;
+                    }
+                }
+                            
+                workTime = workTime * 15;
+                subject = dataGridView1[SUBJECT_COL, i].Value.ToString();
+                time = "　" + (workTime / 60).ToString("00") + ":" + (workTime % 60).ToString("00");
+                category = "(" + dataGridView1[CATEGORY_COL, i].Value.ToString() + time + ")";
+                achieve = "成果物<" + dataGridView1[ACHIEVE_COL, i].Value.ToString() + ">";
+                memo = "メモ：" + dataGridView1[MEMO_COL, i].Value.ToString();
+
+                if (subject != "") {
+                    body = body + "・" + subject + category + "\r\n" + achieve + "\r\n" + memo + "\r\n\r\n";
+                }
+
+                // 工数(後で使う)
+                for (int j = 0; j < arrCategory.Length; j++) {
+                    if (arrCategory[j] == dataGridView1[CATEGORY_COL, i].Value.ToString()) {
+                        arrWorkTime[j] = arrWorkTime[j] + workTime;
+                    }
+                }
+            }
+            settingSchedule.body = body;
             ctrlOutlook.SetSchedule(settingSchedule, RESULT_FOLDER_NAME);
+
+            // クリップボードに工数をコピー
+            string copyText = "";
+            int[] copyNum = new int[arrCategory.Length];
+            for (int i = 0; i < arrCategory.Length; i++) {
+                string[] values = arrCategory[i].Split('_');
+                int n = 0;
+
+                if (int.TryParse(values[0], out n)) {
+                    copyNum[n] = arrWorkTime[i];
+                }              
+            }
+
+            for (int i = 0; i < copyNum.Length; i++) {
+                copyText = copyText + (copyNum[i] / 60).ToString("00") + ":" + (copyNum[i] % 60).ToString("00") + "\t";
+            }
+            Clipboard.SetText(copyText);
+
+            MessageBox.Show("Outlook予定表への転機を完了しました\nクリップボードへ工数をコピーしました", "", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         // ダブルクリックで計画・実績入力

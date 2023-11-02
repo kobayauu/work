@@ -75,6 +75,8 @@
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle47 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle48 = new System.Windows.Forms.DataGridViewCellStyle();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.PostButton = new System.Windows.Forms.Button();
+            this.ClearButton = new System.Windows.Forms.Button();
             this.TodoColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.MemoColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.AchieveColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -123,8 +125,6 @@
             this.Column46 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column47 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column48 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.PostButton = new System.Windows.Forms.Button();
-            this.ClearButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -211,6 +211,30 @@
             this.dataGridView1.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.dataGridView1_CellFormatting);
             this.dataGridView1.CellPainting += new System.Windows.Forms.DataGridViewCellPaintingEventHandler(this.dataGridView1_CellPainting);
             // 
+            // PostButton
+            // 
+            this.PostButton.Font = new System.Drawing.Font("MS UI Gothic", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.PostButton.Location = new System.Drawing.Point(1757, 517);
+            this.PostButton.Margin = new System.Windows.Forms.Padding(2);
+            this.PostButton.Name = "PostButton";
+            this.PostButton.Size = new System.Drawing.Size(90, 33);
+            this.PostButton.TabIndex = 2;
+            this.PostButton.Text = "転記";
+            this.PostButton.UseVisualStyleBackColor = true;
+            this.PostButton.Click += new System.EventHandler(this.PostButton_Click);
+            // 
+            // ClearButton
+            // 
+            this.ClearButton.Font = new System.Drawing.Font("MS UI Gothic", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.ClearButton.Location = new System.Drawing.Point(1664, 517);
+            this.ClearButton.Margin = new System.Windows.Forms.Padding(2);
+            this.ClearButton.Name = "ClearButton";
+            this.ClearButton.Size = new System.Drawing.Size(90, 33);
+            this.ClearButton.TabIndex = 3;
+            this.ClearButton.Text = "クリア";
+            this.ClearButton.UseVisualStyleBackColor = true;
+            this.ClearButton.Click += new System.EventHandler(this.ClearButton_Click);
+            // 
             // TodoColumn
             // 
             dataGridViewCellStyle2.Font = new System.Drawing.Font("MS UI Gothic", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
@@ -256,7 +280,6 @@
             // 
             dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
             dataGridViewCellStyle5.Font = new System.Drawing.Font("MS UI Gothic", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
             this.Column5.DefaultCellStyle = dataGridViewCellStyle5;
             this.Column5.HeaderText = "0";
             this.Column5.Name = "Column5";
@@ -735,30 +758,6 @@
             this.Column48.Resizable = System.Windows.Forms.DataGridViewTriState.False;
             this.Column48.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             this.Column48.Width = 18;
-            // 
-            // PostButton
-            // 
-            this.PostButton.Font = new System.Drawing.Font("MS UI Gothic", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.PostButton.Location = new System.Drawing.Point(1757, 517);
-            this.PostButton.Margin = new System.Windows.Forms.Padding(2);
-            this.PostButton.Name = "PostButton";
-            this.PostButton.Size = new System.Drawing.Size(90, 33);
-            this.PostButton.TabIndex = 2;
-            this.PostButton.Text = "転記";
-            this.PostButton.UseVisualStyleBackColor = true;
-            this.PostButton.Click += new System.EventHandler(this.PostButton_Click);
-            // 
-            // ClearButton
-            // 
-            this.ClearButton.Font = new System.Drawing.Font("MS UI Gothic", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.ClearButton.Location = new System.Drawing.Point(1664, 517);
-            this.ClearButton.Margin = new System.Windows.Forms.Padding(2);
-            this.ClearButton.Name = "ClearButton";
-            this.ClearButton.Size = new System.Drawing.Size(90, 33);
-            this.ClearButton.TabIndex = 3;
-            this.ClearButton.Text = "クリア";
-            this.ClearButton.UseVisualStyleBackColor = true;
-            this.ClearButton.Click += new System.EventHandler(this.ClearButton_Click);
             // 
             // ScheduleForm
             // 

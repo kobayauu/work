@@ -13,31 +13,30 @@ using System.Runtime.InteropServices;
 using Microsoft.Office.Interop;
 using Microsoft.Office.Interop.Outlook;
 using System.Xml.Linq;
+using OutlookAddIn1;
 
 namespace WorkSupportTool
 {
     public partial class Ribbon1
     {
         Function function = new Function();
+        MessageForm msgForm = new MessageForm();
         CtrlOutlook ctrlOutlook = new CtrlOutlook();
 
         /****************************************************************************************************/
         // マクロ定義
-        public const string MESSAGE_TITLE = "確認";
 
         // 情報保存ファイル
         public string SCHEDULE_FILE = @"C:\Users\kobayauu\OneDrive - Brother\schedule.csv";
 
         // ポモードロタイマー
         public const int POMODORO_TIMER_INTERVAL = 1000;
-        public const int POMODORO_WORK_MINUTES   = 25;
-        public const int POMODORO_REST_MINUTES   = 5;
         public const string STATUS_TIMER_WORK    = "作業";
         public const string STATUS_TIMER_REST    = "休憩";
         public const string STATUS_TIMER_STOP    = "停止";
 
         System.Timers.Timer pomodoroTimer = new System.Timers.Timer(POMODORO_TIMER_INTERVAL);
-        int remainingSeconds = 25 * 60;
+        int remainingSeconds = 0;
         string pomodoroTimerStatus = STATUS_TIMER_STOP;
 
 
@@ -128,6 +127,7 @@ namespace WorkSupportTool
 
         private void scheduleButton_Click(object sender, RibbonControlEventArgs e)
         {
+            int n = 0;
             ScheduleForm scheduleForm = new ScheduleForm();
             string[] lines = new string[0];
             RibbonDropDownItem item;
@@ -146,6 +146,10 @@ namespace WorkSupportTool
                     item = Factory.CreateRibbonDropDownItem();
                     item.Label = values[SUBJECT_COL];
                     subjectComboBox.Items.Add(item);
+
+                    Array.Resize(ref arrSchedule, n + 1);
+                    arrSchedule[n] = values[SUBJECT_COL] + "," + values[CATEGORY_COL];
+                    n++;
                 }
             }
         }
@@ -176,13 +180,13 @@ namespace WorkSupportTool
             }
 
             if (ishomeFlag) {
-                if (MessageBox.Show("在宅を終了しますか？", MESSAGE_TITLE, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes) {
+                if (MessageBox.Show("在宅を終了しますか？", "", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes) {
                     settingSchedule.subject = endHomeWork;
                     ctrlOutlook.ChangeSchedule(todayDate, startHomeWork, settingSchedule);
                 }
             }
             else {
-                if (MessageBox.Show("在宅を開始しますか？", MESSAGE_TITLE, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes) {
+                if (MessageBox.Show("在宅を開始しますか？", "", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes) {
                     settingSchedule.subject = startHomeWork;
                     ctrlOutlook.SetSchedule(settingSchedule, "");
                 }
@@ -196,7 +200,7 @@ namespace WorkSupportTool
             }
             else {
                 pomodoroTimer.Stop();
-                if (MessageBox.Show("タイマーを停止しますか？", MESSAGE_TITLE, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes) {
+                if (MessageBox.Show("タイマーを停止しますか？", "", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes) {
                     InitPomodoroStatus(STATUS_TIMER_STOP);
                     return;
                 }
@@ -284,7 +288,9 @@ namespace WorkSupportTool
                 nextStatus = STATUS_TIMER_WORK;
             }
 
-            if (MessageBox.Show(nextStatus + "を開始します", MESSAGE_TITLE, MessageBoxButtons.OKCancel, MessageBoxIcon.Information) == DialogResult.Cancel) {
+            msgForm.msg = nextStatus + "開始です";
+            msgForm.ShowDialog();
+            if (msgForm.status != 0) {
                 nextStatus = STATUS_TIMER_STOP;
             }
 
@@ -300,7 +306,7 @@ namespace WorkSupportTool
             int endCol = 0;
 
             if (subjectComboBox.Text == "") {
-                MessageBox.Show("件名を入力してください", MESSAGE_TITLE, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("件名を入力してください", "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -308,12 +314,14 @@ namespace WorkSupportTool
                 recordFlag = true;
                 workStartTime = DateTime.Now;
                 recordButton.Label = STATUS_RECORD_STOP;
+                recordButton.Image = OutlookAddIn1.Properties.Resources.record;
                 subjectComboBox.Enabled = false;
                 return;
             }
             else {
                 recordFlag = false;
                 recordButton.Label = STATUS_RECORD_START;
+                recordButton.Image = OutlookAddIn1.Properties.Resources.startRecord;
                 subjectComboBox.Enabled = true;
 
                 // ファイル読込
@@ -399,17 +407,26 @@ namespace WorkSupportTool
 
             switch (pomodoroTimerStatus) {
                 case STATUS_TIMER_WORK:
-                    remainingSeconds = POMODORO_WORK_MINUTES * 60;
+                    remainingSeconds = int.Parse(workMinutesList.SelectedItem.Label) * 60;
+                    pomodoroTimerButton.Image = OutlookAddIn1.Properties.Resources.stop;
+                    workMinutesList.Enabled = false;
+                    restMinutesList.Enabled = false;
                     pomodoroTimer.Start();
                     break;
 
                 case STATUS_TIMER_STOP:
                     pomodoroTimer.Stop();
                     pomodoroTimerButton.Label = "タイマー開始";
+                    pomodoroTimerButton.Image = OutlookAddIn1.Properties.Resources.startTimer;
+                    workMinutesList.Enabled = true;
+                    restMinutesList.Enabled = true;
                     break;
 
                 case STATUS_TIMER_REST:
-                    remainingSeconds = POMODORO_REST_MINUTES * 60;
+                    remainingSeconds = int.Parse(restMinutesList.SelectedItem.Label) * 60;
+                    pomodoroTimerButton.Image = OutlookAddIn1.Properties.Resources.stop;
+                    workMinutesList.Enabled = false;
+                    restMinutesList.Enabled = false;
                     pomodoroTimer.Start();
                     break;
             }

@@ -98,6 +98,7 @@ namespace WorkSupportTool
 
             appItem = app.CreateItem(OlItemType.olAppointmentItem);
             appItem.Subject = schedule.subject;
+            appItem.Body = schedule.body;
             appItem.Categories = schedule.categories;
             appItem.Start = schedule.start;
             appItem.End = schedule.end;
@@ -142,6 +143,7 @@ namespace WorkSupportTool
             foreach (_AppointmentItem item in items) {
                 Array.Resize(ref schedule, i + 1);
                 schedule[i].subject = item.Subject;
+                schedule[i].body = item.Body;
                 schedule[i].categories = item.Categories;
                 schedule[i].start = item.Start;
                 schedule[i].end = item.End;
@@ -176,6 +178,7 @@ namespace WorkSupportTool
             foreach (_AppointmentItem item in items) {
                 if (item.Subject == subject) {
                     item.Subject = schedule.subject;
+                    item.Body = schedule.body;
                     item.Categories = schedule.categories;
                     item.Start = schedule.start;
                     item.End = schedule.end;

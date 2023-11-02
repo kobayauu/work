@@ -1,4 +1,4 @@
-﻿namespace OutlookAddIn1
+﻿namespace WorkSupportTool
 {
     partial class ScheduleForm
     {
@@ -123,7 +123,7 @@
             this.Column46 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column47 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column48 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.CpolyButton = new System.Windows.Forms.Button();
+            this.PostButton = new System.Windows.Forms.Button();
             this.ClearButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
@@ -736,17 +736,17 @@
             this.Column48.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             this.Column48.Width = 18;
             // 
-            // CpolyButton
+            // PostButton
             // 
-            this.CpolyButton.Font = new System.Drawing.Font("MS UI Gothic", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.CpolyButton.Location = new System.Drawing.Point(1757, 517);
-            this.CpolyButton.Margin = new System.Windows.Forms.Padding(2);
-            this.CpolyButton.Name = "CpolyButton";
-            this.CpolyButton.Size = new System.Drawing.Size(90, 33);
-            this.CpolyButton.TabIndex = 2;
-            this.CpolyButton.Text = "コピー";
-            this.CpolyButton.UseVisualStyleBackColor = true;
-            this.CpolyButton.Click += new System.EventHandler(this.CpolyButton_Click);
+            this.PostButton.Font = new System.Drawing.Font("MS UI Gothic", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.PostButton.Location = new System.Drawing.Point(1757, 517);
+            this.PostButton.Margin = new System.Windows.Forms.Padding(2);
+            this.PostButton.Name = "PostButton";
+            this.PostButton.Size = new System.Drawing.Size(90, 33);
+            this.PostButton.TabIndex = 2;
+            this.PostButton.Text = "転記";
+            this.PostButton.UseVisualStyleBackColor = true;
+            this.PostButton.Click += new System.EventHandler(this.PostButton_Click);
             // 
             // ClearButton
             // 
@@ -766,7 +766,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1862, 561);
             this.Controls.Add(this.ClearButton);
-            this.Controls.Add(this.CpolyButton);
+            this.Controls.Add(this.PostButton);
             this.Controls.Add(this.dataGridView1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Margin = new System.Windows.Forms.Padding(2);
@@ -785,7 +785,7 @@
         #endregion
 
         private System.Windows.Forms.DataGridView dataGridView1;
-        private System.Windows.Forms.Button CpolyButton;
+        private System.Windows.Forms.Button PostButton;
         private System.Windows.Forms.Button ClearButton;
         private System.Windows.Forms.DataGridViewTextBoxColumn TodoColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn MemoColumn;

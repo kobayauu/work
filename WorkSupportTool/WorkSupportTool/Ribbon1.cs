@@ -28,6 +28,7 @@ namespace WorkSupportTool
 
         // 情報保存ファイル
         public string SCHEDULE_FILE = @"C:\Users\kobayauu\OneDrive - Brother\schedule.csv";
+        public string SETTING_FILE  = @"C:\Users\kobayauu\OneDrive - Brother\setting.csv";
 
         // ポモードロタイマー
         public const int POMODORO_TIMER_INTERVAL = 1000;
@@ -234,6 +235,7 @@ namespace WorkSupportTool
         {
             string todayDate = DateTime.Today.ToString("yyyy/MM/dd");
             string todayTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm");
+            string nowTime = DateTime.Now.ToString("H:mm");
             CtrlOutlook.scheduleSetting[] gettingSchedule = new CtrlOutlook.scheduleSetting[0];
 
             if (autoRecordFlag) {
@@ -252,13 +254,37 @@ namespace WorkSupportTool
                         continue;
                     }
 
+                    if (gettingSchedule[i].categories == "その他") {
+                        continue;
+                    }
+
                     // 記録中なら強制的に停止・記録
-                    if (recordFlag == true) {
+                    if (recordFlag) {
                         RecordWork();
                         autoRecordFlag = true;
                         subjectComboBox.Text = gettingSchedule[i].subject;
                         workEndTime = gettingSchedule[i].end;
                         RecordWork();
+                        break;
+                    }
+                }
+
+                // 休憩時間に強制的に停止・記録
+                if (!recordFlag) {
+                    return;
+                }
+
+                string[] lines = new string[0];
+                function.ReadCSVFile(SETTING_FILE, ref lines);
+                for (int i = 0; i < lines.Length; i++) {
+                    string[] values = lines[i].Split(',');
+
+                    if (values[0] == "休み時間") {
+                        for (int j = 1; j < values.Length; j++) {
+                            if (nowTime == values[j]) {
+                                RecordWork();
+                            }
+                        }
                         break;
                     }
                 }

@@ -333,6 +333,7 @@ namespace WorkSupportTool
         private void PostButton_Click(object sender, EventArgs e)
         {
             CtrlOutlook.scheduleSetting settingSchedule = new CtrlOutlook.scheduleSetting();
+            CtrlOutlook.scheduleSetting settingSchedule2 = new CtrlOutlook.scheduleSetting();
             string body = "";
             string todayDate = DateTime.Today.ToString("yyyy/MM/dd");
             int[] arrWorkTime = new int[arrCategory.Length]; 
@@ -370,12 +371,12 @@ namespace WorkSupportTool
                 workTime = workTime * 15;
                 subject = dataGridView1[SUBJECT_COL, i].Value.ToString();
                 time = "　" + (workTime / 60).ToString("00") + ":" + (workTime % 60).ToString("00");
-                category = "(" + dataGridView1[CATEGORY_COL, i].Value.ToString() + time + ")";
+                category = dataGridView1[CATEGORY_COL, i].Value.ToString();
                 achieve = "成果物<" + dataGridView1[ACHIEVE_COL, i].Value.ToString() + ">";
                 memo = "メモ：" + dataGridView1[MEMO_COL, i].Value.ToString();
 
                 if (subject != "") {
-                    body = body + "・" + subject + category + "\r\n" + achieve + "\r\n" + memo + "\r\n\r\n";
+                    body = body + "・" + subject + "(" + category + time + ")\r\n" + achieve + "\r\n" + memo + "\r\n\r\n";
                 }
 
                 // 工数(後で使う)
@@ -384,6 +385,39 @@ namespace WorkSupportTool
                         arrWorkTime[j] = arrWorkTime[j] + workTime;
                     }
                 }
+
+                // 実績入力
+                bool startFlag = false;
+                DateTime startTime = DateTime.Now;
+                DateTime endTime = DateTime.Now;
+                string hours = "";
+                string minutes = "";
+                for (int j = TIME_COL; j < dataGridView1.ColumnCount; j++) {
+                    if (dataGridView1[j, HEADER_ROW1].Value != null) {
+                        hours = dataGridView1[j, HEADER_ROW1].Value.ToString();
+                    }
+                    minutes = dataGridView1[j, HEADER_ROW2].Value.ToString();
+
+                    if (!startFlag) {
+                        if (dataGridView1[j, i].Style.BackColor == RESULT_COLOR) {
+                            startFlag = true;
+                            startTime = DateTime.Parse(DateTime.Now.ToString("yyyy/MM/dd") + " " + hours + ":" + minutes);
+                        }
+                    }
+                    else {
+                        if (dataGridView1[j, i].Style.BackColor != RESULT_COLOR) {
+                            startFlag = false;
+                            endTime = DateTime.Parse(DateTime.Now.ToString("yyyy/MM/dd") + " " + hours + ":" + minutes);
+
+                            settingSchedule2.subject = subject;
+                            settingSchedule2.start = startTime;
+                            settingSchedule2.end = endTime;
+                            settingSchedule2.categories = category;
+                            ctrlOutlook.SetSchedule(settingSchedule2, RESULT_FOLDER_NAME);
+                        }
+                    }
+                }
+
             }
             settingSchedule.body = body;
             ctrlOutlook.SetSchedule(settingSchedule, RESULT_FOLDER_NAME);
@@ -433,6 +467,10 @@ namespace WorkSupportTool
 
                 if (dataGridView1[col, row].Value != null) {
                     cell = dataGridView1[col, row].Value.ToString();
+                }
+
+                if (dataGridView1[col, row].Style.BackColor == REST_COLOR) {
+                    continue;
                 }
 
                 if (mode == PLAN_BTN) {

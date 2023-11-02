@@ -147,7 +147,11 @@ namespace WorkSupportTool
             for (int i = SCHEDULE_ROW; i < MAX_ROW; i++) {
                 string[] values = lines[i].Split(',');
 
-                if ( (values[SUBJECT_COL] != "") || (values[SUBJECT_COL] != "以下MTG") ) {
+                if (values[SUBJECT_COL] != "") {
+                    if (values[SUBJECT_COL] == "以下MTG") {
+                        continue;
+                    }
+
                     item = Factory.CreateRibbonDropDownItem();
                     item.Label = values[SUBJECT_COL];
                     subjectComboBox.Items.Add(item);

@@ -350,7 +350,7 @@ namespace WorkSupportTool
             settingSchedule.importance = OlImportance.olImportanceNormal;
 
             // 本文
-            for (int i = 2; i < MAX_ROW; i++) {
+            for (int i = SCHEDULE_ROW; i < MAX_ROW; i++) {
                 string subject = "";
                 string category = "";
                 string achieve = "";
@@ -363,7 +363,7 @@ namespace WorkSupportTool
                 }
 
                 for (int j = TIME_COL; j < dataGridView1.ColumnCount; j++) {
-                    if (dataGridView1[j, i].Style.BackColor != default) {
+                    if (dataGridView1[j, i].Style.BackColor == RESULT_COLOR) {
                         workTime++;
                     }
                 }
@@ -386,12 +386,65 @@ namespace WorkSupportTool
                     }
                 }
 
-                // 実績入力
+                // 予定入力
                 bool startFlag = false;
                 DateTime startTime = DateTime.Now;
                 DateTime endTime = DateTime.Now;
                 string hours = "";
                 string minutes = "";
+                string cell =  "";
+                for (int j = TIME_COL; j < dataGridView1.ColumnCount; j++) {
+                    if (dataGridView1[j, HEADER_ROW1].Value != null) {
+                        hours = dataGridView1[j, HEADER_ROW1].Value.ToString();
+                    }
+                    minutes = dataGridView1[j, HEADER_ROW2].Value.ToString();
+
+                    cell = "";
+                    if (dataGridView1[j, i].Value != null) {
+                        cell = dataGridView1[j, i].Value.ToString();
+                    }
+
+                    if (!startFlag) {
+                        if (cell == PLAN_MARK) {
+                            startFlag = true;
+                            startTime = DateTime.Parse(DateTime.Now.ToString("yyyy/MM/dd") + " " + hours + ":" + minutes);
+                        }
+                    }
+                    else {
+                        if (cell != PLAN_MARK) {
+                            startFlag = false;
+                            endTime = DateTime.Parse(DateTime.Now.ToString("yyyy/MM/dd") + " " + hours + ":" + minutes);
+
+                            settingSchedule2.subject = subject + "(予定)";
+                            settingSchedule2.start = startTime;
+                            settingSchedule2.end = endTime;
+                            settingSchedule2.categories = "";
+                            ctrlOutlook.SetSchedule(settingSchedule2, RESULT_FOLDER_NAME);
+                        }
+
+                        if (j == dataGridView1.ColumnCount - 1) {
+                            startFlag = false;
+                            minutes = ((int.Parse(minutes) + 15) % 60).ToString();
+                            if (minutes == "0") {
+                                hours = (int.Parse(hours) + 1).ToString();
+                            }
+                            endTime = DateTime.Parse(DateTime.Now.ToString("yyyy/MM/dd") + " " + hours + ":" + minutes);
+
+                            settingSchedule2.subject = subject + "(予定)";
+                            settingSchedule2.start = startTime;
+                            settingSchedule2.end = endTime;
+                            settingSchedule2.categories = "";
+                            ctrlOutlook.SetSchedule(settingSchedule2, RESULT_FOLDER_NAME);
+                        }
+                    }
+                }
+
+                // 実績入力
+                //bool startFlag = false;
+                //DateTime startTime = DateTime.Now;
+                //DateTime endTime = DateTime.Now;
+                //string hours = "";
+                //string minutes = "";
                 for (int j = TIME_COL; j < dataGridView1.ColumnCount; j++) {
                     if (dataGridView1[j, HEADER_ROW1].Value != null) {
                         hours = dataGridView1[j, HEADER_ROW1].Value.ToString();
@@ -407,6 +460,21 @@ namespace WorkSupportTool
                     else {
                         if (dataGridView1[j, i].Style.BackColor != RESULT_COLOR) {
                             startFlag = false;
+                            endTime = DateTime.Parse(DateTime.Now.ToString("yyyy/MM/dd") + " " + hours + ":" + minutes);
+
+                            settingSchedule2.subject = subject;
+                            settingSchedule2.start = startTime;
+                            settingSchedule2.end = endTime;
+                            settingSchedule2.categories = category;
+                            ctrlOutlook.SetSchedule(settingSchedule2, RESULT_FOLDER_NAME);
+                        }
+
+                        if (j == dataGridView1.ColumnCount - 1) {
+                            startFlag = false;
+                            minutes = ((int.Parse(minutes) + 15) % 60).ToString();
+                            if (minutes == "0") {
+                                hours = (int.Parse(hours) + 1).ToString();
+                            }
                             endTime = DateTime.Parse(DateTime.Now.ToString("yyyy/MM/dd") + " " + hours + ":" + minutes);
 
                             settingSchedule2.subject = subject;
@@ -448,29 +516,25 @@ namespace WorkSupportTool
             string cell = "";
             string mode = "";
 
-            if ((e.RowIndex < SCHEDULE_ROW) || (e.ColumnIndex < TIME_COL) ) {
-                return;
-            }
-
-            if (dataGridView1[CATEGORY_COL, HEADER_ROW2].Value != null) {
-                mode = dataGridView1[CATEGORY_COL, HEADER_ROW2].Value.ToString();
-            }
-
-            // 休憩は計画・実績入力不可
-            if (dataGridView1[e.ColumnIndex, e.RowIndex].Style.BackColor == REST_COLOR) {
-                return;
-            }
-
             for (int i = 0; i < dataGridView1.SelectedCells.Count; i++) {
                 int row = dataGridView1.SelectedCells[i].RowIndex;
                 int col = dataGridView1.SelectedCells[i].ColumnIndex;
+
+                if ((row < SCHEDULE_ROW) || (col < TIME_COL)) {
+                    continue;
+                }
+
+                // 休憩は計画・実績入力不可
+                if (dataGridView1[col, row].Style.BackColor == REST_COLOR) {
+                    continue;
+                }
 
                 if (dataGridView1[col, row].Value != null) {
                     cell = dataGridView1[col, row].Value.ToString();
                 }
 
-                if (dataGridView1[col, row].Style.BackColor == REST_COLOR) {
-                    continue;
+                if (dataGridView1[CATEGORY_COL, HEADER_ROW2].Value != null) {
+                    mode = dataGridView1[CATEGORY_COL, HEADER_ROW2].Value.ToString();
                 }
 
                 if (mode == PLAN_BTN) {

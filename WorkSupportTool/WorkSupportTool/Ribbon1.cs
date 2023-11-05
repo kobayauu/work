@@ -166,7 +166,9 @@ namespace WorkSupportTool
         private void homeWorkButton_Click(object sender, RibbonControlEventArgs e)
         {
             bool ishomeFlag = false;
+            bool changeFlag = false;
             string todayDate = DateTime.Today.ToString("yyyy/MM/dd");
+            string planHomeWork = "在宅(予定)";
             string startHomeWork = "在宅(勤務中)";
             string endHomeWork = "在宅(退勤)";
             CtrlOutlook.scheduleSetting settingSchedule = new CtrlOutlook.scheduleSetting();
@@ -182,6 +184,11 @@ namespace WorkSupportTool
             // 
             ctrlOutlook.GetSchedule(todayDate, ref gettingSchedule);
             for (int i = 0; i < gettingSchedule.Length; i++) {
+                if (gettingSchedule[i].subject == planHomeWork) {
+                    changeFlag = true;
+                    break;
+                }
+
                 if (gettingSchedule[i].subject == startHomeWork) {
                     ishomeFlag = true;
                     break;
@@ -197,7 +204,13 @@ namespace WorkSupportTool
             else {
                 if (MessageBox.Show("在宅を開始しますか？", "", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes) {
                     settingSchedule.subject = startHomeWork;
-                    ctrlOutlook.SetSchedule(settingSchedule, "");
+
+                    if (changeFlag) {
+                        ctrlOutlook.ChangeSchedule(todayDate, planHomeWork, settingSchedule);
+                    }
+                    else {
+                        ctrlOutlook.SetSchedule(settingSchedule, "");
+                    }
                 }
             }
         }

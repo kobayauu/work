@@ -8,6 +8,11 @@ using System.Threading.Tasks;
 
 namespace WorkSupportTool
 {
+    static class Constants
+    {
+        public const int a = 0;
+    }
+
     internal class Function
     {
         // csvファイル読込

@@ -212,6 +212,7 @@ namespace WorkSupportTool
                 arrCategory[i] = caterory.Name;
                 i++;
             }
+            Array.Sort(arrCategory);
 
             // 接続解除
             DisconnectOutlook();

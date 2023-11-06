@@ -1,25 +1,22 @@
-﻿using Microsoft.Office.Interop.Outlook;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+
 using System.Data;
 using System.Drawing;
-using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using static System.Net.Mime.MediaTypeNames;
-using Microsoft.VisualBasic;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
+using System.Configuration;
+using Microsoft.Office.Interop.Outlook;
 
 namespace WorkSupportTool
 {
     public partial class ScheduleForm : Form
     {
         CtrlOutlook ctrlOutlook = new CtrlOutlook();
-        Function function = new Function();
+        CtrlFile ctrlFile = new CtrlFile();
 
         string[] arrCategory = new string[0];
 
@@ -54,7 +51,7 @@ namespace WorkSupportTool
 
             // ファイル読込
             string[] lines = new string[0];
-            function.ReadCSVFile(Macros.SCHEDULE_FILE, ref lines);
+            ctrlFile.ReadCSVFile(OutlookAddIn1.Properties.Settings.Default.SCHEDULE_FILE, ref lines);
 
             for (int i = 0; i < Macros.MAX_ROW; i++) {
                 string[] values = lines[i].Split(',');
@@ -191,7 +188,7 @@ namespace WorkSupportTool
                 lines[i] = tmp;
             }
 
-            function.WriteCSVFile(Macros.SCHEDULE_FILE, lines);
+            ctrlFile.WriteCSVFile(OutlookAddIn1.Properties.Settings.Default.SCHEDULE_FILE, lines);
         }
 
         private void ClearButton_Click(object sender, EventArgs e)
@@ -207,6 +204,7 @@ namespace WorkSupportTool
             }
 
             // クリア
+            dateTimePicker1.Value = DateTime.Now;
             for (int i = Macros.SCHEDULE_ROW; i < Macros.MAX_ROW; i++) {
                 dataGridView1[Macros.SUBJECT_COL, i].Value = "";
                 dataGridView1[Macros.MEMO_COL, i].Value = "";
@@ -248,14 +246,14 @@ namespace WorkSupportTool
                         minutes = dataGridView1[j, 1].Value.ToString();
 
                         if (startFlag) {
-                            if (function.RoundTime(gettingSchedule[i].end, true) == hours + ":" + minutes) {
+                            if (ctrlFile.RoundTime(gettingSchedule[i].end, true) == hours + ":" + minutes) {
                                 endCol = j;
                                 startFlag = false;
                                 break;
                             }
                         }
                         else {
-                            if (function.RoundTime(gettingSchedule[i].start, false) == hours + ":" + minutes) {
+                            if (ctrlFile.RoundTime(gettingSchedule[i].start, false) == hours + ":" + minutes) {
                                 startCol = j;
                                 startFlag = true;
                             }
@@ -281,7 +279,7 @@ namespace WorkSupportTool
             // 休憩時間
             // ファイル読込
             string[] lines = new string[0];
-            function.ReadCSVFile(Macros.SETTING_FILE, ref lines);
+            ctrlFile.ReadCSVFile(OutlookAddIn1.Properties.Settings.Default.SETTING_FILE, ref lines);
             for (int i = 0; i < lines.Length; i++) {
                 string[] values = lines[i].Split(',');
 
@@ -489,8 +487,10 @@ namespace WorkSupportTool
                 copyText = copyText + (copyNum[i] / 60).ToString("00") + ":" + (copyNum[i] % 60).ToString("00") + "\t";
             }
             Clipboard.SetText(copyText);
-
+          
+            System.Diagnostics.Process.Start(OutlookAddIn1.Properties.Settings.Default.WORKTIME_URL);
             MessageBox.Show("Outlook予定表への転機を完了しました\nクリップボードへ工数をコピーしました", "", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            this.Close();
         }
 
         // ダブルクリックで計画・実績入力

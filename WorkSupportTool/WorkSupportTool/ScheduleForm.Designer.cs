@@ -781,9 +781,10 @@
             // 
             // commentTextBox
             // 
-            this.commentTextBox.Location = new System.Drawing.Point(503, 14);
+            this.commentTextBox.Location = new System.Drawing.Point(503, 7);
+            this.commentTextBox.Multiline = true;
             this.commentTextBox.Name = "commentTextBox";
-            this.commentTextBox.Size = new System.Drawing.Size(400, 19);
+            this.commentTextBox.Size = new System.Drawing.Size(400, 30);
             this.commentTextBox.TabIndex = 6;
             // 
             // ScheduleForm

@@ -1,27 +1,18 @@
 ﻿using Microsoft.Office.Tools.Ribbon;
 using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Runtime.Remoting.Messaging;
 using System.Text;
 using System.Windows.Forms;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
-using System.Runtime.InteropServices;
-using Microsoft.Office.Interop;
+using System.Configuration;
 using Microsoft.Office.Interop.Outlook;
-using System.Xml.Linq;
-using OutlookAddIn1;
 
 namespace WorkSupportTool
 {
     public partial class Ribbon1
     {
-        Function function = new Function();
-        MessageForm msgForm = new MessageForm();
         CtrlOutlook ctrlOutlook = new CtrlOutlook();
+        CtrlFile ctrlFile = new CtrlFile();
 
         System.Timers.Timer pomodoroTimer = new System.Timers.Timer(Macros.POMODORO_TIMER_INTERVAL);
         int remainingSeconds = 0;
@@ -36,24 +27,10 @@ namespace WorkSupportTool
 
         private void Ribbon1_Load(object sender, RibbonUIEventArgs e)
         {
-            string[] lines = new string[0];
             RibbonDropDownItem item;
 
             // 予定表読込
-            function.ReadCSVFile(Macros.SCHEDULE_FILE, ref lines);
-            for (int i = Macros.SCHEDULE_ROW; i < Macros.MAX_ROW; i++) {
-                string[] values = lines[i].Split(',');
-
-                if (values[Macros.CSV_SUBJECT_COL] != "") {
-                    if (values[Macros.CSV_SUBJECT_COL] == "以下MTG") {
-                        continue;
-                    }
-
-                    item = Factory.CreateRibbonDropDownItem();
-                    item.Label = values[Macros.CSV_SUBJECT_COL];
-                    subjectComboBox.Items.Add(item);
-                }
-            }
+            UpdateSubject();
 
             // 予定表チェックタイマー設定
             recordTimer.Elapsed += new System.Timers.ElapsedEventHandler(OnElapsed_recordTimer);
@@ -84,31 +61,14 @@ namespace WorkSupportTool
 
         private void scheduleButton_Click(object sender, RibbonControlEventArgs e)
         {
-            int n = 0;
             ScheduleForm scheduleForm = new ScheduleForm();
-            string[] lines = new string[0];
-            RibbonDropDownItem item;
 
             // 予定表表示
             scheduleForm.ShowDialog();
 
             // 予定表読込
             subjectComboBox.Items.Clear();
-
-            function.ReadCSVFile(Macros.SCHEDULE_FILE, ref lines);
-            for (int i = Macros.SCHEDULE_ROW; i < Macros.MAX_ROW; i++) {
-                string[] values = lines[i].Split(',');
-
-                if (values[Macros.CSV_SUBJECT_COL] != "") {
-                    if (values[Macros.CSV_SUBJECT_COL] == "以下MTG") {
-                        continue;
-                    }
-
-                    item = Factory.CreateRibbonDropDownItem();
-                    item.Label = values[Macros.CSV_SUBJECT_COL];
-                    subjectComboBox.Items.Add(item);
-                }
-            }
+            UpdateSubject();
         }
 
         private void homeWorkButton_Click(object sender, RibbonControlEventArgs e)
@@ -223,7 +183,7 @@ namespace WorkSupportTool
                 }
 
                 string[] lines = new string[0];
-                function.ReadCSVFile(Macros.SETTING_FILE, ref lines);
+                ctrlFile.ReadCSVFile(OutlookAddIn1.Properties.Settings.Default.SETTING_FILE, ref lines);
                 for (int i = 0; i < lines.Length; i++) {
                     string[] values = lines[i].Split(',');
 
@@ -266,9 +226,10 @@ namespace WorkSupportTool
                 nextStatus = Macros.STATUS_TIMER_WORK;
             }
 
-            msgForm.msg = nextStatus + "開始です";
-            msgForm.ShowDialog();
-            if (msgForm.status != 0) {
+            //msgForm.msg = nextStatus + "開始です";
+            //msgForm.ShowDialog();
+            //if (msgForm.status != 0) {
+            if (MessageBox.Show(nextStatus + "開始です", "", MessageBoxButtons.OKCancel, MessageBoxIcon.Information) != DialogResult.Cancel) {
                 nextStatus = Macros.STATUS_TIMER_STOP;
             }
 
@@ -303,7 +264,7 @@ namespace WorkSupportTool
                 subjectComboBox.Enabled = true;
 
                 // ファイル読込
-                function.ReadCSVFile(Macros.SCHEDULE_FILE, ref lines);
+                ctrlFile.ReadCSVFile(OutlookAddIn1.Properties.Settings.Default.SCHEDULE_FILE, ref lines);
                 string[] hours = lines[0].Split(',');
                 string[] minutes = lines[1].Split(',');
 
@@ -340,11 +301,11 @@ namespace WorkSupportTool
 
                 // 開始時間と終了時間の列を取得
                 for (int i = Macros.CSV_TIME_COL; i < hours.Length; i++) {
-                    if (function.RoundTime(workStartTime, false) == hours[i] + ":" + minutes[i]) {
+                    if (ctrlFile.RoundTime(workStartTime, false) == hours[i] + ":" + minutes[i]) {
                         startCol = i;
                     }
 
-                    if (function.RoundTime(DateTime.Now, true) == hours[i] + ":" + minutes[i]) {
+                    if (ctrlFile.RoundTime(DateTime.Now, true) == hours[i] + ":" + minutes[i]) {
                         endCol = i;
                         break;
                     }
@@ -371,7 +332,7 @@ namespace WorkSupportTool
                     }
                 }
 
-                function.WriteCSVFile(Macros.SCHEDULE_FILE, lines);
+                ctrlFile.WriteCSVFile(OutlookAddIn1.Properties.Settings.Default.SCHEDULE_FILE, lines);
             }
         }
 
@@ -406,6 +367,29 @@ namespace WorkSupportTool
                     restMinutesList.Enabled = false;
                     pomodoroTimer.Start();
                     break;
+            }
+        }
+
+        // 件名コンボボックスのリスト更新
+        private void UpdateSubject()
+        {
+            string[] lines = new string[0];
+            RibbonDropDownItem item;
+
+            // 予定表読込
+            ctrlFile.ReadCSVFile(OutlookAddIn1.Properties.Settings.Default.SCHEDULE_FILE, ref lines);
+            for (int i = Macros.SCHEDULE_ROW; i < Macros.MAX_ROW; i++) {
+                string[] values = lines[i].Split(',');
+
+                if (values[Macros.CSV_SUBJECT_COL] != "") {
+                    if (values[Macros.CSV_SUBJECT_COL] == "以下MTG") {
+                        continue;
+                    }
+
+                    item = Factory.CreateRibbonDropDownItem();
+                    item.Label = values[Macros.CSV_SUBJECT_COL];
+                    subjectComboBox.Items.Add(item);
+                }
             }
         }
     }

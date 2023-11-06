@@ -1,7 +1,18 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
-<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)">
-  <Profiles>
-    <Profile Name="(Default)" />
-  </Profiles>
-  <Settings />
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="OutlookAddIn1.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="SCHEDULE_FILE" Type="System.String" Scope="User">
+      <Value Profile="(Default)">C:\\Users\\kobayauu\\OneDrive - Brother\\schedule.csv</Value>
+    </Setting>
+    <Setting Name="SETTING_FILE" Type="System.String" Scope="User">
+      <Value Profile="(Default)">C:\\Users\\kobayauu\\OneDrive - Brother\\setting.csv</Value>
+    </Setting>
+    <Setting Name="START_TIME" Type="System.String" Scope="User">
+      <Value Profile="(Default)">7</Value>
+    </Setting>
+    <Setting Name="WORKTIME_URL" Type="System.String" Scope="User">
+      <Value Profile="(Default)">http://133.151.236.52/TimePro-VG/page/OVg00050t.aspx?type=pclocking</Value>
+    </Setting>
+  </Settings>
 </SettingsFile>

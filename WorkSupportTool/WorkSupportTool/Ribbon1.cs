@@ -340,11 +340,11 @@ namespace WorkSupportTool
 
                 // 開始時間と終了時間の列を取得
                 for (int i = Macros.CSV_TIME_COL; i < hours.Length; i++) {
-                    if (function.RoundTime(workStartTime) == hours[i] + ":" + minutes[i]) {
+                    if (function.RoundTime(workStartTime, false) == hours[i] + ":" + minutes[i]) {
                         startCol = i;
                     }
 
-                    if (function.RoundTime(DateTime.Now) == hours[i] + ":" + minutes[i]) {
+                    if (function.RoundTime(DateTime.Now, true) == hours[i] + ":" + minutes[i]) {
                         endCol = i;
                         break;
                     }

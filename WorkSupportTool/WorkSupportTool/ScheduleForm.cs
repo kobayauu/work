@@ -226,14 +226,14 @@ namespace WorkSupportTool
                         minutes = dataGridView1[j, 1].Value.ToString();
 
                         if (startFlag) {
-                            if (function.RoundTime(gettingSchedule[i].end) == hours + ":" + minutes) {
+                            if (function.RoundTime(gettingSchedule[i].end, true) == hours + ":" + minutes) {
                                 endCol = j;
                                 startFlag = false;
                                 break;
                             }
                         }
                         else {
-                            if (function.RoundTime(gettingSchedule[i].start) == hours + ":" + minutes) {
+                            if (function.RoundTime(gettingSchedule[i].start, false) == hours + ":" + minutes) {
                                 startCol = j;
                                 startFlag = true;
                             }

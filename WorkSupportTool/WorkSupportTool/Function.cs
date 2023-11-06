@@ -93,7 +93,7 @@ namespace WorkSupportTool
         }
 
         // 時間の四捨五入
-        public string RoundTime(DateTime time) {
+        public string RoundTime(DateTime time, bool endFlag) {
             string tmpTime = "";
             int hour = 0;
             int minutes = 0;
@@ -104,17 +104,33 @@ namespace WorkSupportTool
             hour = int.Parse(tmp[0]);
             minutes = int.Parse(tmp[1]);
 
-            if (minutes <= 15) {
-                minutes = 0;
-            }
-            else if ( (minutes > 15) && (minutes <= 30) ) {
-                minutes = 15;
-            }
-            else if ( (minutes > 30) && (minutes <= 45) ) {
-                minutes = 30;
+            if (!endFlag) {
+                if (minutes < 15) {
+                    minutes = 0;
+                }
+                else if ((minutes >= 15) && (minutes < 30)) {
+                    minutes = 15;
+                }
+                else if ((minutes >= 30) && (minutes < 45)) {
+                    minutes = 30;
+                }
+                else {
+                    minutes = 45;
+                }
             }
             else {
-                minutes = 45;
+                if (minutes <= 15) {
+                    minutes = 0;
+                }
+                else if ((minutes > 15) && (minutes <= 30)) {
+                    minutes = 15;
+                }
+                else if ((minutes > 30) && (minutes <= 45)) {
+                    minutes = 30;
+                }
+                else {
+                    minutes = 45;
+                }
             }
 
             return hour.ToString() + ":" + minutes.ToString();

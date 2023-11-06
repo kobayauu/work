@@ -63,7 +63,9 @@ namespace WorkSupportTool
                     result = int.Parse(values[0]);
                 }
                 else if (i == 1) {
-                    commentTextBox.Text = values[0];
+                    if (values[0] != "0") {
+                        commentTextBox.Text = values[0];
+                    }
                 }
 
                 for (int j = 0; j <= dataGridView1.ColumnCount; j++) {
@@ -143,7 +145,7 @@ namespace WorkSupportTool
                 }
                 tmp = tmp + time.ToString() + ",";
             }
-            if (dataGridView1[Macros.CATEGORY_COL, 1].Value.ToString() == Macros.ACHIEVE_BTN) {
+            if (dataGridView1[Macros.CATEGORY_COL, Macros.HEADER_ROW2].Value.ToString() == Macros.ACHIEVE_BTN) {
                 result = 1;
             }
             lines[0] = result + ",やること(やったこと),メモ,成果物,PJ No," + tmp;
@@ -153,7 +155,7 @@ namespace WorkSupportTool
                 comment = commentTextBox.Text;
             }
             lines[1] = comment + ",やること(やったこと),メモ,成果物,PJ No,0,15,30,45,0,15,30,45,0,15,30,45,0,15,30,45,0,15,30,45,0,15,30,45," +
-                                                                "0,15,30,45,0,15,30,45,0,15,30,45,0,15,30,45,0,15,30,45";
+                                                                         "0,15,30,45,0,15,30,45,0,15,30,45,0,15,30,45,0,15,30,45";
 
             // 3行目～
             for (int i = Macros.SCHEDULE_ROW; i < Macros.MAX_ROW; i++) {

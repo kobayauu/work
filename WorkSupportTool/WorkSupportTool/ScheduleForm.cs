@@ -30,6 +30,8 @@ namespace WorkSupportTool
 
         private void ScheduleForm_Load(object sender, EventArgs e)
         {
+            int result = 0;
+
             // データグリッドビューの設定
             // 行追加 
             for (int i = 0; i < Macros.MAX_ROW; i++) {
@@ -56,6 +58,13 @@ namespace WorkSupportTool
 
             for (int i = 0; i < Macros.MAX_ROW; i++) {
                 string[] values = lines[i].Split(',');
+
+                if (i == 0) {
+                    result = int.Parse(values[0]);
+                }
+                else if (i == 1) {
+                    commentTextBox.Text = values[0];
+                }
 
                 for (int j = 0; j <= dataGridView1.ColumnCount; j++) {
                     if (j == 0) {
@@ -98,7 +107,8 @@ namespace WorkSupportTool
                 if (i == 1) {
                     ((DataGridViewComboBoxCell)dataGridView1[Macros.CATEGORY_COL, i]).Items.Add(Macros.PLAN_BTN);
                     ((DataGridViewComboBoxCell)dataGridView1[Macros.CATEGORY_COL, i]).Items.Add(Macros.ACHIEVE_BTN);
-                    dataGridView1[Macros.CATEGORY_COL, i].Value = ((DataGridViewComboBoxCell)dataGridView1[Macros.CATEGORY_COL, i]).Items[0];
+
+                    dataGridView1[Macros.CATEGORY_COL, i].Value = ((DataGridViewComboBoxCell)dataGridView1[Macros.CATEGORY_COL, i]).Items[result];
                 }
                 else {
                     //データコンボボックスのリストの内容を追加
@@ -122,6 +132,8 @@ namespace WorkSupportTool
         {
             string[] lines = new string[Macros.MAX_ROW];
             int time = int.Parse(dataGridView1[Macros.TIME_COL, 0].Value.ToString());
+            int result = 0;
+            string comment = "0";
             string tmp = "";
 
             // 1行目
@@ -131,10 +143,16 @@ namespace WorkSupportTool
                 }
                 tmp = tmp + time.ToString() + ",";
             }
-            lines[0] = "0,やること(やったこと),メモ,成果物,PJ No," + tmp;
+            if (dataGridView1[Macros.CATEGORY_COL, 1].Value.ToString() == Macros.ACHIEVE_BTN) {
+                result = 1;
+            }
+            lines[0] = result + ",やること(やったこと),メモ,成果物,PJ No," + tmp;
 
             // 2行目
-            lines[1] = "0,やること(やったこと),メモ,成果物,PJ No,0,15,30,45,0,15,30,45,0,15,30,45,0,15,30,45,0,15,30,45,0,15,30,45," +
+            if (commentTextBox.Text != "") {
+                comment = commentTextBox.Text;
+            }
+            lines[1] = comment + ",やること(やったこと),メモ,成果物,PJ No,0,15,30,45,0,15,30,45,0,15,30,45,0,15,30,45,0,15,30,45,0,15,30,45," +
                                                                 "0,15,30,45,0,15,30,45,0,15,30,45,0,15,30,45,0,15,30,45";
 
             // 3行目～
@@ -199,6 +217,8 @@ namespace WorkSupportTool
                     dataGridView1[j, i].Style.BackColor = default;
                 }
             }
+            commentTextBox.Text = "";
+            dataGridView1[Macros.CATEGORY_COL, Macros.HEADER_ROW2].Value = ((DataGridViewComboBoxCell)dataGridView1[Macros.CATEGORY_COL, Macros.HEADER_ROW2]).Items[0];
 
             // 予定表読込
             ctrlOutlook.GetSchedule(date, ref gettingSchedule);
@@ -448,7 +468,7 @@ namespace WorkSupportTool
                 }
 
             }
-            settingSchedule.body = body + "\r\n■所感";
+            settingSchedule.body = body + "\r\n■所感：" + commentTextBox.Text;
             ctrlOutlook.SetSchedule(settingSchedule, Macros.RESULT_FOLDER_NAME);
 
             // クリップボードに工数をコピー

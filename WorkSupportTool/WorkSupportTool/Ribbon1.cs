@@ -242,7 +242,7 @@ namespace WorkSupportTool
             string[] lines = new string[0];
             int writeRow = 0;
             int startCol = 0;
-            int endCol = 0;
+            int endCol = 48;
 
             if (subjectComboBox.Text == "") {
                 MessageBox.Show("件名を入力してください", "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -301,11 +301,11 @@ namespace WorkSupportTool
 
                 // 開始時間と終了時間の列を取得
                 for (int i = Macros.CSV_TIME_COL; i < hours.Length; i++) {
-                    if (ctrlFile.RoundTime(workStartTime, false) == hours[i] + ":" + minutes[i]) {
+                    if (ctrlFile.RoundTime(workStartTime) == hours[i] + ":" + minutes[i]) {
                         startCol = i;
                     }
 
-                    if (ctrlFile.RoundTime(DateTime.Now, true) == hours[i] + ":" + minutes[i]) {
+                    if (ctrlFile.RoundTime(DateTime.Now) == hours[i] + ":" + minutes[i]) {
                         endCol = i;
                         break;
                     }
@@ -313,12 +313,20 @@ namespace WorkSupportTool
 
                 // 予定表の計画・実績フラグ書換
                 string[] changeValues = lines[writeRow].Split(',');
-                for (int i = startCol; i <= endCol; i++) {
+                for (int i = startCol; i < endCol; i++) {
                     if (changeValues[i] == "") {
                         changeValues[i] = Macros.ACHEIVE_STR;
                     }
                     else if (changeValues[i] == Macros.PLAN_STR) {
                         changeValues[i] = Macros.AS_PLANED_STR;
+                    }
+                }
+                if (endCol == 48) {
+                    if (changeValues[endCol] == "") {
+                        changeValues[endCol] = Macros.ACHEIVE_STR;
+                    }
+                    else if (changeValues[endCol] == Macros.PLAN_STR) {
+                        changeValues[endCol] = Macros.AS_PLANED_STR;
                     }
                 }
 

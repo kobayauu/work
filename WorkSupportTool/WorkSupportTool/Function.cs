@@ -104,13 +104,13 @@ namespace WorkSupportTool
             hour = int.Parse(tmp[0]);
             minutes = int.Parse(tmp[1]);
 
-            if (minutes < 15) {
+            if (minutes <= 15) {
                 minutes = 0;
             }
-            else if ( (minutes >= 15) && (minutes < 30) ) {
+            else if ( (minutes > 15) && (minutes <= 30) ) {
                 minutes = 15;
             }
-            else if ( (minutes >= 30) && (minutes < 45) ) {
+            else if ( (minutes > 30) && (minutes <= 45) ) {
                 minutes = 30;
             }
             else {

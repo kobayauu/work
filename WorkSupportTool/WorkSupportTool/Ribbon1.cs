@@ -23,51 +23,19 @@ namespace WorkSupportTool
         MessageForm msgForm = new MessageForm();
         CtrlOutlook ctrlOutlook = new CtrlOutlook();
 
-        /****************************************************************************************************/
-        // マクロ定義
-
-        //// 情報保存ファイル
-        //public const string SCHEDULE_FILE = @"C:\Users\kobayauu\OneDrive - Brother\schedule.csv";
-        //public const string SETTING_FILE  = @"C:\Users\kobayauu\OneDrive - Brother\setting.csv";
-
-        //// ポモードロタイマー
-        //public const int POMODORO_TIMER_INTERVAL = 1000;
-        //public const string STATUS_TIMER_WORK    = "作業";
-        //public const string STATUS_TIMER_REST    = "休憩";
-        //public const string STATUS_TIMER_STOP    = "停止";
-
         System.Timers.Timer pomodoroTimer = new System.Timers.Timer(Macros.POMODORO_TIMER_INTERVAL);
         int remainingSeconds = 0;
         string pomodoroTimerStatus = Macros.STATUS_TIMER_STOP;
-
-
-        //// 業務記録
-        //public const int RECORD_TIMER_INTERVAL  = 60000; // 1分毎
-        //public const string STATUS_RECORD_START = "記録開始";
-        //public const string STATUS_RECORD_STOP  = "停止・登録";
-        //public const int MAX_ROW                = 14;
-        //public const int SCHEDULE_ROW           = 2;
-        //public const int SUBJECT_COL            = 1;
-        //public const int CATEGORY_COL           = 4;
-        //public const int TIME_COL               = 5;
-        //public const string PLAN_STR            = "1";
-        //public const string ACHEIVE_STR         = "2";
-        //public const string AS_PLANED_STR       = "3";
 
         System.Timers.Timer recordTimer = new System.Timers.Timer(Macros.RECORD_TIMER_INTERVAL);
         DateTime workStartTime = DateTime.Now;
         DateTime workEndTime = DateTime.Now;
         bool recordFlag = false;
         bool autoRecordFlag = false;
-
-        string[] arrSchedule = new string[0];
-        string[] arrCategory = new string[0];
-        /****************************************************************************************************/
-
+        
 
         private void Ribbon1_Load(object sender, RibbonUIEventArgs e)
         {
-            int n = 0;
             string[] lines = new string[0];
             RibbonDropDownItem item;
 
@@ -84,23 +52,7 @@ namespace WorkSupportTool
                     item = Factory.CreateRibbonDropDownItem();
                     item.Label = values[Macros.CSV_SUBJECT_COL];
                     subjectComboBox.Items.Add(item);
-
-                    Array.Resize(ref arrSchedule, n + 1);
-                    arrSchedule[n] = values[Macros.CSV_SUBJECT_COL] + "," + values[Macros.CSV_CATEGORY_COL];
-                    n++;
                 }
-            }
-
-            // 分類設定
-            item = Factory.CreateRibbonDropDownItem();
-            item.Label = "";
-
-            categoryList.Items.Add(item);
-            ctrlOutlook.GetCategory(ref arrCategory);
-            for (int i = 0; i < arrCategory.Length; i++) {
-                item = Factory.CreateRibbonDropDownItem();
-                item.Label = arrCategory[i];
-                categoryList.Items.Add(item);
             }
 
             // 予定表チェックタイマー設定
@@ -155,10 +107,6 @@ namespace WorkSupportTool
                     item = Factory.CreateRibbonDropDownItem();
                     item.Label = values[Macros.CSV_SUBJECT_COL];
                     subjectComboBox.Items.Add(item);
-
-                    Array.Resize(ref arrSchedule, n + 1);
-                    arrSchedule[n] = values[Macros.CSV_SUBJECT_COL] + "," + values[Macros.CSV_CATEGORY_COL];
-                    n++;
                 }
             }
         }
@@ -227,23 +175,6 @@ namespace WorkSupportTool
                     return;
                 }
                 pomodoroTimer.Start();
-            }
-        }
-
-        private void subjectComboBox_TextChanged(object sender, RibbonControlEventArgs e)
-        {
-            for (int i = 0; i < arrSchedule.Length; i++) {
-                string[] values = arrSchedule[i].Split(',');
-                if (subjectComboBox.Text == values[0]) {
-
-                    for (int j = 0; j < categoryList.Items.Count; j++) {
-                        if (categoryList.Items[j].Label == values[1]) {
-                            categoryList.SelectedItemIndex = j;
-                            break;
-                        }
-                    }
-                    break;
-                }
             }
         }
 
@@ -363,7 +294,6 @@ namespace WorkSupportTool
                 recordButton.Label = Macros.STATUS_RECORD_STOP;
                 recordButton.Image = OutlookAddIn1.Properties.Resources.record;
                 subjectComboBox.Enabled = false;
-                categoryList.Enabled = false;
                 return;
             }
             else {
@@ -371,7 +301,6 @@ namespace WorkSupportTool
                 recordButton.Label = Macros.STATUS_RECORD_START;
                 recordButton.Image = OutlookAddIn1.Properties.Resources.startRecord;
                 subjectComboBox.Enabled = true;
-                categoryList.Enabled = true;
 
                 // ファイル読込
                 function.ReadCSVFile(Macros.SCHEDULE_FILE, ref lines);
@@ -395,7 +324,6 @@ namespace WorkSupportTool
                         if (values[Macros.CSV_SUBJECT_COL] == "") {
                             writeRow = i;
                             values[Macros.CSV_SUBJECT_COL] = subjectComboBox.Text;
-                            values[Macros.CSV_CATEGORY_COL] = categoryList.SelectedItem.Label;
 
                             for (int j = 0; j < values.Length; j++) {
                                 if (j == 0) {

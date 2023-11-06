@@ -21,44 +21,7 @@ namespace WorkSupportTool
         CtrlOutlook ctrlOutlook = new CtrlOutlook();
         Function function = new Function();
 
-        /****************************************************************************************************/
-        // マクロ定義
-
-        //// 情報保存ファイル
-        //public string SCHEDULE_FILE = @"C:\Users\kobayauu\OneDrive - Brother\schedule.csv";
-        //public string SETTING_FILE  = @"C:\Users\kobayauu\OneDrive - Brother\setting.csv";
-
-        //// 表の行列番号識別
-        //public const int MAX_ROW      = 14;
-        //public const int HEADER_ROW1  = 0;
-        //public const int HEADER_ROW2  = 1;
-        //public const int SCHEDULE_ROW = 2;
-        //public const int SPLIT_ROW    = 7;
-        //public const int MTG_ROW      = 8;
-        //public const int SUBJECT_COL  = 0;
-        //public const int MEMO_COL     = 1;
-        //public const int ACHIEVE_COL  = 2;
-        //public const int CATEGORY_COL = 3;
-        //public const int TIME_COL     = 4;
-
-        //// 予定・実績
-        //public const string PLAN_BTN             = "計画";
-        //public const string ACHIEVE_BTN          = "実績";
-        //public const string RESULT_FOLDER_NAME   = "実績";
-        //public System.Drawing.Color RESULT_COLOR = Color.LightGreen;
-        //public System.Drawing.Color REST_COLOR   = Color.Gray;
-        //public const string PLAN_MARK            = "→";
-        //public const string PLAN_STR             = "1";
-        //public const string ACHEIVE_STR          = "2";
-        //public const string AS_PLANED_STR        = "3";
-        //public const string REST_STR             = "4";
-
-        ////
-        //public const int MODE_ROW = 0;
-        //public const int MODE_COL = 1;
-
         string[] arrCategory = new string[0];
-        /****************************************************************************************************/
 
 
         public ScheduleForm() {
@@ -247,6 +210,9 @@ namespace WorkSupportTool
 
                     // 件名
                     dataGridView1[0, n].Value = gettingSchedule[i].subject;
+                    if (gettingSchedule[i].subject == "朝会") {
+                        dataGridView1[1, n].Value = "進捗:、予定:";
+                    }
 
                     bool startFlag = false;
                     int startCol = 0;

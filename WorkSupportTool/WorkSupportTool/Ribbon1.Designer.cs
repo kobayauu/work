@@ -36,15 +36,14 @@
         {
             this.tab1 = this.Factory.CreateRibbonTab();
             this.group3 = this.Factory.CreateRibbonGroup();
+            this.recordButton = this.Factory.CreateRibbonButton();
             this.subjectComboBox = this.Factory.CreateRibbonComboBox();
-            this.categoryList = this.Factory.CreateRibbonDropDown();
             this.scheduleButton = this.Factory.CreateRibbonButton();
             this.homeWorkButton = this.Factory.CreateRibbonButton();
             this.group1 = this.Factory.CreateRibbonGroup();
             this.pomodoroTimerButton = this.Factory.CreateRibbonButton();
             this.workMinutesList = this.Factory.CreateRibbonDropDown();
             this.restMinutesList = this.Factory.CreateRibbonDropDown();
-            this.recordButton = this.Factory.CreateRibbonButton();
             this.tab1.SuspendLayout();
             this.group3.SuspendLayout();
             this.group1.SuspendLayout();
@@ -60,25 +59,26 @@
             // 
             // group3
             // 
+            this.group3.Items.Add(this.scheduleButton);
             this.group3.Items.Add(this.recordButton);
             this.group3.Items.Add(this.subjectComboBox);
-            this.group3.Items.Add(this.categoryList);
-            this.group3.Items.Add(this.scheduleButton);
             this.group3.Items.Add(this.homeWorkButton);
             this.group3.Label = "勤務管理";
             this.group3.Name = "group3";
+            // 
+            // recordButton
+            // 
+            this.recordButton.Image = global::OutlookAddIn1.Properties.Resources.startRecord;
+            this.recordButton.Label = "記録開始";
+            this.recordButton.Name = "recordButton";
+            this.recordButton.ShowImage = true;
+            this.recordButton.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.recordButton_Click);
             // 
             // subjectComboBox
             // 
             this.subjectComboBox.Label = "件名";
             this.subjectComboBox.Name = "subjectComboBox";
             this.subjectComboBox.Text = null;
-            this.subjectComboBox.TextChanged += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.subjectComboBox_TextChanged);
-            // 
-            // categoryList
-            // 
-            this.categoryList.Label = "分類";
-            this.categoryList.Name = "categoryList";
             // 
             // scheduleButton
             // 
@@ -122,14 +122,6 @@
             this.restMinutesList.Label = "休憩[分]";
             this.restMinutesList.Name = "restMinutesList";
             // 
-            // recordButton
-            // 
-            this.recordButton.Image = global::OutlookAddIn1.Properties.Resources.startRecord;
-            this.recordButton.Label = "記録開始";
-            this.recordButton.Name = "recordButton";
-            this.recordButton.ShowImage = true;
-            this.recordButton.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.recordButton_Click);
-            // 
             // Ribbon1
             // 
             this.Name = "Ribbon1";
@@ -158,7 +150,6 @@
         internal Microsoft.Office.Tools.Ribbon.RibbonButton recordButton;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton scheduleButton;
         internal Microsoft.Office.Tools.Ribbon.RibbonComboBox subjectComboBox;
-        internal Microsoft.Office.Tools.Ribbon.RibbonDropDown categoryList;
     }
 
     partial class ThisRibbonCollection

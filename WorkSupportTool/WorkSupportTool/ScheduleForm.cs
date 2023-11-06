@@ -211,7 +211,7 @@ namespace WorkSupportTool
                     // 件名
                     dataGridView1[0, n].Value = gettingSchedule[i].subject;
                     if (gettingSchedule[i].subject == "朝会") {
-                        dataGridView1[1, n].Value = "進捗:、予定:";
+                        dataGridView1[1, n].Value = "進捗：、予定：";
                     }
 
                     bool startFlag = false;
@@ -301,7 +301,7 @@ namespace WorkSupportTool
             CtrlOutlook.scheduleSetting settingSchedule = new CtrlOutlook.scheduleSetting();
             CtrlOutlook.scheduleSetting settingSchedule2 = new CtrlOutlook.scheduleSetting();
             string body = "";
-            string todayDate = DateTime.Today.ToString("yyyy/MM/dd");
+            string todayDate = dateTimePicker1.Value.ToString("yyyy/MM/dd");
             int[] arrWorkTime = new int[arrCategory.Length]; 
 
             if (MessageBox.Show(this, "Outlookに転記しますか？", "", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No) {
@@ -310,8 +310,8 @@ namespace WorkSupportTool
 
             // 各種設定
             settingSchedule.subject = "日報_" + todayDate;
-            settingSchedule.start = DateTime.Now;
-            settingSchedule.end = DateTime.Now;
+            settingSchedule.start = dateTimePicker1.Value;
+            settingSchedule.end = dateTimePicker1.Value;
             settingSchedule.allDayEvent = true;
             settingSchedule.importance = OlImportance.olImportanceNormal;
 
@@ -354,8 +354,8 @@ namespace WorkSupportTool
 
                 // 予定入力
                 bool startFlag = false;
-                DateTime startTime = DateTime.Now;
-                DateTime endTime = DateTime.Now;
+                DateTime startTime = dateTimePicker1.Value;
+                DateTime endTime = dateTimePicker1.Value;
                 string hours = "";
                 string minutes = "";
                 string cell =  "";
@@ -373,13 +373,13 @@ namespace WorkSupportTool
                     if (!startFlag) {
                         if (cell == Macros.PLAN_MARK) {
                             startFlag = true;
-                            startTime = DateTime.Parse(DateTime.Now.ToString("yyyy/MM/dd") + " " + hours + ":" + minutes);
+                            startTime = DateTime.Parse(dateTimePicker1.Value.ToString("yyyy/MM/dd") + " " + hours + ":" + minutes);
                         }
                     }
                     else {
                         if (cell != Macros.PLAN_MARK) {
                             startFlag = false;
-                            endTime = DateTime.Parse(DateTime.Now.ToString("yyyy/MM/dd") + " " + hours + ":" + minutes);
+                            endTime = DateTime.Parse(dateTimePicker1.Value.ToString("yyyy/MM/dd") + " " + hours + ":" + minutes);
 
                             settingSchedule2.subject = subject + "(予定)";
                             settingSchedule2.start = startTime;
@@ -394,7 +394,7 @@ namespace WorkSupportTool
                             if (minutes == "0") {
                                 hours = (int.Parse(hours) + 1).ToString();
                             }
-                            endTime = DateTime.Parse(DateTime.Now.ToString("yyyy/MM/dd") + " " + hours + ":" + minutes);
+                            endTime = DateTime.Parse(dateTimePicker1.Value.ToString("yyyy/MM/dd") + " " + hours + ":" + minutes);
 
                             settingSchedule2.subject = subject + "(予定)";
                             settingSchedule2.start = startTime;
@@ -415,13 +415,13 @@ namespace WorkSupportTool
                     if (!startFlag) {
                         if (dataGridView1[j, i].Style.BackColor == Macros.RESULT_COLOR) {
                             startFlag = true;
-                            startTime = DateTime.Parse(DateTime.Now.ToString("yyyy/MM/dd") + " " + hours + ":" + minutes);
+                            startTime = DateTime.Parse(dateTimePicker1.Value.ToString("yyyy/MM/dd") + " " + hours + ":" + minutes);
                         }
                     }
                     else {
                         if (dataGridView1[j, i].Style.BackColor != Macros.RESULT_COLOR) {
                             startFlag = false;
-                            endTime = DateTime.Parse(DateTime.Now.ToString("yyyy/MM/dd") + " " + hours + ":" + minutes);
+                            endTime = DateTime.Parse(dateTimePicker1.Value.ToString("yyyy/MM/dd") + " " + hours + ":" + minutes);
 
                             settingSchedule2.subject = subject;
                             settingSchedule2.start = startTime;
@@ -436,7 +436,7 @@ namespace WorkSupportTool
                             if (minutes == "0") {
                                 hours = (int.Parse(hours) + 1).ToString();
                             }
-                            endTime = DateTime.Parse(DateTime.Now.ToString("yyyy/MM/dd") + " " + hours + ":" + minutes);
+                            endTime = DateTime.Parse(dateTimePicker1.Value.ToString("yyyy/MM/dd") + " " + hours + ":" + minutes);
 
                             settingSchedule2.subject = subject;
                             settingSchedule2.start = startTime;
@@ -448,7 +448,7 @@ namespace WorkSupportTool
                 }
 
             }
-            settingSchedule.body = body;
+            settingSchedule.body = body + "\r\n■所感";
             ctrlOutlook.SetSchedule(settingSchedule, Macros.RESULT_FOLDER_NAME);
 
             // クリップボードに工数をコピー

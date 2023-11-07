@@ -56,6 +56,10 @@ namespace WorkSupportTool
         //
         public const int MODE_ROW = 0;
         public const int MODE_COL = 1;
+
+        // 勤務
+        public static string WORK_START = "出勤";
+        public static string WORK_END   = "退勤";
     }
 
     internal class CtrlFile
@@ -329,9 +333,10 @@ namespace WorkSupportTool
             return 0;
         }
 
-        public int ChangeWorkStatus()
+        public int ChangeWorkStatus(string status)
         {
-            bool isworkFlag = false;
+            bool isWorkFlag = false;
+            bool isEndFlag = false;
             string todayDate = DateTime.Today.ToString("yyyy/MM/dd");
             string startWork = "出勤(勤務中)";
             string endWork = "退勤";
@@ -340,7 +345,8 @@ namespace WorkSupportTool
 
             // 初期化
             settingSchedule.start = DateTime.Now;
-            settingSchedule.end = DateTime.Now;          
+            settingSchedule.end = DateTime.Now;
+            settingSchedule.location = "GTハードソフト研(第1-2F)";
             settingSchedule.allDayEvent = true;
             settingSchedule.busyStatus = OlBusyStatus.olFree;
             settingSchedule.importance = OlImportance.olImportanceNormal;
@@ -349,25 +355,57 @@ namespace WorkSupportTool
             GetSchedule(todayDate, ref gettingSchedule);
             for (int i = 0; i < gettingSchedule.Length; i++) {
                 if (gettingSchedule[i].subject == startWork) {
-                    isworkFlag = true;
-                    break;
+                    isWorkFlag = true;
+                    //break;
+                }
+                if (gettingSchedule[i].subject == endWork) {
+                    isEndFlag = true;
+                    //break;
                 }
             }
 
-            if (isworkFlag) {
-                //if (MessageBox.Show("退勤しますか？", "", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes) {
-                settingSchedule.subject = endWork;
-                settingSchedule.location = "";
-                ChangeSchedule(todayDate, startWork, settingSchedule);
-                //}
-            }
-            else {
-                if (MessageBox.Show("出勤しますか？", "", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes) {
-                    settingSchedule.subject = startWork;
-                    settingSchedule.location = "GTハードソフト研(第1-2F)";
-                    SetSchedule(settingSchedule, "");
+            if (status == Macros.WORK_START) {
+                if (!isWorkFlag) {
+                    //if (MessageBox.Show("出勤しますか？", "", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes) {
+                        settingSchedule.subject = startWork;
+                        SetSchedule(settingSchedule, "");
+                    //}
                 }
             }
+            else if (status == Macros.WORK_END) {
+                if (isWorkFlag) {
+                    //if (MessageBox.Show("退勤しますか？", "", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes) {
+                        settingSchedule.subject = endWork;
+                        settingSchedule.location = "";
+                        ChangeSchedule(todayDate, startWork, settingSchedule);
+                    //}
+                }
+                else {
+                    //if (MessageBox.Show("退勤しますか？", "", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes) {
+                    if (isEndFlag) {
+                        settingSchedule.subject = endWork;
+                        settingSchedule.location = "";
+                        SetSchedule(settingSchedule, "");
+                    }
+                    //}
+                }
+            }
+            else {
+                if (isWorkFlag) {
+                    if (MessageBox.Show("退勤しますか？", "", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes) {
+                        settingSchedule.subject = endWork;
+                        settingSchedule.location = "";
+                        ChangeSchedule(todayDate, startWork, settingSchedule);
+                    }
+                }
+                else {
+                    if (MessageBox.Show("出勤しますか？", "", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes) {
+                        settingSchedule.subject = startWork;
+                        SetSchedule(settingSchedule, "");
+                    }
+                }
+            }
+
             return 0;
         }
     }

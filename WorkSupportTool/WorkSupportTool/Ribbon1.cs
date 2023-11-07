@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using System.Configuration;
 using Microsoft.Office.Interop.Outlook;
+using Microsoft.Toolkit.Uwp.Notifications;
 
 namespace WorkSupportTool
 {
@@ -226,12 +226,10 @@ namespace WorkSupportTool
                 nextStatus = Macros.STATUS_TIMER_WORK;
             }
 
-            //msgForm.msg = nextStatus + "開始です";
-            //msgForm.ShowDialog();
-            //if (msgForm.status != 0) {
-            if (MessageBox.Show(nextStatus + "開始です", "", MessageBoxButtons.OKCancel, MessageBoxIcon.Information) != DialogResult.Cancel) {
-                nextStatus = Macros.STATUS_TIMER_STOP;
-            }
+            new ToastContentBuilder().AddArgument("action", "viewConversation").AddArgument("conversationId", 9813).AddText(nextStatus + "を開始してください").Show();
+            //if (MessageBox.Show(nextStatus + "開始です", "", MessageBoxButtons.OKCancel, MessageBoxIcon.Information) != DialogResult.Cancel) {
+            //    nextStatus = Macros.STATUS_TIMER_STOP;
+            //}
 
             InitPomodoroStatus(nextStatus);
         }
@@ -319,6 +317,14 @@ namespace WorkSupportTool
                     }
                     else if (changeValues[i] == Macros.PLAN_STR) {
                         changeValues[i] = Macros.AS_PLANED_STR;
+                    }
+                }
+                if (startCol == endCol) {
+                    if (changeValues[startCol] == "") {
+                        changeValues[startCol] = Macros.ACHEIVE_STR;
+                    }
+                    else if (changeValues[startCol] == Macros.PLAN_STR) {
+                        changeValues[startCol] = Macros.AS_PLANED_STR;
                     }
                 }
                 if (endCol == 48) {

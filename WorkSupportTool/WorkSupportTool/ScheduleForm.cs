@@ -191,7 +191,6 @@ namespace WorkSupportTool
         private void ClearButton_Click(object sender, EventArgs e)
         {
             CtrlOutlook.scheduleSetting[] gettingSchedule = new CtrlOutlook.scheduleSetting[0];
-            string date = DateTime.Today.ToString("yyyy/MM/dd");
             int n = Macros.MTG_ROW + 1;
             string hours = "";
             string minutes = "";
@@ -201,7 +200,6 @@ namespace WorkSupportTool
             }
 
             // クリア
-            dateTimePicker1.Value = DateTime.Now;
             for (int i = Macros.SCHEDULE_ROW; i < Macros.MAX_ROW; i++) {
                 dataGridView1[Macros.SUBJECT_COL, i].Value = "";
                 dataGridView1[Macros.MEMO_COL, i].Value = "";
@@ -218,7 +216,7 @@ namespace WorkSupportTool
             dataGridView1[Macros.CATEGORY_COL, Macros.HEADER_ROW2].Value = ((DataGridViewComboBoxCell)dataGridView1[Macros.CATEGORY_COL, Macros.HEADER_ROW2]).Items[0];
 
             // 予定表読込
-            ctrlOutlook.GetSchedule(date, ref gettingSchedule);
+            ctrlOutlook.GetSchedule(dateTimePicker1.Value.ToString("yyyy/MM/dd"), ref gettingSchedule);
             for (int i = 0; i < gettingSchedule.Length; i++) {
                 if (gettingSchedule[i].categories != "その他" && gettingSchedule[i].allDayEvent != true) {
                     if (n == Macros.MAX_ROW) {
@@ -484,7 +482,10 @@ namespace WorkSupportTool
                 copyText = copyText + (copyNum[i] / 60).ToString("00") + ":" + (copyNum[i] % 60).ToString("00") + "\t";
             }
             Clipboard.SetText(copyText);
-          
+
+            // 出勤切替
+            ctrlOutlook.ChangeWorkStatus();
+
             System.Diagnostics.Process.Start(OutlookAddIn1.Properties.Settings.Default.WORKTIME_URL);
             MessageBox.Show("Outlook予定表への転機を完了しました\nクリップボードへ工数をコピーしました", "", MessageBoxButtons.OK, MessageBoxIcon.Information);
             this.Close();

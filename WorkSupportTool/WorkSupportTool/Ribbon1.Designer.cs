@@ -36,14 +36,15 @@
         {
             this.tab1 = this.Factory.CreateRibbonTab();
             this.group3 = this.Factory.CreateRibbonGroup();
-            this.recordButton = this.Factory.CreateRibbonButton();
             this.subjectComboBox = this.Factory.CreateRibbonComboBox();
-            this.scheduleButton = this.Factory.CreateRibbonButton();
-            this.homeWorkButton = this.Factory.CreateRibbonButton();
             this.group1 = this.Factory.CreateRibbonGroup();
-            this.pomodoroTimerButton = this.Factory.CreateRibbonButton();
             this.workMinutesList = this.Factory.CreateRibbonDropDown();
             this.restMinutesList = this.Factory.CreateRibbonDropDown();
+            this.scheduleButton = this.Factory.CreateRibbonButton();
+            this.recordButton = this.Factory.CreateRibbonButton();
+            this.WorkButton = this.Factory.CreateRibbonButton();
+            this.homeWorkButton = this.Factory.CreateRibbonButton();
+            this.pomodoroTimerButton = this.Factory.CreateRibbonButton();
             this.tab1.SuspendLayout();
             this.group3.SuspendLayout();
             this.group1.SuspendLayout();
@@ -62,39 +63,16 @@
             this.group3.Items.Add(this.scheduleButton);
             this.group3.Items.Add(this.recordButton);
             this.group3.Items.Add(this.subjectComboBox);
+            this.group3.Items.Add(this.WorkButton);
             this.group3.Items.Add(this.homeWorkButton);
             this.group3.Label = "勤務管理";
             this.group3.Name = "group3";
-            // 
-            // recordButton
-            // 
-            this.recordButton.Image = global::OutlookAddIn1.Properties.Resources.startRecord;
-            this.recordButton.Label = "記録開始";
-            this.recordButton.Name = "recordButton";
-            this.recordButton.ShowImage = true;
-            this.recordButton.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.recordButton_Click);
             // 
             // subjectComboBox
             // 
             this.subjectComboBox.Label = "件名";
             this.subjectComboBox.Name = "subjectComboBox";
             this.subjectComboBox.Text = null;
-            // 
-            // scheduleButton
-            // 
-            this.scheduleButton.Image = global::OutlookAddIn1.Properties.Resources.schedule;
-            this.scheduleButton.Label = "予定表";
-            this.scheduleButton.Name = "scheduleButton";
-            this.scheduleButton.ShowImage = true;
-            this.scheduleButton.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.scheduleButton_Click);
-            // 
-            // homeWorkButton
-            // 
-            this.homeWorkButton.Image = global::OutlookAddIn1.Properties.Resources.home;
-            this.homeWorkButton.Label = "在宅切替";
-            this.homeWorkButton.Name = "homeWorkButton";
-            this.homeWorkButton.ShowImage = true;
-            this.homeWorkButton.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.homeWorkButton_Click);
             // 
             // group1
             // 
@@ -103,14 +81,6 @@
             this.group1.Items.Add(this.restMinutesList);
             this.group1.Label = "ポモードロタイマー";
             this.group1.Name = "group1";
-            // 
-            // pomodoroTimerButton
-            // 
-            this.pomodoroTimerButton.Image = global::OutlookAddIn1.Properties.Resources.startTimer;
-            this.pomodoroTimerButton.Label = "タイマー開始";
-            this.pomodoroTimerButton.Name = "pomodoroTimerButton";
-            this.pomodoroTimerButton.ShowImage = true;
-            this.pomodoroTimerButton.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.pomodoroTimerButton_Click);
             // 
             // workMinutesList
             // 
@@ -121,6 +91,46 @@
             // 
             this.restMinutesList.Label = "休憩[分]";
             this.restMinutesList.Name = "restMinutesList";
+            // 
+            // scheduleButton
+            // 
+            this.scheduleButton.Image = global::OutlookAddIn1.Properties.Resources.schedule;
+            this.scheduleButton.Label = "予定表";
+            this.scheduleButton.Name = "scheduleButton";
+            this.scheduleButton.ShowImage = true;
+            this.scheduleButton.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.scheduleButton_Click);
+            // 
+            // recordButton
+            // 
+            this.recordButton.Image = global::OutlookAddIn1.Properties.Resources.startRecord;
+            this.recordButton.Label = "記録開始";
+            this.recordButton.Name = "recordButton";
+            this.recordButton.ShowImage = true;
+            this.recordButton.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.recordButton_Click);
+            // 
+            // WorkButton
+            // 
+            this.WorkButton.Image = global::OutlookAddIn1.Properties.Resources.company;
+            this.WorkButton.Label = "出勤切替";
+            this.WorkButton.Name = "WorkButton";
+            this.WorkButton.ShowImage = true;
+            this.WorkButton.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.WorkButton_Click);
+            // 
+            // homeWorkButton
+            // 
+            this.homeWorkButton.Image = global::OutlookAddIn1.Properties.Resources.home;
+            this.homeWorkButton.Label = "在宅切替";
+            this.homeWorkButton.Name = "homeWorkButton";
+            this.homeWorkButton.ShowImage = true;
+            this.homeWorkButton.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.homeWorkButton_Click);
+            // 
+            // pomodoroTimerButton
+            // 
+            this.pomodoroTimerButton.Image = global::OutlookAddIn1.Properties.Resources.startTimer;
+            this.pomodoroTimerButton.Label = "タイマー開始";
+            this.pomodoroTimerButton.Name = "pomodoroTimerButton";
+            this.pomodoroTimerButton.ShowImage = true;
+            this.pomodoroTimerButton.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.pomodoroTimerButton_Click);
             // 
             // Ribbon1
             // 
@@ -150,6 +160,7 @@
         internal Microsoft.Office.Tools.Ribbon.RibbonButton recordButton;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton scheduleButton;
         internal Microsoft.Office.Tools.Ribbon.RibbonComboBox subjectComboBox;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton WorkButton;
     }
 
     partial class ThisRibbonCollection

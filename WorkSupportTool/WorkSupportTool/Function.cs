@@ -7,6 +7,7 @@ using System.IO;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using Microsoft.Office.Interop.Outlook;
+using System.Windows.Forms;
 
 namespace WorkSupportTool
 {
@@ -138,6 +139,7 @@ namespace WorkSupportTool
             public string categories;
             public DateTime start;
             public DateTime end;
+            public string location;
             public bool allDayEvent;
             public OlBusyStatus busyStatus;
             public bool reminderSet;
@@ -149,6 +151,7 @@ namespace WorkSupportTool
                 this.categories = "";
                 this.start = DateTime.Now;
                 this.end = DateTime.Now;
+                this.location = "";
                 this.allDayEvent = false;
                 this.busyStatus = OlBusyStatus.olFree;
                 this.reminderSet = false;
@@ -208,6 +211,7 @@ namespace WorkSupportTool
             appItem.Categories = schedule.categories;
             appItem.Start = schedule.start;
             appItem.End = schedule.end;
+            appItem.Location = schedule.location;
             appItem.AllDayEvent = schedule.allDayEvent;
             appItem.BusyStatus = schedule.busyStatus;
             appItem.ReminderSet = schedule.reminderSet;
@@ -252,6 +256,7 @@ namespace WorkSupportTool
                 schedule[i].categories = item.Categories;
                 schedule[i].start = item.Start;
                 schedule[i].end = item.End;
+                schedule[i].location = item.Location;
                 schedule[i].allDayEvent = item.AllDayEvent;
                 schedule[i].busyStatus = item.BusyStatus;
                 schedule[i].reminderSet = item.ReminderSet;
@@ -286,6 +291,7 @@ namespace WorkSupportTool
                     item.Categories = schedule.categories;
                     item.Start = schedule.start;
                     item.End = schedule.end;
+                    item.Location = schedule.location;
                     item.AllDayEvent = schedule.allDayEvent;
                     item.BusyStatus = schedule.busyStatus;
                     item.ReminderSet = schedule.reminderSet;
@@ -320,6 +326,48 @@ namespace WorkSupportTool
             // 接続解除
             DisconnectOutlook();
 
+            return 0;
+        }
+
+        public int ChangeWorkStatus()
+        {
+            bool isworkFlag = false;
+            string todayDate = DateTime.Today.ToString("yyyy/MM/dd");
+            string startWork = "出勤(勤務中)";
+            string endWork = "退勤";
+            CtrlOutlook.scheduleSetting settingSchedule = new CtrlOutlook.scheduleSetting();
+            CtrlOutlook.scheduleSetting[] gettingSchedule = new CtrlOutlook.scheduleSetting[0];
+
+            // 初期化
+            settingSchedule.start = DateTime.Now;
+            settingSchedule.end = DateTime.Now;          
+            settingSchedule.allDayEvent = true;
+            settingSchedule.busyStatus = OlBusyStatus.olFree;
+            settingSchedule.importance = OlImportance.olImportanceNormal;
+
+            // 
+            GetSchedule(todayDate, ref gettingSchedule);
+            for (int i = 0; i < gettingSchedule.Length; i++) {
+                if (gettingSchedule[i].subject == startWork) {
+                    isworkFlag = true;
+                    break;
+                }
+            }
+
+            if (isworkFlag) {
+                //if (MessageBox.Show("退勤しますか？", "", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes) {
+                settingSchedule.subject = endWork;
+                settingSchedule.location = "";
+                ChangeSchedule(todayDate, startWork, settingSchedule);
+                //}
+            }
+            else {
+                if (MessageBox.Show("出勤しますか？", "", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes) {
+                    settingSchedule.subject = startWork;
+                    settingSchedule.location = "GTハードソフト研(第1-2F)";
+                    SetSchedule(settingSchedule, "");
+                }
+            }
             return 0;
         }
     }

@@ -338,7 +338,7 @@ namespace WorkSupportTool
             bool isWorkFlag = false;
             bool isEndFlag = false;
             string todayDate = DateTime.Today.ToString("yyyy/MM/dd");
-            string startWork = "出勤(勤務中)";
+            string startWork = "出社(勤務中)";
             string endWork = "退勤";
             CtrlOutlook.scheduleSetting settingSchedule = new CtrlOutlook.scheduleSetting();
             CtrlOutlook.scheduleSetting[] gettingSchedule = new CtrlOutlook.scheduleSetting[0];
@@ -382,7 +382,7 @@ namespace WorkSupportTool
                 }
                 else {
                     //if (MessageBox.Show("退勤しますか？", "", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes) {
-                    if (isEndFlag) {
+                    if (!isEndFlag) {
                         settingSchedule.subject = endWork;
                         settingSchedule.location = "";
                         SetSchedule(settingSchedule, "");

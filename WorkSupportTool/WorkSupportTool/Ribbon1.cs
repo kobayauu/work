@@ -84,9 +84,11 @@ namespace WorkSupportTool
             bool ishomeFlag = false;
             bool changeFlag = false;
             string todayDate = DateTime.Today.ToString("yyyy/MM/dd");
+            string doingHomeWork = "在宅(勤務中)";
             string planHomeWork = "在宅(予定)";
-            string startHomeWork = "在宅(勤務中)";
-            string endHomeWork = "在宅(退勤)";
+            string startHomeWork = "在宅(開始)";
+            string endHomeWork = "在宅(終了)";
+            string msgID = "";
             CtrlOutlook.scheduleSetting settingSchedule = new CtrlOutlook.scheduleSetting();
             CtrlOutlook.scheduleSetting[] gettingSchedule = new CtrlOutlook.scheduleSetting[0];
 
@@ -105,7 +107,8 @@ namespace WorkSupportTool
                     break;
                 }
 
-                if (gettingSchedule[i].subject == startHomeWork) {
+                if (gettingSchedule[i].subject == doingHomeWork) {
+                    msgID = gettingSchedule[i].location;
                     ishomeFlag = true;
                     break;
                 }
@@ -114,7 +117,8 @@ namespace WorkSupportTool
             if (ishomeFlag) {
                 if (MessageBox.Show("在宅を終了しますか？", "", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes) {
                     settingSchedule.subject = endHomeWork;
-                    ctrlOutlook.ChangeSchedule(todayDate, startHomeWork, settingSchedule);
+                    settingSchedule.location = msgID;
+                    ctrlOutlook.ChangeSchedule(todayDate, doingHomeWork, settingSchedule);
                 }
             }
             else {
@@ -150,46 +154,39 @@ namespace WorkSupportTool
         private void OnElapsed_recordTimer(object sender, System.Timers.ElapsedEventArgs e)
         {
             string todayDate = DateTime.Today.ToString("yyyy/MM/dd");
-            string todayTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm");
+            string currentTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm");
             string nowTime = DateTime.Now.ToString("H:mm");
             CtrlOutlook.scheduleSetting[] gettingSchedule = new CtrlOutlook.scheduleSetting[0];
 
-            if (autoRecordFlag) {
-                if (todayTime != workEndTime.ToString("yyyy/MM/dd HH:mm")) {
-                    return;
-                }
-
-                autoRecordFlag = false;
-                RecordWork();
-            }
-            else {
+            if (!autoRecordFlag) {
                 ctrlOutlook.GetSchedule(todayDate, ref gettingSchedule);
 
                 for (int i = 0; i < gettingSchedule.Length; i++) {
-                    if (todayTime != gettingSchedule[i].start.ToString("yyyy/MM/dd HH:mm")) {
-                        continue;
-                    }
-
-                    if (gettingSchedule[i].categories == "その他") {
+                    if ((currentTime != gettingSchedule[i].start.ToString("yyyy/MM/dd HH:mm")) || (gettingSchedule[i].categories == "その他") ) {
                         continue;
                     }
 
                     // 記録中なら強制的に停止・記録
                     if (recordFlag) {
-                        RecordWork();
-                        autoRecordFlag = true;
-                        subjectComboBox.Text = gettingSchedule[i].subject;
-                        workEndTime = gettingSchedule[i].end;
-                        RecordWork();
-                        break;
+                        RecordWork(); // 停止・記録
                     }
-                }
 
-                // 休憩時間に強制的に停止・記録
-                if (!recordFlag) {
-                    return;
+                    autoRecordFlag = true;
+                    subjectComboBox.Text = gettingSchedule[i].subject;
+                    workEndTime = gettingSchedule[i].end;
+                    RecordWork(); // 開始
+                    break;
                 }
+            }
+            else {
+                if (currentTime == workEndTime.ToString("yyyy/MM/dd HH:mm")) {
+                    autoRecordFlag = false;
+                    RecordWork(); // 停止・記録
+                }
+            }
 
+            // 記録中に休憩時間になったら強制的に停止・記録
+            if (recordFlag) {
                 string[] lines = new string[0];
                 ctrlFile.ReadCSVFile(OutlookAddIn1.Properties.Settings.Default.SETTING_FILE, ref lines);
                 for (int i = 0; i < lines.Length; i++) {
@@ -198,7 +195,8 @@ namespace WorkSupportTool
                     if (values[0] == "休み時間") {
                         for (int j = 1; j < values.Length; j++) {
                             if (nowTime == values[j]) {
-                                RecordWork();
+                                autoRecordFlag = false;
+                                RecordWork(); // 停止・記録
                             }
                         }
                         break;

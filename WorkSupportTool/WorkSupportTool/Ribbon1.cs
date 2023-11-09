@@ -54,7 +54,7 @@ namespace WorkSupportTool
             restMinutesList.SelectedItem = restMinutesList.Items[4];
 
             // 出勤切替
-            ctrlOutlook.ChangeWorkStatus(Macros.WORK_START);
+            ctrlOutlook.ChangeWorkStatus();
         }
 
         private void recordButton_Click(object sender, RibbonControlEventArgs e)
@@ -76,7 +76,7 @@ namespace WorkSupportTool
 
         private void WorkButton_Click(object sender, RibbonControlEventArgs e)
         {
-            ctrlOutlook.ChangeWorkStatus("");
+            ctrlOutlook.ChangeWorkStatus();
         }
 
         private void homeWorkButton_Click(object sender, RibbonControlEventArgs e)

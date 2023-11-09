@@ -57,10 +57,6 @@ namespace WorkSupportTool
         //
         public const int MODE_ROW = 0;
         public const int MODE_COL = 1;
-
-        // 勤務
-        public static string WORK_START = "出勤";
-        public static string WORK_END   = "退勤";
     }
 
     internal class CtrlFile
@@ -294,10 +290,10 @@ namespace WorkSupportTool
                     item.Subject = schedule.subject;
                     item.Body = schedule.body;
                     item.Categories = schedule.categories;
-                    item.Start = schedule.start;
-                    item.End = schedule.end;
+                    //item.Start = schedule.start;
+                    //item.End = schedule.end;
                     item.Location = schedule.location;
-                    item.AllDayEvent = schedule.allDayEvent;
+                    //item.AllDayEvent = schedule.allDayEvent;
                     item.BusyStatus = schedule.busyStatus;
                     item.ReminderSet = schedule.reminderSet;
                     item.Importance = schedule.importance;
@@ -334,7 +330,7 @@ namespace WorkSupportTool
             return 0;
         }
 
-        public int ChangeWorkStatus(string status)
+        public int ChangeWorkStatus()
         {
             bool isWorkFlag = false;
             bool isEndFlag = false;
@@ -365,42 +361,20 @@ namespace WorkSupportTool
                 }
             }
 
-            if (status == Macros.WORK_START) {
-                if (!isWorkFlag) {
-                    //if (MessageBox.Show("出勤しますか？", "", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes) {
-                        settingSchedule.subject = startWork;
-                        SetSchedule(settingSchedule, "");
-                    //}
-                }
-            }
-            else if (status == Macros.WORK_END) {
-                if (isWorkFlag) {
-                    //if (MessageBox.Show("退勤しますか？", "", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes) {
-                        settingSchedule.subject = endWork;
-                        settingSchedule.location = "";
-                        ChangeSchedule(todayDate, startWork, settingSchedule);
-                    //}
-                }
-                else {
-                    //if (MessageBox.Show("退勤しますか？", "", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes) {
-                    if (!isEndFlag) {
-                        settingSchedule.subject = endWork;
-                        settingSchedule.location = "";
-                        SetSchedule(settingSchedule, "");
-                    }
-                    //}
+            if (isWorkFlag) {
+                if (MessageBox.Show("退勤しますか？", "", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes) {
+                    settingSchedule.subject = endWork;
+                    settingSchedule.location = "";
+                    ChangeSchedule(todayDate, startWork, settingSchedule);
                 }
             }
             else {
-                if (isWorkFlag) {
-                    if (MessageBox.Show("退勤しますか？", "", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes) {
-                        settingSchedule.subject = endWork;
-                        settingSchedule.location = "";
-                        ChangeSchedule(todayDate, startWork, settingSchedule);
+                if (MessageBox.Show("出勤しますか？", "", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes) {
+                    if (isEndFlag) {
+                        settingSchedule.subject = startWork;
+                        ChangeSchedule(todayDate, endWork, settingSchedule);
                     }
-                }
-                else {
-                    if (MessageBox.Show("出勤しますか？", "", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes) {
+                    else {
                         settingSchedule.subject = startWork;
                         SetSchedule(settingSchedule, "");
                     }

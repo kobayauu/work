@@ -508,7 +508,7 @@ namespace WorkSupportTool
             Clipboard.SetText(copyText);
 
             // 出勤切替
-            ctrlOutlook.ChangeWorkStatus(Macros.WORK_END);
+            ctrlOutlook.ChangeWorkStatus();
 
             System.Diagnostics.Process.Start(OutlookAddIn1.Properties.Settings.Default.WORKTIME_URL);
             MessageBox.Show("Outlook予定表への転機を完了しました\nクリップボードへ工数をコピーしました", "", MessageBoxButtons.OK, MessageBoxIcon.Information);

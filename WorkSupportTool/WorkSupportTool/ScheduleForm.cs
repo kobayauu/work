@@ -122,6 +122,30 @@ namespace WorkSupportTool
                 }
             }
 
+            // 現在の時間列を強調
+            string currentTime = ctrlFile.RoundTime(DateTime.Now);
+            string hours = "";
+            string minutes = "";
+            for (int i = 0; i < dataGridView1.ColumnCount; i++) {
+                if (dataGridView1[i, Macros.HEADER_ROW1].Value != null) {
+                    hours = dataGridView1[i, Macros.HEADER_ROW1].Value.ToString();
+                }
+                minutes = dataGridView1[i, Macros.HEADER_ROW2].Value.ToString();
+
+                if (currentTime == hours + ":" + minutes) {
+                    dataGridView1[i, Macros.HEADER_ROW2].Style.BackColor = Macros.NOW_COLOR;
+
+                    for (int j = Macros.SCHEDULE_ROW; j < Macros.MAX_ROW; j++) {
+                        if (dataGridView1[i, j].Value != null) {
+                            dataGridView1[Macros.SUBJECT_COL, j].Style.BackColor = Macros.NOW_COLOR;
+                            dataGridView1[Macros.MEMO_COL, j].Style.BackColor = Macros.NOW_COLOR;
+                            dataGridView1[Macros.ACHIEVE_COL, j].Style.BackColor = Macros.NOW_COLOR;
+                            break;
+                        }
+                    }
+                    break;
+                }
+            }
         }
 
         private void ScheduleForm_FormClosing(object sender, FormClosingEventArgs e)

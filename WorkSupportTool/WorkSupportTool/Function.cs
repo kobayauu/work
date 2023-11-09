@@ -47,6 +47,7 @@ namespace WorkSupportTool
         public const string RESULT_FOLDER_NAME          = "実績";
         public static System.Drawing.Color RESULT_COLOR = Color.LightGreen;
         public static System.Drawing.Color REST_COLOR   = Color.Gray;
+        public static System.Drawing.Color NOW_COLOR    = Color.LightPink;
         public const string PLAN_MARK                   = "→";
         public const string PLAN_STR                    = "1";
         public const string ACHEIVE_STR                 = "2";

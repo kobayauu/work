@@ -56,11 +56,6 @@ namespace WorkSupportTool
                 if (i == 0) {
                     result = int.Parse(values[0]);
                 }
-                else if (i == 1) {
-                    if (values[0] != "0") {
-                        commentTextBox.Text = values[0];
-                    }
-                }
 
                 for (int j = 0; j <= dataGridView1.ColumnCount; j++) {
                     if (j == 0) {
@@ -153,7 +148,6 @@ namespace WorkSupportTool
             string[] lines = new string[Macros.MAX_ROW];
             int time = int.Parse(dataGridView1[Macros.TIME_COL, 0].Value.ToString());
             int result = 0;
-            string comment = "0";
             string tmp = "";
 
             // 1行目
@@ -169,11 +163,8 @@ namespace WorkSupportTool
             lines[0] = result + ",やること(やったこと),メモ,成果物,PJ No," + tmp;
 
             // 2行目
-            if (commentTextBox.Text != "") {
-                comment = commentTextBox.Text;
-            }
-            lines[1] = comment + ",やること(やったこと),メモ,成果物,PJ No,0,15,30,45,0,15,30,45,0,15,30,45,0,15,30,45,0,15,30,45,0,15,30,45," +
-                                                                         "0,15,30,45,0,15,30,45,0,15,30,45,0,15,30,45,0,15,30,45";
+            lines[1] = "0,やること(やったこと),メモ,成果物,PJ No,0,15,30,45,0,15,30,45,0,15,30,45,0,15,30,45,0,15,30,45,0,15,30,45," +
+                                                                "0,15,30,45,0,15,30,45,0,15,30,45,0,15,30,45,0,15,30,45";
 
             // 3行目～
             for (int i = Macros.SCHEDULE_ROW; i < Macros.MAX_ROW; i++) {
@@ -236,7 +227,6 @@ namespace WorkSupportTool
                     dataGridView1[j, i].Style.BackColor = default;
                 }
             }
-            commentTextBox.Text = "";
             dataGridView1[Macros.CATEGORY_COL, Macros.HEADER_ROW2].Value = ((DataGridViewComboBoxCell)dataGridView1[Macros.CATEGORY_COL, Macros.HEADER_ROW2]).Items[0];
 
             // 予定表読込
@@ -338,30 +328,17 @@ namespace WorkSupportTool
         private void PostButton_Click(object sender, EventArgs e)
         {
             CtrlOutlook.scheduleSetting settingSchedule = new CtrlOutlook.scheduleSetting();
-            CtrlOutlook.scheduleSetting settingSchedule2 = new CtrlOutlook.scheduleSetting();
-            string body = "";
-            string todayDate = dateTimePicker1.Value.ToString("yyyy/MM/dd");
             int[] arrWorkTime = new int[arrCategory.Length]; 
 
-            if (MessageBox.Show(this, "Outlookに転記しますか？", "", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No) {
+            if (MessageBox.Show(this, "Outlookへ実績を記入しますか？", "", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No) {
                 return;
             }
 
-            // 各種設定
-            settingSchedule.subject = "日報_" + todayDate;
-            settingSchedule.start = dateTimePicker1.Value;
-            settingSchedule.end = dateTimePicker1.Value;
-            settingSchedule.allDayEvent = true;
-            settingSchedule.importance = OlImportance.olImportanceNormal;
-
             // 本文
             for (int i = Macros.SCHEDULE_ROW; i < Macros.MAX_ROW; i++) {
+                int workTime = 0;
                 string subject = "";
                 string category = "";
-                string achieve = "";
-                string memo = "";
-                string time = "";
-                int workTime = 0;
 
                 if (i == Macros.SPLIT_ROW || i == Macros.MTG_ROW) {
                     continue;
@@ -372,16 +349,15 @@ namespace WorkSupportTool
                         workTime++;
                     }
                 }
-                            
+                
                 workTime = workTime * 15;
-                subject = dataGridView1[Macros.SUBJECT_COL, i].Value.ToString();
-                time = "　" + (workTime / 60).ToString("00") + ":" + (workTime % 60).ToString("00");
+                subject = dataGridView1[Macros.SUBJECT_COL, i].Value.ToString();               
                 category = dataGridView1[Macros.CATEGORY_COL, i].Value.ToString();
-                achieve = "成果物<" + dataGridView1[Macros.ACHIEVE_COL, i].Value.ToString() + ">";
-                memo = "メモ：" + dataGridView1[Macros.MEMO_COL, i].Value.ToString();
 
-                if (subject != "") {
-                    body = body + "・" + subject + "(" + category + time + ")\r\n" + achieve + "\r\n" + memo + "\r\n\r\n";
+                // 以前転記して時間が残っていたら削除
+                string[] tmp = subject.Split('(');
+                if (tmp.Length != 0) {
+                    subject = tmp[0];
                 }
 
                 // 工数(後で使う)
@@ -389,6 +365,17 @@ namespace WorkSupportTool
                     if (arrCategory[j] == dataGridView1[Macros.CATEGORY_COL, i].Value.ToString()) {
                         arrWorkTime[j] = arrWorkTime[j] + workTime;
                     }
+                }
+
+                if (workTime != 0) {
+                    dataGridView1[Macros.SUBJECT_COL, i].Value = subject + "(" + (workTime / 60).ToString("00") + ":" + (workTime % 60).ToString("00") + ")";
+                }
+                else {
+                    dataGridView1[Macros.SUBJECT_COL, i].Value = subject;
+                }
+
+                if (i > Macros.SPLIT_ROW) {
+                    continue;
                 }
 
                 // 実績入力
@@ -414,11 +401,11 @@ namespace WorkSupportTool
                             startFlag = false;
                             endTime = DateTime.Parse(dateTimePicker1.Value.ToString("yyyy/MM/dd") + " " + hours + ":" + minutes);
 
-                            settingSchedule2.subject = subject;
-                            settingSchedule2.start = startTime;
-                            settingSchedule2.end = endTime;
-                            settingSchedule2.categories = category;
-                            ctrlOutlook.SetSchedule(settingSchedule2, Macros.RESULT_FOLDER_NAME);
+                            settingSchedule.subject = subject;
+                            settingSchedule.start = startTime;
+                            settingSchedule.end = endTime;
+                            settingSchedule.categories = category;
+                            ctrlOutlook.SetSchedule(settingSchedule, "");
                         }
 
                         if (j == dataGridView1.ColumnCount - 1) {
@@ -429,19 +416,44 @@ namespace WorkSupportTool
                             }
                             endTime = DateTime.Parse(dateTimePicker1.Value.ToString("yyyy/MM/dd") + " " + hours + ":" + minutes);
 
-                            settingSchedule2.subject = subject;
-                            settingSchedule2.start = startTime;
-                            settingSchedule2.end = endTime;
-                            settingSchedule2.categories = category;
-                            ctrlOutlook.SetSchedule(settingSchedule2, Macros.RESULT_FOLDER_NAME);
+                            settingSchedule.subject = subject;
+                            settingSchedule.start = startTime;
+                            settingSchedule.end = endTime;
+                            settingSchedule.categories = category;
+                            ctrlOutlook.SetSchedule(settingSchedule, "");
                         }
                     }
                 }
-
             }
-            settingSchedule.body = body;
-            settingSchedule.location = "所感：" + commentTextBox.Text;
-            ctrlOutlook.SetSchedule(settingSchedule, Macros.RESULT_FOLDER_NAME);
+
+            MessageBox.Show("Outlookへの実績を記入しました", "", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private void CopyButton_Click(object sender, EventArgs e)
+        {
+            int[] arrWorkTime = new int[arrCategory.Length];
+
+            // 工数計算
+            for (int i = Macros.SCHEDULE_ROW; i < Macros.MAX_ROW; i++) {
+                int workTime = 0;
+
+                if (i == Macros.SPLIT_ROW || i == Macros.MTG_ROW) {
+                    continue;
+                }
+
+                for (int j = Macros.TIME_COL; j < dataGridView1.ColumnCount; j++) {
+                    if (dataGridView1[j, i].Style.BackColor == Macros.RESULT_COLOR) {
+                        workTime++;
+                    }
+                }
+
+                workTime = workTime * 15;
+                for (int j = 0; j < arrCategory.Length; j++) {
+                    if (arrCategory[j] == dataGridView1[Macros.CATEGORY_COL, i].Value.ToString()) {
+                        arrWorkTime[j] = arrWorkTime[j] + workTime;
+                    }
+                }
+            }
 
             // クリップボードに工数をコピー
             string copyText = "";
@@ -452,20 +464,16 @@ namespace WorkSupportTool
 
                 if (int.TryParse(values[0], out n)) {
                     copyNum[n] = arrWorkTime[i];
-                }              
+                }
             }
 
             for (int i = 0; i < copyNum.Length; i++) {
                 copyText = copyText + (copyNum[i] / 60).ToString("00") + ":" + (copyNum[i] % 60).ToString("00") + "\t";
             }
             Clipboard.SetText(copyText);
-
-            // 出勤切替
-            ctrlOutlook.ChangeWorkStatus();
+            MessageBox.Show("クリップボードへ工数をコピーしました", "", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
             System.Diagnostics.Process.Start(OutlookAddIn1.Properties.Settings.Default.WORKTIME_URL);
-            MessageBox.Show("Outlook予定表への転機を完了しました\nクリップボードへ工数をコピーしました", "", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            this.Close();
         }
 
         // ダブルクリックで計画・実績入力

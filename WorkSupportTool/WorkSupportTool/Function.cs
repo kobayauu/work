@@ -44,7 +44,6 @@ namespace WorkSupportTool
         // 予定・実績
         public const string PLAN_BTN                    = "計画";
         public const string ACHIEVE_BTN                 = "実績";
-        public const string RESULT_FOLDER_NAME          = "実績";
         public static System.Drawing.Color RESULT_COLOR = Color.LightGreen;
         public static System.Drawing.Color REST_COLOR   = Color.Gray;
         public static System.Drawing.Color NOW_COLOR    = Color.LightPink;
@@ -217,6 +216,7 @@ namespace WorkSupportTool
             appItem.BusyStatus = schedule.busyStatus;
             appItem.ReminderSet = schedule.reminderSet;
             appItem.Importance = schedule.importance;
+            appItem.Sensitivity = OlSensitivity.olPrivate;
             appItem.Close(OlInspectorClose.olSave);
 
             // フォルダ移動(あれば)

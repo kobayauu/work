@@ -126,8 +126,7 @@
             this.PostButton = new System.Windows.Forms.Button();
             this.ClearButton = new System.Windows.Forms.Button();
             this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
-            this.label1 = new System.Windows.Forms.Label();
-            this.commentTextBox = new System.Windows.Forms.TextBox();
+            this.CopyButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -769,31 +768,24 @@
             this.dateTimePicker1.Size = new System.Drawing.Size(200, 19);
             this.dateTimePicker1.TabIndex = 4;
             // 
-            // label1
+            // CopyButton
             // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("MS UI Gothic", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label1.Location = new System.Drawing.Point(450, 12);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(47, 19);
-            this.label1.TabIndex = 5;
-            this.label1.Text = "所感";
-            // 
-            // commentTextBox
-            // 
-            this.commentTextBox.Location = new System.Drawing.Point(503, 7);
-            this.commentTextBox.Multiline = true;
-            this.commentTextBox.Name = "commentTextBox";
-            this.commentTextBox.Size = new System.Drawing.Size(400, 30);
-            this.commentTextBox.TabIndex = 6;
+            this.CopyButton.Font = new System.Drawing.Font("MS UI Gothic", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.CopyButton.Location = new System.Drawing.Point(405, 4);
+            this.CopyButton.Margin = new System.Windows.Forms.Padding(2);
+            this.CopyButton.Name = "CopyButton";
+            this.CopyButton.Size = new System.Drawing.Size(90, 33);
+            this.CopyButton.TabIndex = 5;
+            this.CopyButton.Text = "工数";
+            this.CopyButton.UseVisualStyleBackColor = true;
+            this.CopyButton.Click += new System.EventHandler(this.CopyButton_Click);
             // 
             // ScheduleForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1714, 561);
-            this.Controls.Add(this.commentTextBox);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.CopyButton);
             this.Controls.Add(this.dateTimePicker1);
             this.Controls.Add(this.ClearButton);
             this.Controls.Add(this.PostButton);
@@ -809,7 +801,6 @@
             this.Load += new System.EventHandler(this.ScheduleForm_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -867,7 +858,6 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn Column47;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column48;
         private System.Windows.Forms.DateTimePicker dateTimePicker1;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox commentTextBox;
+        private System.Windows.Forms.Button CopyButton;
     }
 }

@@ -52,9 +52,6 @@ namespace WorkSupportTool
             // 初期値を設定
             workMinutesList.SelectedItem = workMinutesList.Items[24];
             restMinutesList.SelectedItem = restMinutesList.Items[4];
-
-            // 出勤切替
-            ctrlOutlook.ChangeWorkStatus();
         }
 
         private void recordButton_Click(object sender, RibbonControlEventArgs e)

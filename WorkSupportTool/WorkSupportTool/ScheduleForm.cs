@@ -391,60 +391,12 @@ namespace WorkSupportTool
                     }
                 }
 
-                // 予定入力
+                // 実績入力
                 bool startFlag = false;
                 DateTime startTime = dateTimePicker1.Value;
                 DateTime endTime = dateTimePicker1.Value;
                 string hours = "";
                 string minutes = "";
-                string cell =  "";
-                for (int j = Macros.TIME_COL; j < dataGridView1.ColumnCount; j++) {
-                    if (dataGridView1[j, Macros.HEADER_ROW1].Value != null) {
-                        hours = dataGridView1[j, Macros.HEADER_ROW1].Value.ToString();
-                    }
-                    minutes = dataGridView1[j, Macros.HEADER_ROW2].Value.ToString();
-
-                    cell = "";
-                    if (dataGridView1[j, i].Value != null) {
-                        cell = dataGridView1[j, i].Value.ToString();
-                    }
-
-                    if (!startFlag) {
-                        if (cell == Macros.PLAN_MARK) {
-                            startFlag = true;
-                            startTime = DateTime.Parse(dateTimePicker1.Value.ToString("yyyy/MM/dd") + " " + hours + ":" + minutes);
-                        }
-                    }
-                    else {
-                        if (cell != Macros.PLAN_MARK) {
-                            startFlag = false;
-                            endTime = DateTime.Parse(dateTimePicker1.Value.ToString("yyyy/MM/dd") + " " + hours + ":" + minutes);
-
-                            settingSchedule2.subject = subject + "(予定)";
-                            settingSchedule2.start = startTime;
-                            settingSchedule2.end = endTime;
-                            settingSchedule2.categories = "";
-                            ctrlOutlook.SetSchedule(settingSchedule2, Macros.RESULT_FOLDER_NAME);
-                        }
-
-                        if (j == dataGridView1.ColumnCount - 1) {
-                            startFlag = false;
-                            minutes = ((int.Parse(minutes) + 15) % 60).ToString();
-                            if (minutes == "0") {
-                                hours = (int.Parse(hours) + 1).ToString();
-                            }
-                            endTime = DateTime.Parse(dateTimePicker1.Value.ToString("yyyy/MM/dd") + " " + hours + ":" + minutes);
-
-                            settingSchedule2.subject = subject + "(予定)";
-                            settingSchedule2.start = startTime;
-                            settingSchedule2.end = endTime;
-                            settingSchedule2.categories = "";
-                            ctrlOutlook.SetSchedule(settingSchedule2, Macros.RESULT_FOLDER_NAME);
-                        }
-                    }
-                }
-
-                // 実績入力
                 for (int j = Macros.TIME_COL; j < dataGridView1.ColumnCount; j++) {
                     if (dataGridView1[j, Macros.HEADER_ROW1].Value != null) {
                         hours = dataGridView1[j, Macros.HEADER_ROW1].Value.ToString();
@@ -487,7 +439,8 @@ namespace WorkSupportTool
                 }
 
             }
-            settingSchedule.body = body + "\r\n■所感：" + commentTextBox.Text;
+            settingSchedule.body = body;
+            settingSchedule.location = "所感：" + commentTextBox.Text;
             ctrlOutlook.SetSchedule(settingSchedule, Macros.RESULT_FOLDER_NAME);
 
             // クリップボードに工数をコピー

@@ -405,6 +405,8 @@ namespace WorkSupportTool
                             settingSchedule.start = startTime;
                             settingSchedule.end = endTime;
                             settingSchedule.categories = category;
+                            settingSchedule.importance = OlImportance.olImportanceNormal;
+                            settingSchedule.sensitivity = OlSensitivity.olPrivate;
                             ctrlOutlook.SetSchedule(settingSchedule, "");
                         }
 
@@ -420,6 +422,8 @@ namespace WorkSupportTool
                             settingSchedule.start = startTime;
                             settingSchedule.end = endTime;
                             settingSchedule.categories = category;
+                            settingSchedule.importance = OlImportance.olImportanceNormal;
+                            settingSchedule.sensitivity = OlSensitivity.olPrivate;
                             ctrlOutlook.SetSchedule(settingSchedule, "");
                         }
                     }

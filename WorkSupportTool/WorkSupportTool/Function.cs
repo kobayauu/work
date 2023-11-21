@@ -144,6 +144,7 @@ namespace WorkSupportTool
             public OlBusyStatus busyStatus;
             public bool reminderSet;
             public OlImportance importance;
+            public OlSensitivity sensitivity;
 
             public scheduleSetting(string subject) {
                 this.subject = subject;
@@ -156,6 +157,7 @@ namespace WorkSupportTool
                 this.busyStatus = OlBusyStatus.olFree;
                 this.reminderSet = false;
                 this.importance = OlImportance.olImportanceNormal;
+                this.sensitivity = OlSensitivity.olPrivate;
             }
         }
         /****************************************************************************************************/
@@ -216,7 +218,7 @@ namespace WorkSupportTool
             appItem.BusyStatus = schedule.busyStatus;
             appItem.ReminderSet = schedule.reminderSet;
             appItem.Importance = schedule.importance;
-            appItem.Sensitivity = OlSensitivity.olPrivate;
+            appItem.Sensitivity = schedule.sensitivity;
             appItem.Close(OlInspectorClose.olSave);
 
             // フォルダ移動(あれば)
@@ -262,6 +264,7 @@ namespace WorkSupportTool
                 schedule[i].busyStatus = item.BusyStatus;
                 schedule[i].reminderSet = item.ReminderSet;
                 schedule[i].importance = item.Importance;
+                schedule[i].sensitivity = item.Sensitivity;
                 i++;
             }
 
@@ -297,6 +300,7 @@ namespace WorkSupportTool
                     item.BusyStatus = schedule.busyStatus;
                     item.ReminderSet = schedule.reminderSet;
                     item.Importance = schedule.importance;
+                    //item.Sensitivity = schedule.sensitivity;
                     item.Save();
                     break;
                 }
@@ -326,60 +330,6 @@ namespace WorkSupportTool
 
             // 接続解除
             DisconnectOutlook();
-
-            return 0;
-        }
-
-        public int ChangeWorkStatus()
-        {
-            bool isWorkFlag = false;
-            bool isEndFlag = false;
-            string todayDate = DateTime.Today.ToString("yyyy/MM/dd");
-            string startWork = "出社(勤務中)";
-            string endWork = "退勤";
-            CtrlOutlook.scheduleSetting settingSchedule = new CtrlOutlook.scheduleSetting();
-            CtrlOutlook.scheduleSetting[] gettingSchedule = new CtrlOutlook.scheduleSetting[0];
-
-            // 初期化
-            settingSchedule.start = DateTime.Now;
-            settingSchedule.end = DateTime.Now;
-            settingSchedule.location = "GTハードソフト研(第1-2F)";
-            settingSchedule.allDayEvent = true;
-            settingSchedule.busyStatus = OlBusyStatus.olFree;
-            settingSchedule.importance = OlImportance.olImportanceNormal;
-
-            // 
-            GetSchedule(todayDate, ref gettingSchedule);
-            for (int i = 0; i < gettingSchedule.Length; i++) {
-                if (gettingSchedule[i].subject == startWork) {
-                    isWorkFlag = true;
-                    //break;
-                }
-                if (gettingSchedule[i].subject == endWork) {
-                    isEndFlag = true;
-                    //break;
-                }
-            }
-
-            if (isWorkFlag) {
-                if (MessageBox.Show("退勤しますか？", "", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes) {
-                    settingSchedule.subject = endWork;
-                    settingSchedule.location = "";
-                    ChangeSchedule(todayDate, startWork, settingSchedule);
-                }
-            }
-            else {
-                if (MessageBox.Show("出勤しますか？", "", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes) {
-                    if (isEndFlag) {
-                        settingSchedule.subject = startWork;
-                        ChangeSchedule(todayDate, endWork, settingSchedule);
-                    }
-                    else {
-                        settingSchedule.subject = startWork;
-                        SetSchedule(settingSchedule, "");
-                    }
-                }
-            }
 
             return 0;
         }

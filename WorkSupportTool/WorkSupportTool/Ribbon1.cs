@@ -73,7 +73,55 @@ namespace WorkSupportTool
 
         private void WorkButton_Click(object sender, RibbonControlEventArgs e)
         {
-            ctrlOutlook.ChangeWorkStatus();
+            bool isWorkFlag = false;
+            bool isEndFlag = false;
+            string todayDate = DateTime.Today.ToString("yyyy/MM/dd");
+            string startWork = "出社(勤務中)";
+            string endWork = "退勤";
+            CtrlOutlook.scheduleSetting settingSchedule = new CtrlOutlook.scheduleSetting();
+            CtrlOutlook.scheduleSetting[] gettingSchedule = new CtrlOutlook.scheduleSetting[0];
+
+            // 初期化
+            settingSchedule.start = DateTime.Now;
+            settingSchedule.end = DateTime.Now;
+            settingSchedule.location = "GTハードソフト研(第1-2F)";
+            settingSchedule.allDayEvent = true;
+            settingSchedule.busyStatus = OlBusyStatus.olFree;
+            settingSchedule.importance = OlImportance.olImportanceNormal;
+            settingSchedule.sensitivity = OlSensitivity.olNormal;
+
+            // 
+            ctrlOutlook.GetSchedule(todayDate, ref gettingSchedule);
+            for (int i = 0; i < gettingSchedule.Length; i++) {
+                if (gettingSchedule[i].subject == startWork) {
+                    isWorkFlag = true;
+                    //break;
+                }
+                if (gettingSchedule[i].subject == endWork) {
+                    isEndFlag = true;
+                    //break;
+                }
+            }
+
+            if (isWorkFlag) {
+                if (MessageBox.Show("退勤しますか？", "", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes) {
+                    settingSchedule.subject = endWork;
+                    settingSchedule.location = "";
+                    ctrlOutlook.ChangeSchedule(todayDate, startWork, settingSchedule);
+                }
+            }
+            else {
+                if (MessageBox.Show("出勤しますか？", "", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes) {
+                    if (isEndFlag) {
+                        settingSchedule.subject = startWork;
+                        ctrlOutlook.ChangeSchedule(todayDate, endWork, settingSchedule);
+                    }
+                    else {
+                        settingSchedule.subject = startWork;
+                        ctrlOutlook.SetSchedule(settingSchedule, "");
+                    }
+                }
+            }
         }
 
         private void homeWorkButton_Click(object sender, RibbonControlEventArgs e)
@@ -95,6 +143,7 @@ namespace WorkSupportTool
             settingSchedule.allDayEvent = true;
             settingSchedule.busyStatus = OlBusyStatus.olWorkingElsewhere;
             settingSchedule.importance = OlImportance.olImportanceNormal;
+            settingSchedule.sensitivity = OlSensitivity.olNormal;
 
             // 
             ctrlOutlook.GetSchedule(todayDate, ref gettingSchedule);

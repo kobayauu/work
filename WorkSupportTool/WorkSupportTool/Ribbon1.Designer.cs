@@ -34,17 +34,47 @@
         /// </summary>
         private void InitializeComponent()
         {
+            Microsoft.Office.Tools.Ribbon.RibbonDropDownItem ribbonDropDownItemImpl1 = this.Factory.CreateRibbonDropDownItem();
+            Microsoft.Office.Tools.Ribbon.RibbonDropDownItem ribbonDropDownItemImpl2 = this.Factory.CreateRibbonDropDownItem();
+            Microsoft.Office.Tools.Ribbon.RibbonDropDownItem ribbonDropDownItemImpl3 = this.Factory.CreateRibbonDropDownItem();
+            Microsoft.Office.Tools.Ribbon.RibbonDropDownItem ribbonDropDownItemImpl4 = this.Factory.CreateRibbonDropDownItem();
+            Microsoft.Office.Tools.Ribbon.RibbonDropDownItem ribbonDropDownItemImpl5 = this.Factory.CreateRibbonDropDownItem();
+            Microsoft.Office.Tools.Ribbon.RibbonDropDownItem ribbonDropDownItemImpl6 = this.Factory.CreateRibbonDropDownItem();
+            Microsoft.Office.Tools.Ribbon.RibbonDropDownItem ribbonDropDownItemImpl7 = this.Factory.CreateRibbonDropDownItem();
+            Microsoft.Office.Tools.Ribbon.RibbonDropDownItem ribbonDropDownItemImpl8 = this.Factory.CreateRibbonDropDownItem();
+            Microsoft.Office.Tools.Ribbon.RibbonDropDownItem ribbonDropDownItemImpl9 = this.Factory.CreateRibbonDropDownItem();
+            Microsoft.Office.Tools.Ribbon.RibbonDropDownItem ribbonDropDownItemImpl10 = this.Factory.CreateRibbonDropDownItem();
+            Microsoft.Office.Tools.Ribbon.RibbonDropDownItem ribbonDropDownItemImpl11 = this.Factory.CreateRibbonDropDownItem();
+            Microsoft.Office.Tools.Ribbon.RibbonDropDownItem ribbonDropDownItemImpl12 = this.Factory.CreateRibbonDropDownItem();
+            Microsoft.Office.Tools.Ribbon.RibbonDropDownItem ribbonDropDownItemImpl13 = this.Factory.CreateRibbonDropDownItem();
+            Microsoft.Office.Tools.Ribbon.RibbonDropDownItem ribbonDropDownItemImpl14 = this.Factory.CreateRibbonDropDownItem();
+            Microsoft.Office.Tools.Ribbon.RibbonDropDownItem ribbonDropDownItemImpl15 = this.Factory.CreateRibbonDropDownItem();
+            Microsoft.Office.Tools.Ribbon.RibbonDropDownItem ribbonDropDownItemImpl16 = this.Factory.CreateRibbonDropDownItem();
+            Microsoft.Office.Tools.Ribbon.RibbonDropDownItem ribbonDropDownItemImpl17 = this.Factory.CreateRibbonDropDownItem();
+            Microsoft.Office.Tools.Ribbon.RibbonDropDownItem ribbonDropDownItemImpl18 = this.Factory.CreateRibbonDropDownItem();
+            Microsoft.Office.Tools.Ribbon.RibbonDropDownItem ribbonDropDownItemImpl19 = this.Factory.CreateRibbonDropDownItem();
+            Microsoft.Office.Tools.Ribbon.RibbonDropDownItem ribbonDropDownItemImpl20 = this.Factory.CreateRibbonDropDownItem();
+            Microsoft.Office.Tools.Ribbon.RibbonDropDownItem ribbonDropDownItemImpl21 = this.Factory.CreateRibbonDropDownItem();
+            Microsoft.Office.Tools.Ribbon.RibbonDropDownItem ribbonDropDownItemImpl22 = this.Factory.CreateRibbonDropDownItem();
+            Microsoft.Office.Tools.Ribbon.RibbonDropDownItem ribbonDropDownItemImpl23 = this.Factory.CreateRibbonDropDownItem();
+            Microsoft.Office.Tools.Ribbon.RibbonDropDownItem ribbonDropDownItemImpl24 = this.Factory.CreateRibbonDropDownItem();
+            Microsoft.Office.Tools.Ribbon.RibbonDropDownItem ribbonDropDownItemImpl25 = this.Factory.CreateRibbonDropDownItem();
+            Microsoft.Office.Tools.Ribbon.RibbonDropDownItem ribbonDropDownItemImpl26 = this.Factory.CreateRibbonDropDownItem();
+            Microsoft.Office.Tools.Ribbon.RibbonDropDownItem ribbonDropDownItemImpl27 = this.Factory.CreateRibbonDropDownItem();
+            Microsoft.Office.Tools.Ribbon.RibbonDropDownItem ribbonDropDownItemImpl28 = this.Factory.CreateRibbonDropDownItem();
+            Microsoft.Office.Tools.Ribbon.RibbonDropDownItem ribbonDropDownItemImpl29 = this.Factory.CreateRibbonDropDownItem();
+            Microsoft.Office.Tools.Ribbon.RibbonDropDownItem ribbonDropDownItemImpl30 = this.Factory.CreateRibbonDropDownItem();
             this.tab1 = this.Factory.CreateRibbonTab();
             this.group3 = this.Factory.CreateRibbonGroup();
-            this.subjectComboBox = this.Factory.CreateRibbonComboBox();
-            this.group1 = this.Factory.CreateRibbonGroup();
-            this.workMinutesList = this.Factory.CreateRibbonDropDown();
-            this.restMinutesList = this.Factory.CreateRibbonDropDown();
-            this.scheduleButton = this.Factory.CreateRibbonButton();
-            this.recordButton = this.Factory.CreateRibbonButton();
+            this.ScheduleButton = this.Factory.CreateRibbonButton();
+            this.RecordButton = this.Factory.CreateRibbonButton();
+            this.SubjectComboBox = this.Factory.CreateRibbonComboBox();
             this.WorkButton = this.Factory.CreateRibbonButton();
-            this.homeWorkButton = this.Factory.CreateRibbonButton();
-            this.pomodoroTimerButton = this.Factory.CreateRibbonButton();
+            this.HomeWorkButton = this.Factory.CreateRibbonButton();
+            this.group1 = this.Factory.CreateRibbonGroup();
+            this.PomodoroButton = this.Factory.CreateRibbonButton();
+            this.WorkMinutesDropDown = this.Factory.CreateRibbonDropDown();
+            this.RestMinutesDropDown = this.Factory.CreateRibbonDropDown();
             this.tab1.SuspendLayout();
             this.group3.SuspendLayout();
             this.group1.SuspendLayout();
@@ -60,53 +90,35 @@
             // 
             // group3
             // 
-            this.group3.Items.Add(this.scheduleButton);
-            this.group3.Items.Add(this.recordButton);
-            this.group3.Items.Add(this.subjectComboBox);
+            this.group3.Items.Add(this.ScheduleButton);
+            this.group3.Items.Add(this.RecordButton);
+            this.group3.Items.Add(this.SubjectComboBox);
             this.group3.Items.Add(this.WorkButton);
-            this.group3.Items.Add(this.homeWorkButton);
+            this.group3.Items.Add(this.HomeWorkButton);
             this.group3.Label = "勤務管理";
             this.group3.Name = "group3";
             // 
-            // subjectComboBox
+            // ScheduleButton
             // 
-            this.subjectComboBox.Label = "件名";
-            this.subjectComboBox.Name = "subjectComboBox";
-            this.subjectComboBox.Text = null;
+            this.ScheduleButton.Image = global::OutlookAddIn1.Properties.Resources.schedule;
+            this.ScheduleButton.Label = "予定表";
+            this.ScheduleButton.Name = "ScheduleButton";
+            this.ScheduleButton.ShowImage = true;
+            this.ScheduleButton.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.ScheduleButton_Click);
             // 
-            // group1
+            // RecordButton
             // 
-            this.group1.Items.Add(this.pomodoroTimerButton);
-            this.group1.Items.Add(this.workMinutesList);
-            this.group1.Items.Add(this.restMinutesList);
-            this.group1.Label = "ポモードロタイマー";
-            this.group1.Name = "group1";
+            this.RecordButton.Image = global::OutlookAddIn1.Properties.Resources.startRecord;
+            this.RecordButton.Label = "記録開始";
+            this.RecordButton.Name = "RecordButton";
+            this.RecordButton.ShowImage = true;
+            this.RecordButton.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.RecordButton_Click);
             // 
-            // workMinutesList
+            // SubjectComboBox
             // 
-            this.workMinutesList.Label = "作業[分]";
-            this.workMinutesList.Name = "workMinutesList";
-            // 
-            // restMinutesList
-            // 
-            this.restMinutesList.Label = "休憩[分]";
-            this.restMinutesList.Name = "restMinutesList";
-            // 
-            // scheduleButton
-            // 
-            this.scheduleButton.Image = global::OutlookAddIn1.Properties.Resources.schedule;
-            this.scheduleButton.Label = "予定表";
-            this.scheduleButton.Name = "scheduleButton";
-            this.scheduleButton.ShowImage = true;
-            this.scheduleButton.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.scheduleButton_Click);
-            // 
-            // recordButton
-            // 
-            this.recordButton.Image = global::OutlookAddIn1.Properties.Resources.startRecord;
-            this.recordButton.Label = "記録開始";
-            this.recordButton.Name = "recordButton";
-            this.recordButton.ShowImage = true;
-            this.recordButton.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.recordButton_Click);
+            this.SubjectComboBox.Label = "件名";
+            this.SubjectComboBox.Name = "SubjectComboBox";
+            this.SubjectComboBox.Text = null;
             // 
             // WorkButton
             // 
@@ -116,21 +128,99 @@
             this.WorkButton.ShowImage = true;
             this.WorkButton.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.WorkButton_Click);
             // 
-            // homeWorkButton
+            // HomeWorkButton
             // 
-            this.homeWorkButton.Image = global::OutlookAddIn1.Properties.Resources.home;
-            this.homeWorkButton.Label = "在宅切替";
-            this.homeWorkButton.Name = "homeWorkButton";
-            this.homeWorkButton.ShowImage = true;
-            this.homeWorkButton.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.homeWorkButton_Click);
+            this.HomeWorkButton.Image = global::OutlookAddIn1.Properties.Resources.home;
+            this.HomeWorkButton.Label = "在宅切替";
+            this.HomeWorkButton.Name = "HomeWorkButton";
+            this.HomeWorkButton.ShowImage = true;
+            this.HomeWorkButton.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.HomeWorkButton_Click);
             // 
-            // pomodoroTimerButton
+            // group1
             // 
-            this.pomodoroTimerButton.Image = global::OutlookAddIn1.Properties.Resources.startTimer;
-            this.pomodoroTimerButton.Label = "タイマー開始";
-            this.pomodoroTimerButton.Name = "pomodoroTimerButton";
-            this.pomodoroTimerButton.ShowImage = true;
-            this.pomodoroTimerButton.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.pomodoroTimerButton_Click);
+            this.group1.Items.Add(this.PomodoroButton);
+            this.group1.Items.Add(this.WorkMinutesDropDown);
+            this.group1.Items.Add(this.RestMinutesDropDown);
+            this.group1.Label = "ポモードロタイマー";
+            this.group1.Name = "group1";
+            // 
+            // PomodoroButton
+            // 
+            this.PomodoroButton.Image = global::OutlookAddIn1.Properties.Resources.startTimer;
+            this.PomodoroButton.Label = "タイマー開始";
+            this.PomodoroButton.Name = "PomodoroButton";
+            this.PomodoroButton.ShowImage = true;
+            this.PomodoroButton.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.pomodoroTimerButton_Click);
+            // 
+            // WorkMinutesDropDown
+            // 
+            ribbonDropDownItemImpl1.Label = "1";
+            ribbonDropDownItemImpl2.Label = "2";
+            ribbonDropDownItemImpl3.Label = "3";
+            ribbonDropDownItemImpl4.Label = "4";
+            ribbonDropDownItemImpl5.Label = "5";
+            ribbonDropDownItemImpl6.Label = "6";
+            ribbonDropDownItemImpl7.Label = "7";
+            ribbonDropDownItemImpl8.Label = "8";
+            ribbonDropDownItemImpl9.Label = "9";
+            ribbonDropDownItemImpl10.Label = "10";
+            ribbonDropDownItemImpl11.Label = "11";
+            ribbonDropDownItemImpl12.Label = "12";
+            ribbonDropDownItemImpl13.Label = "13";
+            ribbonDropDownItemImpl14.Label = "14";
+            ribbonDropDownItemImpl15.Label = "15";
+            ribbonDropDownItemImpl16.Label = "16";
+            ribbonDropDownItemImpl17.Label = "17";
+            ribbonDropDownItemImpl18.Label = "18";
+            ribbonDropDownItemImpl19.Label = "19";
+            ribbonDropDownItemImpl20.Label = "20";
+            ribbonDropDownItemImpl21.Label = "21";
+            ribbonDropDownItemImpl22.Label = "22";
+            ribbonDropDownItemImpl23.Label = "23";
+            ribbonDropDownItemImpl24.Label = "24";
+            ribbonDropDownItemImpl25.Label = "25";
+            this.WorkMinutesDropDown.Items.Add(ribbonDropDownItemImpl1);
+            this.WorkMinutesDropDown.Items.Add(ribbonDropDownItemImpl2);
+            this.WorkMinutesDropDown.Items.Add(ribbonDropDownItemImpl3);
+            this.WorkMinutesDropDown.Items.Add(ribbonDropDownItemImpl4);
+            this.WorkMinutesDropDown.Items.Add(ribbonDropDownItemImpl5);
+            this.WorkMinutesDropDown.Items.Add(ribbonDropDownItemImpl6);
+            this.WorkMinutesDropDown.Items.Add(ribbonDropDownItemImpl7);
+            this.WorkMinutesDropDown.Items.Add(ribbonDropDownItemImpl8);
+            this.WorkMinutesDropDown.Items.Add(ribbonDropDownItemImpl9);
+            this.WorkMinutesDropDown.Items.Add(ribbonDropDownItemImpl10);
+            this.WorkMinutesDropDown.Items.Add(ribbonDropDownItemImpl11);
+            this.WorkMinutesDropDown.Items.Add(ribbonDropDownItemImpl12);
+            this.WorkMinutesDropDown.Items.Add(ribbonDropDownItemImpl13);
+            this.WorkMinutesDropDown.Items.Add(ribbonDropDownItemImpl14);
+            this.WorkMinutesDropDown.Items.Add(ribbonDropDownItemImpl15);
+            this.WorkMinutesDropDown.Items.Add(ribbonDropDownItemImpl16);
+            this.WorkMinutesDropDown.Items.Add(ribbonDropDownItemImpl17);
+            this.WorkMinutesDropDown.Items.Add(ribbonDropDownItemImpl18);
+            this.WorkMinutesDropDown.Items.Add(ribbonDropDownItemImpl19);
+            this.WorkMinutesDropDown.Items.Add(ribbonDropDownItemImpl20);
+            this.WorkMinutesDropDown.Items.Add(ribbonDropDownItemImpl21);
+            this.WorkMinutesDropDown.Items.Add(ribbonDropDownItemImpl22);
+            this.WorkMinutesDropDown.Items.Add(ribbonDropDownItemImpl23);
+            this.WorkMinutesDropDown.Items.Add(ribbonDropDownItemImpl24);
+            this.WorkMinutesDropDown.Items.Add(ribbonDropDownItemImpl25);
+            this.WorkMinutesDropDown.Label = "作業[分]";
+            this.WorkMinutesDropDown.Name = "WorkMinutesDropDown";
+            // 
+            // RestMinutesDropDown
+            // 
+            ribbonDropDownItemImpl26.Label = "1";
+            ribbonDropDownItemImpl27.Label = "2";
+            ribbonDropDownItemImpl28.Label = "3";
+            ribbonDropDownItemImpl29.Label = "4";
+            ribbonDropDownItemImpl30.Label = "5";
+            this.RestMinutesDropDown.Items.Add(ribbonDropDownItemImpl26);
+            this.RestMinutesDropDown.Items.Add(ribbonDropDownItemImpl27);
+            this.RestMinutesDropDown.Items.Add(ribbonDropDownItemImpl28);
+            this.RestMinutesDropDown.Items.Add(ribbonDropDownItemImpl29);
+            this.RestMinutesDropDown.Items.Add(ribbonDropDownItemImpl30);
+            this.RestMinutesDropDown.Label = "休憩[分]";
+            this.RestMinutesDropDown.Name = "RestMinutesDropDown";
             // 
             // Ribbon1
             // 
@@ -152,14 +242,14 @@
 
         internal Microsoft.Office.Tools.Ribbon.RibbonTab tab1;
         internal Microsoft.Office.Tools.Ribbon.RibbonGroup group1;
-        internal Microsoft.Office.Tools.Ribbon.RibbonDropDown workMinutesList;
-        internal Microsoft.Office.Tools.Ribbon.RibbonDropDown restMinutesList;
-        internal Microsoft.Office.Tools.Ribbon.RibbonButton homeWorkButton;
-        internal Microsoft.Office.Tools.Ribbon.RibbonButton pomodoroTimerButton;
+        internal Microsoft.Office.Tools.Ribbon.RibbonDropDown WorkMinutesDropDown;
+        internal Microsoft.Office.Tools.Ribbon.RibbonDropDown RestMinutesDropDown;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton HomeWorkButton;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton PomodoroButton;
         internal Microsoft.Office.Tools.Ribbon.RibbonGroup group3;
-        internal Microsoft.Office.Tools.Ribbon.RibbonButton recordButton;
-        internal Microsoft.Office.Tools.Ribbon.RibbonButton scheduleButton;
-        internal Microsoft.Office.Tools.Ribbon.RibbonComboBox subjectComboBox;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton RecordButton;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton ScheduleButton;
+        internal Microsoft.Office.Tools.Ribbon.RibbonComboBox SubjectComboBox;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton WorkButton;
     }
 

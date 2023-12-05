@@ -26,48 +26,75 @@ namespace OutlookAddIn1.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("C:\\\\Users\\\\kobayauu\\\\OneDrive - Brother\\\\schedule.csv")]
-        public string SCHEDULE_FILE {
+        public string shcheduleFile {
             get {
-                return ((string)(this["SCHEDULE_FILE"]));
+                return ((string)(this["shcheduleFile"]));
             }
             set {
-                this["SCHEDULE_FILE"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("C:\\\\Users\\\\kobayauu\\\\OneDrive - Brother\\\\setting.csv")]
-        public string SETTING_FILE {
-            get {
-                return ((string)(this["SETTING_FILE"]));
-            }
-            set {
-                this["SETTING_FILE"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("7")]
-        public string START_TIME {
-            get {
-                return ((string)(this["START_TIME"]));
-            }
-            set {
-                this["START_TIME"] = value;
+                this["shcheduleFile"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("http://133.151.236.52/TimePro-VG/page/OVg00050t.aspx?type=pclocking")]
-        public string WORKTIME_URL {
+        public string worktimeURL {
             get {
-                return ((string)(this["WORKTIME_URL"]));
+                return ((string)(this["worktimeURL"]));
             }
             set {
-                this["WORKTIME_URL"] = value;
+                this["worktimeURL"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int scheduleMode {
+            get {
+                return ((int)(this["scheduleMode"]));
+            }
+            set {
+                this["scheduleMode"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("60000")]
+        public int timerSpan {
+            get {
+                return ((int)(this["timerSpan"]));
+            }
+            set {
+                this["timerSpan"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("10:00,12:00,12:15,12:30,12:45,15:00,18:00,20:00")]
+        public string restTime {
+            get {
+                return ((string)(this["restTime"]));
+            }
+            set {
+                this["restTime"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("朝会-00_現行機種[特殊印刷機] GG51100,アプリMTG-00_現行機種[特殊印刷機] GG51100,ソフトMTG-00_現行機種[特殊印刷機] GG5" +
+            "1100,GTXpoly定例-03_GTXpoly GDGS300,GT CFT-00_現行機種[特殊印刷機] GG51100,GTXpoly製造定例（製造-開" +
+            "発）-03_GTXpoly GDGS300,使い倒しWG(全体)-00_現行機種[特殊印刷機] GG51100,使い倒しWG【DTF】-00_現行機種[特殊印刷" +
+            "機] GG51100")]
+        public string regularMTG {
+            get {
+                return ((string)(this["regularMTG"]));
+            }
+            set {
+                this["regularMTG"] = value;
             }
         }
     }

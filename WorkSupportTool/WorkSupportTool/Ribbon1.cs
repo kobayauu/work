@@ -5,435 +5,358 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Microsoft.Office.Interop.Outlook;
-using Microsoft.Toolkit.Uwp.Notifications;
 
 namespace WorkSupportTool
 {
     public partial class Ribbon1
     {
-        CtrlOutlook ctrlOutlook = new CtrlOutlook();
-        CtrlFile ctrlFile = new CtrlFile();
+        // 予定表チェックタイマー
+        System.Timers.Timer recordTimer = new System.Timers.Timer(OutlookAddIn1.Properties.Settings.Default.timerSpan);
+        int recording                   = 0x00; // 0bit目：記録中フラグ、1bit目：自動記録中フラグ
+        DateTime startWorkTime          = DateTime.Now;
+        DateTime endWorkTime            = DateTime.Now;
 
-        System.Timers.Timer pomodoroTimer = new System.Timers.Timer(Macros.POMODORO_TIMER_INTERVAL);
-        int remainingSeconds = 0;
-        string pomodoroTimerStatus = Macros.STATUS_TIMER_STOP;
+        // ポモードロタイマー
+        System.Timers.Timer pomodoroTimer = new System.Timers.Timer(1000);
+        int remainingSeconds              = 0;
 
-        System.Timers.Timer recordTimer = new System.Timers.Timer(Macros.RECORD_TIMER_INTERVAL);
-        DateTime workStartTime = DateTime.Now;
-        DateTime workEndTime = DateTime.Now;
-        bool recordFlag = false;
-        bool autoRecordFlag = false;
-        
 
         private void Ribbon1_Load(object sender, RibbonUIEventArgs e)
         {
-            RibbonDropDownItem item;
-
-            // 予定表読込
-            UpdateSubject();
-
             // 予定表チェックタイマー設定
-            recordTimer.Elapsed += new System.Timers.ElapsedEventHandler(OnElapsed_recordTimer);
-            recordTimer.Start();
+            recordTimer.Elapsed += new System.Timers.ElapsedEventHandler(OnElapsed_RecordTimer);
 
             // ポモードロタイマー設定
-            pomodoroTimer.Elapsed += new System.Timers.ElapsedEventHandler(OnElapsed_pomodoroTimer);
+            pomodoroTimer.Elapsed += new System.Timers.ElapsedEventHandler(OnElapsed_PomodoroTimer);
+            WorkMinutesDropDown.SelectedItem = WorkMinutesDropDown.Items[24];
+            RestMinutesDropDown.SelectedItem = RestMinutesDropDown.Items[4];
 
-            // コンボボックスに値を追加
-            for (int i = 1; i <= 60; i++) {
-                item = Factory.CreateRibbonDropDownItem();
-                item.Label = i.ToString();
-                workMinutesList.Items.Add(item);
-                item = Factory.CreateRibbonDropDownItem();
-                item.Label = i.ToString();
-                restMinutesList.Items.Add(item);
-            }
+            // 件名リスト読込
+            UpdateSubject();
 
-            // 初期値を設定
-            workMinutesList.SelectedItem = workMinutesList.Items[24];
-            restMinutesList.SelectedItem = restMinutesList.Items[4];
+            // 記録用タイマー開始
+            recordTimer.Start();
         }
 
-        private void recordButton_Click(object sender, RibbonControlEventArgs e)
+        private void ScheduleButton_Click(object sender, RibbonControlEventArgs e)
         {
-            RecordWork();
-        }
-
-        private void scheduleButton_Click(object sender, RibbonControlEventArgs e)
-        {
-            ScheduleForm scheduleForm = new ScheduleForm();
-
             // 予定表表示
+            ScheduleForm scheduleForm = new ScheduleForm();
             scheduleForm.ShowDialog();
 
-            // 予定表読込
-            subjectComboBox.Items.Clear();
+            // 件名リスト更新
+            SubjectComboBox.Items.Clear();
             UpdateSubject();
         }
 
-        private void WorkButton_Click(object sender, RibbonControlEventArgs e)
+        private void RecordButton_Click(object sender, RibbonControlEventArgs e)
         {
-            bool isWorkFlag = false;
-            bool isEndFlag = false;
-            string todayDate = DateTime.Today.ToString("yyyy/MM/dd");
-            string startWork = "出社(勤務中)";
-            string endWork = "退勤";
-            CtrlOutlook.scheduleSetting settingSchedule = new CtrlOutlook.scheduleSetting();
-            CtrlOutlook.scheduleSetting[] gettingSchedule = new CtrlOutlook.scheduleSetting[0];
-
-            // 初期化
-            settingSchedule.start = DateTime.Now;
-            settingSchedule.end = DateTime.Now;
-            settingSchedule.location = "GTハードソフト研(第1-2F)";
-            settingSchedule.allDayEvent = true;
-            settingSchedule.busyStatus = OlBusyStatus.olFree;
-            settingSchedule.importance = OlImportance.olImportanceNormal;
-            settingSchedule.sensitivity = OlSensitivity.olNormal;
-
-            // 
-            ctrlOutlook.GetSchedule(todayDate, ref gettingSchedule);
-            for (int i = 0; i < gettingSchedule.Length; i++) {
-                if (gettingSchedule[i].subject == startWork) {
-                    isWorkFlag = true;
-                    //break;
-                }
-                if (gettingSchedule[i].subject == endWork) {
-                    isEndFlag = true;
-                    //break;
-                }
+            if ((recording & 0x01) == 0x00) {
+                StartRecord();
             }
-
-            if (isWorkFlag) {
-                if (MessageBox.Show("退勤しますか？", "", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes) {
-                    settingSchedule.subject = endWork;
-                    settingSchedule.location = "";
-                    ctrlOutlook.ChangeSchedule(todayDate, startWork, settingSchedule);
-                }
-            }
-            else {
-                if (MessageBox.Show("出勤しますか？", "", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes) {
-                    if (isEndFlag) {
-                        settingSchedule.subject = startWork;
-                        ctrlOutlook.ChangeSchedule(todayDate, endWork, settingSchedule);
-                    }
-                    else {
-                        settingSchedule.subject = startWork;
-                        ctrlOutlook.SetSchedule(settingSchedule, "");
-                    }
-                }
+            else if ((recording & 0x01) == 0x01) {
+                StopRecord();
             }
         }
 
-        private void homeWorkButton_Click(object sender, RibbonControlEventArgs e)
+        private void StartRecord() {
+            if (SubjectComboBox.Text == "") {
+                MessageBox.Show("件名を入力してください", "WorkSupportTool", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            recording              |= 0x01;
+            startWorkTime           = DateTime.Now;
+            RecordButton.Label      = "停止・登録";
+            RecordButton.Image      = OutlookAddIn1.Properties.Resources.record;
+            SubjectComboBox.Enabled = false;
+        }
+
+        private void StopRecord()
         {
-            bool ishomeFlag = false;
-            bool changeFlag = false;
-            string todayDate = DateTime.Today.ToString("yyyy/MM/dd");
-            string doingHomeWork = "在宅(勤務中)";
-            string planHomeWork = "在宅(予定)";
-            string startHomeWork = "在宅(開始)";
-            string endHomeWork = "在宅(終了)";
-            string msgID = "";
-            CtrlOutlook.scheduleSetting settingSchedule = new CtrlOutlook.scheduleSetting();
-            CtrlOutlook.scheduleSetting[] gettingSchedule = new CtrlOutlook.scheduleSetting[0];
+            string[] lines = new string[0];
+            int writeRow   = 0;
+            int startCol   = 0;
+            int endCol     = 0;
 
-            // 初期化
-            settingSchedule.start = DateTime.Now;
-            settingSchedule.end = DateTime.Now;
-            settingSchedule.allDayEvent = true;
-            settingSchedule.busyStatus = OlBusyStatus.olWorkingElsewhere;
-            settingSchedule.importance = OlImportance.olImportanceNormal;
-            settingSchedule.sensitivity = OlSensitivity.olNormal;
+            // ファイル読込
+            Common.ctrlFile.ReadCSVFile(OutlookAddIn1.Properties.Settings.Default.shcheduleFile, ref lines);
+            string[] hours   = lines[0].Split(',');
+            string[] minutes = lines[1].Split(',');
 
-            // 
-            ctrlOutlook.GetSchedule(todayDate, ref gettingSchedule);
-            for (int i = 0; i < gettingSchedule.Length; i++) {
-                if (gettingSchedule[i].subject == planHomeWork) {
-                    changeFlag = true;
-                    break;
-                }
-
-                if (gettingSchedule[i].subject == doingHomeWork) {
-                    msgID = gettingSchedule[i].location;
-                    ishomeFlag = true;
+            // 件名が同じものがあるか判定
+            for (int i = Common.FIRST_SCHEDULE_ROW; i < Common.MAX_ROW; i++) {
+                string[] values = lines[i].Split(',');
+                if (values[Common.CSV_SUBJECT_COL] == SubjectComboBox.Text) {
+                    writeRow = i;
                     break;
                 }
             }
 
-            if (ishomeFlag) {
-                if (MessageBox.Show("在宅を終了しますか？", "", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes) {
-                    settingSchedule.subject = endHomeWork;
-                    settingSchedule.location = msgID;
-                    ctrlOutlook.ChangeSchedule(todayDate, doingHomeWork, settingSchedule);
-                }
-            }
-            else {
-                if (MessageBox.Show("在宅を開始しますか？", "", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes) {
-                    settingSchedule.subject = startHomeWork;
+            // 予定表になければ追加
+            if (writeRow == 0) {
+                for (int i = Common.FIRST_SCHEDULE_ROW; i < Common.MAX_ROW; i++) {
+                    string[] values = lines[i].Split(',');
+                    if (values[Common.CSV_SUBJECT_COL] == "") {
+                        writeRow = i;
+                        values[Common.CSV_SUBJECT_COL] = SubjectComboBox.Text;
 
-                    if (changeFlag) {
-                        ctrlOutlook.ChangeSchedule(todayDate, planHomeWork, settingSchedule);
-                    }
-                    else {
-                        ctrlOutlook.SetSchedule(settingSchedule, "");
+                        // linesに格納
+                        lines[i] = values[0];
+                        for (int j = 1; j < values.Length; j++) {
+                            lines[i] = lines[i] + "," + values[j];
+                        }
+                        break;
                     }
                 }
             }
-        }
 
-        private void pomodoroTimerButton_Click(object sender, RibbonControlEventArgs e)
-        {
-            if (pomodoroTimerStatus == Macros.STATUS_TIMER_STOP) {
-                InitPomodoroStatus(Macros.STATUS_TIMER_WORK);
-            }
-            else {
-                pomodoroTimer.Stop();
-                if (MessageBox.Show("タイマーを停止しますか？", "", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes) {
-                    InitPomodoroStatus(Macros.STATUS_TIMER_STOP);
-                    return;
+            // 開始時間と終了時間の列を取得
+            for (int i = Common.CSV_FIRST_TIME_COL; i < hours.Length; i++) {
+                if (Common.RoundTime(startWorkTime) == hours[i] + ":" + minutes[i]) {
+                    startCol = i;
                 }
-                pomodoroTimer.Start();
+
+                if (Common.RoundTime(DateTime.Now) == hours[i] + ":" + minutes[i]) {
+                    endCol = i;
+                    break;
+                }
             }
+
+            // 予定表の計画・実績フラグ書換
+            string[] changeValues = lines[writeRow].Split(',');
+            for (int i = startCol; i < endCol; i++) {
+                if (changeValues[i] == "") {
+                    changeValues[i] = Common.ACHEIVE_NUM;
+                }
+                else if (changeValues[i] == Common.PLAN_NUM) {
+                    changeValues[i] = Common.AS_PLANED_NUM;
+                }
+            }
+            if (startCol == endCol) {
+                if (changeValues[startCol] == "") {
+                    changeValues[startCol] = Common.ACHEIVE_NUM;
+                }
+                else if (changeValues[startCol] == Common.PLAN_NUM) {
+                    changeValues[startCol] = Common.AS_PLANED_NUM;
+                }
+            }
+            if (endCol == 48) {
+                if (changeValues[endCol] == "") {
+                    changeValues[endCol] = Common.ACHEIVE_NUM;
+                }
+                else if (changeValues[endCol] == Common.PLAN_NUM) {
+                    changeValues[endCol] = Common.AS_PLANED_NUM;
+                }
+            }
+
+            // 元に戻す
+            lines[writeRow] = changeValues[0];
+            for (int i = 1; i < changeValues.Length; i++) {
+                lines[writeRow] = lines[writeRow] + "," + changeValues[i];
+            }
+            Common.ctrlFile.WriteCSVFile(OutlookAddIn1.Properties.Settings.Default.shcheduleFile, lines);
+
+            recording               = 0x00;
+            RecordButton.Label      = "記録開始";
+            RecordButton.Image      = OutlookAddIn1.Properties.Resources.startRecord;
+            SubjectComboBox.Enabled = true;
         }
 
-        // 業務記録タイマーのイベント
-        private void OnElapsed_recordTimer(object sender, System.Timers.ElapsedEventArgs e)
+        private void OnElapsed_RecordTimer(object sender, System.Timers.ElapsedEventArgs e)
         {
-            string todayDate = DateTime.Today.ToString("yyyy/MM/dd");
             string currentTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm");
-            string nowTime = DateTime.Now.ToString("H:mm");
-            CtrlOutlook.scheduleSetting[] gettingSchedule = new CtrlOutlook.scheduleSetting[0];
+            CtrlOutlook.SCHEDULEOPTION[] gettingSchedule = new CtrlOutlook.SCHEDULEOPTION[0];
 
-            if (!autoRecordFlag) {
-                ctrlOutlook.GetSchedule(todayDate, ref gettingSchedule);
-
+            // 予定表より自動記録開始
+            if ((recording & 0x10) == 0x00) {
+                Common.ctrlOutlook.GetSchedule(ref gettingSchedule);
                 for (int i = 0; i < gettingSchedule.Length; i++) {
                     if ((currentTime != gettingSchedule[i].start.ToString("yyyy/MM/dd HH:mm")) || (gettingSchedule[i].categories == "その他") ) {
                         continue;
                     }
 
                     // 記録中なら強制的に停止・記録
-                    if (recordFlag) {
-                        RecordWork(); // 停止・記録
+                    if ((recording & 0x01) == 0x01) {
+                        StopRecord(); 
                     }
 
-                    autoRecordFlag = true;
-                    subjectComboBox.Text = gettingSchedule[i].subject;
-                    workEndTime = gettingSchedule[i].end;
-                    RecordWork(); // 開始
+                    // 記録開始
+                    SubjectComboBox.Text = gettingSchedule[i].subject;
+                    endWorkTime = gettingSchedule[i].end;
+                    StartRecord();
+                    recording |= 0x10;
                     break;
                 }
             }
             else {
-                if (currentTime == workEndTime.ToString("yyyy/MM/dd HH:mm")) {
-                    autoRecordFlag = false;
-                    RecordWork(); // 停止・記録
+                if (currentTime == endWorkTime.ToString("yyyy/MM/dd HH:mm")) {
+                    StopRecord();
                 }
             }
 
             // 記録中に休憩時間になったら強制的に停止・記録
-            if (recordFlag) {
-                string[] lines = new string[0];
-                ctrlFile.ReadCSVFile(OutlookAddIn1.Properties.Settings.Default.SETTING_FILE, ref lines);
-                for (int i = 0; i < lines.Length; i++) {
-                    string[] values = lines[i].Split(',');
+            if ((recording & 0x01) == 0x01) {
+                string restTimes = OutlookAddIn1.Properties.Settings.Default.restTime;
+                string[] values = restTimes.Split(',');
 
-                    if (values[0] == "休み時間") {
-                        for (int j = 1; j < values.Length; j++) {
-                            if (nowTime == values[j]) {
-                                autoRecordFlag = false;
-                                RecordWork(); // 停止・記録
-                            }
-                        }
+                for (int i = 0; i < values.Length; i++) {
+                    if (currentTime == DateTime.Now.ToString("yyyy/MM/dd ") + values[i]) {
+                        StopRecord();
                         break;
-                    }
+                    }             
                 }
             }
         }
 
-        // ポモードロタイマーのイベント
-        private void OnElapsed_pomodoroTimer(object sender, System.Timers.ElapsedEventArgs e)
+        private void pomodoroTimerButton_Click(object sender, RibbonControlEventArgs e)
         {
-            string nextStatus = "";
+            string status = PomodoroButton.Label;
 
-            // 残り時間を表示
+            if (status.Contains("タイマー開始")) {
+                PomodoroButton.Image = OutlookAddIn1.Properties.Resources.stop;
+                WorkMinutesDropDown.Enabled = false;
+                RestMinutesDropDown.Enabled = false;
+                pomodoroTimer.Start();
+            }
+            else {
+                if (MessageBox.Show("タイマーを停止しますか？", "WorkSupportTool", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes) {
+                    pomodoroTimer.Stop();
+                    remainingSeconds = 0;
+                    PomodoroButton.Label = "タイマー開始";
+                    PomodoroButton.Image = OutlookAddIn1.Properties.Resources.startTimer;
+                    WorkMinutesDropDown.Enabled = true;
+                    RestMinutesDropDown.Enabled = true;
+                }
+            }
+        }
+
+        private void OnElapsed_PomodoroTimer(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            string[] status = PomodoroButton.Label.Split(' ');
+
+            // 残り時間が0になったらタイマー停止
+            if (remainingSeconds == 0) {
+                // 作業時間にする
+                if ((status[0] == "タイマー開始") || (status[0] == "休憩中")) {
+                    remainingSeconds = int.Parse(WorkMinutesDropDown.SelectedItem.Label) * 60;
+                    status[0] = "作業中";
+                }
+                // 休憩時間にする
+                else {
+                    remainingSeconds = int.Parse(RestMinutesDropDown.SelectedItem.Label) * 60;
+                    status[0] = "休憩中";
+                }
+
+                MessageBox.Show(status[0] + "を開始してください", "WorkSupportTool", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+
+            // 残り時間等を表示
             remainingSeconds--;
             int workMinutes = remainingSeconds / 60;
             int workSeconds = remainingSeconds % 60;
-            pomodoroTimerButton.Label = pomodoroTimerStatus + "中 " + workMinutes.ToString("00") + ":" + workSeconds.ToString("00");
 
-            // 残り時間が0になったらタイマーを停止
-            if (remainingSeconds != 0) {
-                return;
-            }
-
-            pomodoroTimer.Stop();
-
-            // 休憩時間にする
-            if (pomodoroTimerStatus == Macros.STATUS_TIMER_WORK) {
-                nextStatus = Macros.STATUS_TIMER_REST;
-            }
-            // 作業時間にする
-            else if (pomodoroTimerStatus == Macros.STATUS_TIMER_REST) {
-                nextStatus = Macros.STATUS_TIMER_WORK;
-            }
-
-            new ToastContentBuilder().AddArgument("action", "viewConversation").AddArgument("conversationId", 9813).AddText(nextStatus + "を開始してください").Show();
-            //if (MessageBox.Show(nextStatus + "開始です", "", MessageBoxButtons.OKCancel, MessageBoxIcon.Information) != DialogResult.Cancel) {
-            //    nextStatus = Macros.STATUS_TIMER_STOP;
-            //}
-
-            InitPomodoroStatus(nextStatus);
+            PomodoroButton.Label = status[0] + " " + workMinutes.ToString("00") + ":" + workSeconds.ToString("00");
         }
 
-        // 記録開始
-        private void RecordWork() {
-            string status = recordButton.Label;
-            string[] lines = new string[0];
-            int writeRow = 0;
-            int startCol = 0;
-            int endCol = 48;
+        private void WorkButton_Click(object sender, RibbonControlEventArgs e)
+        {
+            bool working         = false;
+            string doingWork     = "出社(勤務中)";
+            string endWork       = "退勤";
+            string deleteSubject = "";
+            string msg           = "";
+            CtrlOutlook.SCHEDULEOPTION settingWork       = new CtrlOutlook.SCHEDULEOPTION();
+            CtrlOutlook.SCHEDULEOPTION[] gettingSchedule = new CtrlOutlook.SCHEDULEOPTION[0];
 
-            if (subjectComboBox.Text == "") {
-                MessageBox.Show("件名を入力してください", "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
+            // 予定設定
+            settingWork.start       = DateTime.Now;
+            settingWork.end         = DateTime.Now;
+            settingWork.allDayEvent = true;
+            settingWork.busyStatus  = OlBusyStatus.olFree;
+            settingWork.sensitivity = OlSensitivity.olNormal;
+            settingWork.importance  = OlImportance.olImportanceNormal;
+
+            // 既に出社の予定があるかチェック
+            Common.ctrlOutlook.GetSchedule(ref gettingSchedule);
+            for (int i = 0; i < gettingSchedule.Length; i++) {
+                if (gettingSchedule[i].subject == doingWork) {
+                    working = true;
+                    break;
+                }
             }
 
-            if (status == Macros.STATUS_RECORD_START) {
-                recordFlag = true;
-                workStartTime = DateTime.Now;
-                recordButton.Label = Macros.STATUS_RECORD_STOP;
-                recordButton.Image = OutlookAddIn1.Properties.Resources.record;
-                subjectComboBox.Enabled = false;
-                return;
+            if (!working) {
+                msg                  = "出勤しますか？";
+                settingWork.subject  = doingWork;
+                settingWork.location = "GTハードソフト研(第1-2F)";
+                deleteSubject        = endWork;
             }
             else {
-                recordFlag = false;
-                recordButton.Label = Macros.STATUS_RECORD_START;
-                recordButton.Image = OutlookAddIn1.Properties.Resources.startRecord;
-                subjectComboBox.Enabled = true;
-
-                // ファイル読込
-                ctrlFile.ReadCSVFile(OutlookAddIn1.Properties.Settings.Default.SCHEDULE_FILE, ref lines);
-                string[] hours = lines[0].Split(',');
-                string[] minutes = lines[1].Split(',');
-
-
-                // 件名が同じものがあるか判定
-                for (int i = Macros.SCHEDULE_ROW; i < Macros.MAX_ROW; i++) {
-                    string[] values = lines[i].Split(',');
-                    if (values[Macros.CSV_SUBJECT_COL] == subjectComboBox.Text) {
-                        writeRow = i;
-                        break;
-                    }
-                }
-
-                // 予定表になければ追加
-                if (writeRow == 0) {
-                    for (int i = Macros.SCHEDULE_ROW; i < Macros.MAX_ROW; i++) {
-                        string[] values = lines[i].Split(',');
-                        if (values[Macros.CSV_SUBJECT_COL] == "") {
-                            writeRow = i;
-                            values[Macros.CSV_SUBJECT_COL] = subjectComboBox.Text;
-
-                            for (int j = 0; j < values.Length; j++) {
-                                if (j == 0) {
-                                    lines[i] = values[j];
-                                }
-                                else {
-                                    lines[i] = lines[i] + "," + values[j];
-                                }
-                            }
-                            break;
-                        }
-                    }
-                }
-
-                // 開始時間と終了時間の列を取得
-                for (int i = Macros.CSV_TIME_COL; i < hours.Length; i++) {
-                    if (ctrlFile.RoundTime(workStartTime) == hours[i] + ":" + minutes[i]) {
-                        startCol = i;
-                    }
-
-                    if (ctrlFile.RoundTime(DateTime.Now) == hours[i] + ":" + minutes[i]) {
-                        endCol = i;
-                        break;
-                    }
-                }
-
-                // 予定表の計画・実績フラグ書換
-                string[] changeValues = lines[writeRow].Split(',');
-                for (int i = startCol; i < endCol; i++) {
-                    if (changeValues[i] == "") {
-                        changeValues[i] = Macros.ACHEIVE_STR;
-                    }
-                    else if (changeValues[i] == Macros.PLAN_STR) {
-                        changeValues[i] = Macros.AS_PLANED_STR;
-                    }
-                }
-                if (startCol == endCol) {
-                    if (changeValues[startCol] == "") {
-                        changeValues[startCol] = Macros.ACHEIVE_STR;
-                    }
-                    else if (changeValues[startCol] == Macros.PLAN_STR) {
-                        changeValues[startCol] = Macros.AS_PLANED_STR;
-                    }
-                }
-                if (endCol == 48) {
-                    if (changeValues[endCol] == "") {
-                        changeValues[endCol] = Macros.ACHEIVE_STR;
-                    }
-                    else if (changeValues[endCol] == Macros.PLAN_STR) {
-                        changeValues[endCol] = Macros.AS_PLANED_STR;
-                    }
-                }
-
-                // 元に戻す
-                for (int i = 0; i < changeValues.Length; i++) {
-                    if (i == 0) {
-                        lines[writeRow] = changeValues[i];
-                    }
-                    else {
-                        lines[writeRow] = lines[writeRow] + "," + changeValues[i];
-                    }
-                }
-
-                ctrlFile.WriteCSVFile(OutlookAddIn1.Properties.Settings.Default.SCHEDULE_FILE, lines);
+                msg                 = "退勤しますか？";
+                settingWork.subject = endWork;
+                deleteSubject       = doingWork;
             }
-        }
 
-        // ステータスの初期化
-        private void InitPomodoroStatus(string status) {
-            if (status == "") {
+            if (MessageBox.Show(msg, "WorkSupportTool", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) {
                 return;
             }
-            pomodoroTimerStatus = status;
 
-            switch (pomodoroTimerStatus) {
-                case Macros.STATUS_TIMER_WORK:
-                    remainingSeconds = int.Parse(workMinutesList.SelectedItem.Label) * 60;
-                    pomodoroTimerButton.Image = OutlookAddIn1.Properties.Resources.stop;
-                    workMinutesList.Enabled = false;
-                    restMinutesList.Enabled = false;
-                    pomodoroTimer.Start();
-                    break;
+            // 予定追加
+            Common.ctrlOutlook.DeleteSchedule(deleteSubject);
+            Common.ctrlOutlook.SetSchedule(settingWork);
+        }
 
-                case Macros.STATUS_TIMER_STOP:
-                    pomodoroTimer.Stop();
-                    pomodoroTimerButton.Label = "タイマー開始";
-                    pomodoroTimerButton.Image = OutlookAddIn1.Properties.Resources.startTimer;
-                    workMinutesList.Enabled = true;
-                    restMinutesList.Enabled = true;
-                    break;
+        private void HomeWorkButton_Click(object sender, RibbonControlEventArgs e)
+        {
+            bool homeWorking     = false;
+            string planHomeWork  = "在宅(予定)";
+            string startHomeWork = "在宅(開始)";
+            string doingHomeWork = "在宅(勤務中)";
+            string endHomeWork   = "在宅(終了)";
+            string chatID        = "";
+            string deleteSubject = "";
+            string msg           = "";
+            CtrlOutlook.SCHEDULEOPTION settingHomeWork = new CtrlOutlook.SCHEDULEOPTION();
+            CtrlOutlook.SCHEDULEOPTION[] gettingSchedule = new CtrlOutlook.SCHEDULEOPTION[0];
 
-                case Macros.STATUS_TIMER_REST:
-                    remainingSeconds = int.Parse(restMinutesList.SelectedItem.Label) * 60;
-                    pomodoroTimerButton.Image = OutlookAddIn1.Properties.Resources.stop;
-                    workMinutesList.Enabled = false;
-                    restMinutesList.Enabled = false;
-                    pomodoroTimer.Start();
+            /// 予定設定
+            settingHomeWork.start       = DateTime.Now;
+            settingHomeWork.end         = DateTime.Now;
+            settingHomeWork.allDayEvent = true;
+            settingHomeWork.busyStatus  = OlBusyStatus.olWorkingElsewhere;
+            settingHomeWork.sensitivity = OlSensitivity.olNormal;
+            settingHomeWork.importance  = OlImportance.olImportanceNormal;
+
+            // 既に在宅の予定があるかチェック
+            Common.ctrlOutlook.GetSchedule(ref gettingSchedule);
+            for (int i = 0; i < gettingSchedule.Length; i++) {
+                if (gettingSchedule[i].subject == doingHomeWork) {
+                    chatID = gettingSchedule[i].location;
+                    homeWorking = true;
                     break;
+                }
             }
+
+            if (!homeWorking) {
+                msg = "在宅を開始しますか？";
+                settingHomeWork.subject = startHomeWork;
+                deleteSubject           = planHomeWork;
+            }
+            else {
+                msg = "在宅を終了しますか？";
+                settingHomeWork.subject  = endHomeWork;
+                settingHomeWork.location = chatID;
+                deleteSubject            = doingHomeWork;
+            }
+
+            if (MessageBox.Show(msg, "WorkSupportTool", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) {
+                return;
+            }
+
+            // 予定追加
+            Common.ctrlOutlook.DeleteSchedule(deleteSubject);
+            Common.ctrlOutlook.SetSchedule(settingHomeWork);
         }
 
         // 件名コンボボックスのリスト更新
@@ -443,19 +366,17 @@ namespace WorkSupportTool
             RibbonDropDownItem item;
 
             // 予定表読込
-            ctrlFile.ReadCSVFile(OutlookAddIn1.Properties.Settings.Default.SCHEDULE_FILE, ref lines);
-            for (int i = Macros.SCHEDULE_ROW; i < Macros.MAX_ROW; i++) {
+            Common.ctrlFile.ReadCSVFile(OutlookAddIn1.Properties.Settings.Default.shcheduleFile, ref lines);
+            for (int i = Common.FIRST_SCHEDULE_ROW; i < Common.MAX_ROW; i++) {
                 string[] values = lines[i].Split(',');
 
-                if (values[Macros.CSV_SUBJECT_COL] != "") {
-                    if (values[Macros.CSV_SUBJECT_COL] == "以下MTG") {
-                        continue;
-                    }
-
-                    item = Factory.CreateRibbonDropDownItem();
-                    item.Label = values[Macros.CSV_SUBJECT_COL];
-                    subjectComboBox.Items.Add(item);
+                if ( (values[Common.CSV_SUBJECT_COL] == "") || (values[Common.CSV_SUBJECT_COL] == "以下MTG") ) {
+                    continue;
                 }
+
+                item       = Factory.CreateRibbonDropDownItem();
+                item.Label = values[Common.CSV_SUBJECT_COL];
+                SubjectComboBox.Items.Add(item);
             }
         }
     }

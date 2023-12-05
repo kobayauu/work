@@ -12,9 +12,6 @@ namespace WorkSupportTool
 {
     public partial class ScheduleForm : Form
     {
-        CtrlOutlook ctrlOutlook = new CtrlOutlook();
-        CtrlFile ctrlFile = new CtrlFile();
-
         string[] arrCategory = new string[0];
 
 
@@ -24,117 +21,114 @@ namespace WorkSupportTool
 
         private void ScheduleForm_Load(object sender, EventArgs e)
         {
-            int result = 0;
+            string[] lines     = new string[0];
+            string currentTime = Common.RoundTime(DateTime.Now);
 
             // データグリッドビューの設定
             // 行追加 
-            for (int i = 0; i < Macros.MAX_ROW; i++) {
+            for (int i = 0; i < Common.MAX_ROW; i++) {
                 dataGridView1.Rows.Add();
             }
 
             // 編集不可行列設定
-            dataGridView1.Rows[Macros.HEADER_ROW1].ReadOnly = true;
-            dataGridView1.Rows[Macros.HEADER_ROW2].ReadOnly = true;
-            dataGridView1.Rows[Macros.SPLIT_ROW].ReadOnly = true;
-            dataGridView1.Rows[Macros.MTG_ROW].ReadOnly = true;
-            for (int i = Macros.TIME_COL; i < dataGridView1.ColumnCount; i++) {
+            dataGridView1.Rows[Common.HOUR_ROW].ReadOnly      = true;
+            dataGridView1.Rows[Common.MINUTE_ROW].ReadOnly    = true;
+            dataGridView1.Rows[Common.SPLIT_ROW].ReadOnly     = true;
+            dataGridView1.Rows[Common.FIRST_MTG_ROW].ReadOnly = true;
+            for (int i = Common.FIRST_TIME_COL; i < dataGridView1.ColumnCount; i++) {
                 dataGridView1.Columns[i].ReadOnly = true;
             }
-            dataGridView1[Macros.CATEGORY_COL, Macros.HEADER_ROW2].ReadOnly = false;
+            dataGridView1[Common.CATEGORY_COL, Common.MINUTE_ROW].ReadOnly = false;
 
             // ヘッダーの背景色設定
-            dataGridView1.Rows[Macros.HEADER_ROW1].DefaultCellStyle.BackColor = Color.LightCyan;
-            dataGridView1.Rows[Macros.HEADER_ROW2].DefaultCellStyle.BackColor = Color.LightCyan;
+            dataGridView1.Rows[Common.HOUR_ROW].DefaultCellStyle.BackColor = Color.LightCyan;
+            dataGridView1.Rows[Common.MINUTE_ROW].DefaultCellStyle.BackColor = Color.LightCyan;
+
+            // 計画/実績モード設定
+            if (OutlookAddIn1.Properties.Settings.Default.scheduleMode == 0) {
+                PlanRadioButton.Checked = true;
+            }
+            else {
+                AchieveRadioButton.Checked = true;
+            }
 
             // ファイル読込
-            string[] lines = new string[0];
-            ctrlFile.ReadCSVFile(OutlookAddIn1.Properties.Settings.Default.SCHEDULE_FILE, ref lines);
-
-            for (int i = 0; i < Macros.MAX_ROW; i++) {
+            Common.ctrlFile.ReadCSVFile(OutlookAddIn1.Properties.Settings.Default.shcheduleFile, ref lines);
+            for (int i = 0; i < Common.MAX_ROW; i++) {
                 string[] values = lines[i].Split(',');
-
-                if (i == 0) {
-                    result = int.Parse(values[0]);
-                }
 
                 for (int j = 0; j <= dataGridView1.ColumnCount; j++) {
                     if (j == 0) {
                         continue;
                     }
 
-                    if ( (i < Macros.SCHEDULE_ROW) || (j <= Macros.TIME_COL) ) {
+                    // やること、メモ、成果物
+                    if ( (i < Common.FIRST_SCHEDULE_ROW) || (j <= Common.FIRST_TIME_COL) ) {
                         dataGridView1[j - 1, i].Value = values[j];
                     }
+                    // 予定・実績
                     else {
-                        // 予定・実績表示
-                        if (values[j] == Macros.PLAN_STR) {
-                            dataGridView1[j - 1, i].Value = Macros.PLAN_MARK;
+                        if (values[j] == Common.PLAN_NUM) {
+                            dataGridView1[j - 1, i].Value = Common.PLAN_MARK;
                         }
-                        else if (values[j] == Macros.ACHEIVE_STR) {
-                            dataGridView1[j - 1, i].Style.BackColor = Macros.RESULT_COLOR;
+                        else if (values[j] == Common.ACHEIVE_NUM) {
+                            dataGridView1[j - 1, i].Style.BackColor = Common.RESULT_COLOR;
                         }
-                        else if (values[j] == Macros.AS_PLANED_STR) {
-                            dataGridView1[j - 1, i].Value = Macros.PLAN_MARK;
-                            dataGridView1[j - 1, i].Style.BackColor = Macros.RESULT_COLOR;
+                        else if (values[j] == Common.AS_PLANED_NUM) {
+                            dataGridView1[j - 1, i].Value = Common.PLAN_MARK;
+                            dataGridView1[j - 1, i].Style.BackColor = Common.RESULT_COLOR;
                         }
-                        else if (values[j] == Macros.REST_STR) {
-                            dataGridView1[j - 1, i].Style.BackColor = Macros.REST_COLOR;
+                        else if (values[j] == Common.REST_NUM) {
+                            dataGridView1[j - 1, i].Style.BackColor = Common.REST_COLOR;
                         }
                     }
                 }
             }
 
-            ctrlOutlook.GetCategory(ref arrCategory);
-            for (int i = 1; i < Macros.MAX_ROW;i++) {
+            // PJ No列設定
+            Common.ctrlOutlook.GetCategory(ref arrCategory);
+            for (int i = 2; i < Common.MAX_ROW;i++) {
                 int selectIndex = 0;
-                string tmp = dataGridView1[Macros.CATEGORY_COL, i].Value.ToString();
+                string tmp = dataGridView1[Common.CATEGORY_COL, i].Value.ToString();
 
                 //指定セルにデータコンボボックスを作成
-                dataGridView1[Macros.CATEGORY_COL, i] = new DataGridViewComboBoxCell();
+                dataGridView1[Common.CATEGORY_COL, i] = new DataGridViewComboBoxCell();
 
                 //既に入っているテキストデータがエラーの原因となるため初期化
-                dataGridView1[Macros.CATEGORY_COL, i].Value = null;
+                dataGridView1[Common.CATEGORY_COL, i].Value = null;
+             
+                //データコンボボックスのリストの内容を追加
+                ((DataGridViewComboBoxCell)dataGridView1[Common.CATEGORY_COL, i]).Items.Add("");
+                for (int j = 0; j < arrCategory.Length; j++) {
+                    ((DataGridViewComboBoxCell)dataGridView1[Common.CATEGORY_COL, i]).Items.Add(arrCategory[j]);
 
-                if (i == 1) {
-                    ((DataGridViewComboBoxCell)dataGridView1[Macros.CATEGORY_COL, i]).Items.Add(Macros.PLAN_BTN);
-                    ((DataGridViewComboBoxCell)dataGridView1[Macros.CATEGORY_COL, i]).Items.Add(Macros.ACHIEVE_BTN);
-
-                    dataGridView1[Macros.CATEGORY_COL, i].Value = ((DataGridViewComboBoxCell)dataGridView1[Macros.CATEGORY_COL, i]).Items[result];
-                }
-                else {
-                    //データコンボボックスのリストの内容を追加
-                    ((DataGridViewComboBoxCell)dataGridView1[Macros.CATEGORY_COL, i]).Items.Add("");
-                    for (int j = 0; j < arrCategory.Length; j++) {
-                        ((DataGridViewComboBoxCell)dataGridView1[Macros.CATEGORY_COL, i]).Items.Add(arrCategory[j]);
-
-                        if (tmp == arrCategory[j]) {
-                            selectIndex = j + 1;
-                        }
+                    if (tmp == arrCategory[j]) {
+                        selectIndex = j + 1;
                     }
-
-                    //データコンボボックスの初期値を設定
-                    dataGridView1[Macros.CATEGORY_COL, i].Value = ((DataGridViewComboBoxCell)dataGridView1[Macros.CATEGORY_COL, i]).Items[selectIndex];
                 }
+
+                //データコンボボックスの初期値を設定
+                dataGridView1[Common.CATEGORY_COL, i].Value = ((DataGridViewComboBoxCell)dataGridView1[Common.CATEGORY_COL, i]).Items[selectIndex];
             }
 
-            // 現在の時間列を強調
-            string currentTime = ctrlFile.RoundTime(DateTime.Now);
-            string hours = "";
-            string minutes = "";
-            for (int i = 0; i < dataGridView1.ColumnCount; i++) {
-                if (dataGridView1[i, Macros.HEADER_ROW1].Value != null) {
-                    hours = dataGridView1[i, Macros.HEADER_ROW1].Value.ToString();
+            // 現在の時間列を強調           
+            for (int i = 0; i < dataGridView1.ColumnCount; i++) {               
+                string hours   = "";
+                string minutes = "";
+
+                if (dataGridView1[i, Common.HOUR_ROW].Value != null) {
+                    hours = dataGridView1[i, Common.HOUR_ROW].Value.ToString();
                 }
-                minutes = dataGridView1[i, Macros.HEADER_ROW2].Value.ToString();
+                minutes = dataGridView1[i, Common.MINUTE_ROW].Value.ToString();
 
                 if (currentTime == hours + ":" + minutes) {
-                    dataGridView1[i, Macros.HEADER_ROW2].Style.BackColor = Macros.NOW_COLOR;
+                    dataGridView1[i, Common.MINUTE_ROW].Style.BackColor = Common.CURRENT_COLOR;
 
-                    for (int j = Macros.SCHEDULE_ROW; j < Macros.MAX_ROW; j++) {
+                    for (int j = Common.FIRST_SCHEDULE_ROW; j < Common.MAX_ROW; j++) {
                         if (dataGridView1[i, j].Value != null) {
-                            dataGridView1[Macros.SUBJECT_COL, j].Style.BackColor = Macros.NOW_COLOR;
-                            dataGridView1[Macros.MEMO_COL, j].Style.BackColor = Macros.NOW_COLOR;
-                            dataGridView1[Macros.ACHIEVE_COL, j].Style.BackColor = Macros.NOW_COLOR;
+                            dataGridView1[Common.SUBJECT_COL, j].Style.BackColor = Common.CURRENT_COLOR;
+                            dataGridView1[Common.MEMO_COL, j].Style.BackColor    = Common.CURRENT_COLOR;
+                            dataGridView1[Common.ACHIEVE_COL, j].Style.BackColor = Common.CURRENT_COLOR;
                             break;
                         }
                     }
@@ -145,30 +139,20 @@ namespace WorkSupportTool
 
         private void ScheduleForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            string[] lines = new string[Macros.MAX_ROW];
-            int time = int.Parse(dataGridView1[Macros.TIME_COL, 0].Value.ToString());
-            int result = 0;
-            string tmp = "";
+            string[] lines = new string[Common.MAX_ROW];
 
-            // 1行目
-            for (int i = Macros.TIME_COL; i < dataGridView1.ColumnCount; i++) {
-                if ( (i != Macros.TIME_COL) && (i % Macros.TIME_COL == 0) ) {
-                    time++;
-                }
-                tmp = tmp + time.ToString() + ",";
+            // 計画/実績モード設定
+            if (PlanRadioButton.Checked) {
+                OutlookAddIn1.Properties.Settings.Default.scheduleMode = 0;
             }
-            if (dataGridView1[Macros.CATEGORY_COL, Macros.HEADER_ROW2].Value.ToString() == Macros.ACHIEVE_BTN) {
-                result = 1;
+            else {
+                OutlookAddIn1.Properties.Settings.Default.scheduleMode = 1;
             }
-            lines[0] = result + ",やること(やったこと),メモ,成果物,PJ No," + tmp;
 
-            // 2行目
-            lines[1] = "0,やること(やったこと),メモ,成果物,PJ No,0,15,30,45,0,15,30,45,0,15,30,45,0,15,30,45,0,15,30,45,0,15,30,45," +
-                                                                "0,15,30,45,0,15,30,45,0,15,30,45,0,15,30,45,0,15,30,45";
-
-            // 3行目～
-            for (int i = Macros.SCHEDULE_ROW; i < Macros.MAX_ROW; i++) {
-                tmp = (i - 1).ToString();
+            // ファイルへ編集結果更新(3行目～)
+            Common.ctrlFile.ReadCSVFile(OutlookAddIn1.Properties.Settings.Default.shcheduleFile, ref lines);            
+            for (int i = Common.FIRST_SCHEDULE_ROW; i < Common.MAX_ROW; i++) {
+                string tmp = (i - 1).ToString();
 
                 for (int j = 0; j < dataGridView1.ColumnCount; j++) {
                     string cell = "";
@@ -176,21 +160,21 @@ namespace WorkSupportTool
                         cell = dataGridView1[j, i].Value.ToString();
                     }
 
-                    if (j < Macros.TIME_COL) {
+                    if (j < Common.FIRST_TIME_COL) {
                         tmp = tmp + "," + cell;
                     }
                     else {
-                        if ( (cell == Macros.PLAN_MARK) && (dataGridView1[j, i].Style.BackColor == Macros.RESULT_COLOR) ) {
-                            tmp = tmp + "," + Macros.AS_PLANED_STR;
+                        if ( (cell == Common.PLAN_MARK) && (dataGridView1[j, i].Style.BackColor == Common.RESULT_COLOR) ) {
+                            tmp = tmp + "," + Common.AS_PLANED_NUM;
                         }
-                        else if ( (cell == "") && (dataGridView1[j, i].Style.BackColor == Macros.RESULT_COLOR) ) {
-                            tmp = tmp + "," + Macros.ACHEIVE_STR;
+                        else if ( (cell == "") && (dataGridView1[j, i].Style.BackColor == Common.RESULT_COLOR) ) {
+                            tmp = tmp + "," + Common.ACHEIVE_NUM;
                         }
-                        else if ( (cell == Macros.PLAN_MARK) && (dataGridView1[j, i].Style.BackColor == default) ) {
-                            tmp = tmp + "," + Macros.PLAN_STR;
+                        else if ( (cell == Common.PLAN_MARK) && (dataGridView1[j, i].Style.BackColor == default) ) {
+                            tmp = tmp + "," + Common.PLAN_NUM;
                         }
-                        else if (dataGridView1[j, i].Style.BackColor == Macros.REST_COLOR) {
-                            tmp = tmp + "," + Macros.REST_STR;
+                        else if (dataGridView1[j, i].Style.BackColor == Common.REST_COLOR) {
+                            tmp = tmp + "," + Common.REST_NUM;
                         }
                         else {
                             tmp = tmp + ",";
@@ -200,40 +184,44 @@ namespace WorkSupportTool
                 lines[i] = tmp;
             }
 
-            ctrlFile.WriteCSVFile(OutlookAddIn1.Properties.Settings.Default.SCHEDULE_FILE, lines);
+            Common.ctrlFile.WriteCSVFile(OutlookAddIn1.Properties.Settings.Default.shcheduleFile, lines);
         }
 
         private void ClearButton_Click(object sender, EventArgs e)
         {
-            CtrlOutlook.scheduleSetting[] gettingSchedule = new CtrlOutlook.scheduleSetting[0];
-            int n = Macros.MTG_ROW + 1;
-            string hours = "";
+            CtrlOutlook.SCHEDULEOPTION[] gettingSchedule = new CtrlOutlook.SCHEDULEOPTION[0];
+            int n          = Common.FIRST_MTG_ROW + 1;
+            string hours   = "";
             string minutes = "";
 
-            if (MessageBox.Show("クリアしますか？", "", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No) {
+            if (MessageBox.Show("クリアしますか？", "WorkSupportTool", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No) {
                 return;
             }
 
-            // クリア
-            for (int i = Macros.SCHEDULE_ROW; i < Macros.MAX_ROW; i++) {
-                dataGridView1[Macros.SUBJECT_COL, i].Value = "";
-                dataGridView1[Macros.MEMO_COL, i].Value = "";
-                dataGridView1[Macros.ACHIEVE_COL, i].Value = "";
-                dataGridView1[Macros.CATEGORY_COL, i].Value = "";
-                dataGridView1[Macros.SUBJECT_COL, Macros.MTG_ROW].Value = "以下MTG";
+            // 計画/実績モード設定
+            PlanRadioButton.Checked = true;
 
-                for (int j = Macros.TIME_COL; j < dataGridView1.ColumnCount; j++) {
-                    dataGridView1[j, i].Value = "";
-                    dataGridView1[j, i].Style.BackColor = default;
+            // クリア
+            for (int i = Common.FIRST_SCHEDULE_ROW; i < Common.MAX_ROW; i++) {
+                dataGridView1[Common.SUBJECT_COL, i].Value                    = "";
+                dataGridView1[Common.MEMO_COL, i].Value                       = "";
+                dataGridView1[Common.ACHIEVE_COL, i].Value                    = "";
+                dataGridView1[Common.CATEGORY_COL, i].Value                   = "";
+                dataGridView1[Common.SUBJECT_COL, Common.FIRST_MTG_ROW].Value = "以下MTG";
+
+                for (int j = Common.FIRST_TIME_COL; j < dataGridView1.ColumnCount; j++) {
+                    if (dataGridView1[j, i].Style.BackColor != Common.REST_COLOR) {
+                        dataGridView1[j, i].Value           = "";
+                        dataGridView1[j, i].Style.BackColor = default;
+                    }
                 }
             }
-            dataGridView1[Macros.CATEGORY_COL, Macros.HEADER_ROW2].Value = ((DataGridViewComboBoxCell)dataGridView1[Macros.CATEGORY_COL, Macros.HEADER_ROW2]).Items[0];
 
-            // 予定表読込
-            ctrlOutlook.GetSchedule(dateTimePicker1.Value.ToString("yyyy/MM/dd"), ref gettingSchedule);
+            // 予定表から読込
+            Common.ctrlOutlook.GetSchedule(ref gettingSchedule, dateTimePicker1.Value.ToString("yyyy/MM/dd"));
             for (int i = 0; i < gettingSchedule.Length; i++) {
-                if (gettingSchedule[i].categories != "その他" && gettingSchedule[i].allDayEvent != true) {
-                    if (n == Macros.MAX_ROW) {
+                if ( (gettingSchedule[i].categories != "その他") && (gettingSchedule[i].allDayEvent != true) ) {
+                    if (n == Common.MAX_ROW) {
                         break;
                     }
 
@@ -244,27 +232,27 @@ namespace WorkSupportTool
                     }
 
                     bool startFlag = false;
-                    int startCol = 0;
-                    int endCol = dataGridView1.ColumnCount - 1;
+                    int startCol   = 0;
+                    int endCol     = dataGridView1.ColumnCount - 1;
 
                     // 予定
-                    for (int j = Macros.TIME_COL; j < dataGridView1.ColumnCount; j++) {
+                    for (int j = Common.FIRST_TIME_COL; j < dataGridView1.ColumnCount; j++) {
                         if (dataGridView1[j, 0].Value != null) {
                             hours = dataGridView1[j, 0].Value.ToString();
                         }
                         minutes = dataGridView1[j, 1].Value.ToString();
 
-                        if (startFlag) {
-                            if (ctrlFile.RoundTime(gettingSchedule[i].end) == hours + ":" + minutes) {
-                                endCol = j;
-                                startFlag = false;
-                                break;
+                        if (!startFlag) {
+                            if (Common.RoundTime(gettingSchedule[i].start) == hours + ":" + minutes) {
+                                startCol  = j;
+                                startFlag = true;
                             }
                         }
                         else {
-                            if (ctrlFile.RoundTime(gettingSchedule[i].start) == hours + ":" + minutes) {
-                                startCol = j;
-                                startFlag = true;
+                            if (Common.RoundTime(gettingSchedule[i].end) == hours + ":" + minutes) {
+                                endCol    = j;
+                                startFlag = false;
+                                break;
                             }
                         }
                     }
@@ -274,51 +262,27 @@ namespace WorkSupportTool
                         continue;
                     }
 
-                    // MTG予定を入力
+                    // MTG予定入力
                     for (int j = startCol; j < endCol; j++) {
-                        dataGridView1[j, n].Value = Macros.PLAN_MARK;
+                        dataGridView1[j, n].Value = Common.PLAN_MARK;
                     }
                     if (endCol == dataGridView1.ColumnCount - 1) {
-                        dataGridView1[endCol, n].Value = Macros.PLAN_MARK;
+                        dataGridView1[endCol, n].Value = Common.PLAN_MARK;
                     }
                     n++;
                 }
             }
 
-            // 休憩時間
-            // ファイル読込
-            string[] lines = new string[0];
-            ctrlFile.ReadCSVFile(OutlookAddIn1.Properties.Settings.Default.SETTING_FILE, ref lines);
+            // 定例MTGのPJ No設定
+            string[] lines = OutlookAddIn1.Properties.Settings.Default.regularMTG.Split(',');
             for (int i = 0; i < lines.Length; i++) {
-                string[] values = lines[i].Split(',');
+                for (int j = Common.FIRST_MTG_ROW + 1; j < Common.MAX_ROW; j++) {
+                    string[] values = lines[i].Split('-');
 
-                if (values[0] == "休み時間") {
-                    for (int j = 1; j < values.Length; j++) {
-                        for (int k = Macros.TIME_COL; k < dataGridView1.ColumnCount; k++) {
-                            if (dataGridView1[k, 0].Value != null) {
-                                hours = dataGridView1[k, 0].Value.ToString();
-                            }
-                            minutes = dataGridView1[k, 1].Value.ToString();
-                            if (minutes.Length == 1) {
-                                minutes = "0" + minutes;
-                            }
-
-                            if (values[j] == hours + ":" + minutes) {
-                                for (int l = 2; l < Macros.MAX_ROW; l++) {
-                                    dataGridView1[k, l].Style.BackColor = Macros.REST_COLOR;
-                                }
-                                break;
-                            }
-                        }
-                    }
-                }
-                else if (values[0] == "定例会") {
-                    for (int j = Macros.MTG_ROW + 1; j < Macros.MAX_ROW; j++) {
-                        if (dataGridView1[Macros.SUBJECT_COL, j].Value != null) {
-                            if (values[1] == dataGridView1[Macros.SUBJECT_COL, j].Value.ToString()) {
-                                dataGridView1[Macros.CATEGORY_COL, j].Value = values[2];
-                                break;
-                            }
+                    if (dataGridView1[Common.SUBJECT_COL, j].Value != null) {
+                        if (values[0] == dataGridView1[Common.SUBJECT_COL, j].Value.ToString()) {
+                            dataGridView1[Common.CATEGORY_COL, j].Value = values[1];
+                            break;
                         }
                     }
                 }
@@ -327,175 +291,153 @@ namespace WorkSupportTool
 
         private void PostButton_Click(object sender, EventArgs e)
         {
-            CtrlOutlook.scheduleSetting settingSchedule = new CtrlOutlook.scheduleSetting();
-            int[] arrWorkTime = new int[arrCategory.Length]; 
+            CtrlOutlook.SCHEDULEOPTION settingSchedule = new CtrlOutlook.SCHEDULEOPTION();
+            int[] arrWorkTime                          = new int[arrCategory.Length]; 
 
-            if (MessageBox.Show(this, "Outlookへ実績を記入しますか？", "", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No) {
+            if (MessageBox.Show(this, "Outlookへ実績を記入しますか？", "WorkSupportTool", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No) {
                 return;
             }
 
             // 本文
-            for (int i = Macros.SCHEDULE_ROW; i < Macros.MAX_ROW; i++) {
-                int workTime = 0;
-                string subject = "";
+            for (int i = Common.FIRST_SCHEDULE_ROW; i < Common.MAX_ROW; i++) {
+                int workTime    = 0;
+                string subject  = "";
                 string category = "";
 
-                if (i == Macros.SPLIT_ROW || i == Macros.MTG_ROW) {
+                if (i == Common.SPLIT_ROW || i == Common.FIRST_MTG_ROW) {
                     continue;
                 }
 
-                for (int j = Macros.TIME_COL; j < dataGridView1.ColumnCount; j++) {
-                    if (dataGridView1[j, i].Style.BackColor == Macros.RESULT_COLOR) {
+                // 工数(後で使う)
+                for (int j = Common.FIRST_TIME_COL; j < dataGridView1.ColumnCount; j++) {
+                    if (dataGridView1[j, i].Style.BackColor == Common.RESULT_COLOR) {
                         workTime++;
                     }
-                }
-                
+                }             
                 workTime = workTime * 15;
-                subject = dataGridView1[Macros.SUBJECT_COL, i].Value.ToString();               
-                category = dataGridView1[Macros.CATEGORY_COL, i].Value.ToString();
+
+                for (int j = 0; j < arrCategory.Length; j++) {
+                    if (arrCategory[j] == dataGridView1[Common.CATEGORY_COL, i].Value.ToString()) {
+                        arrWorkTime[j] = arrWorkTime[j] + workTime;
+                    }
+                }
 
                 // 以前転記して時間が残っていたら削除
+                subject = dataGridView1[Common.SUBJECT_COL, i].Value.ToString();
+                category = dataGridView1[Common.CATEGORY_COL, i].Value.ToString();
                 string[] tmp = subject.Split('(');
                 if (tmp.Length != 0) {
                     subject = tmp[0];
                 }
 
-                // 工数(後で使う)
-                for (int j = 0; j < arrCategory.Length; j++) {
-                    if (arrCategory[j] == dataGridView1[Macros.CATEGORY_COL, i].Value.ToString()) {
-                        arrWorkTime[j] = arrWorkTime[j] + workTime;
-                    }
-                }
-
                 if (workTime != 0) {
-                    dataGridView1[Macros.SUBJECT_COL, i].Value = subject + "(" + (workTime / 60).ToString("00") + ":" + (workTime % 60).ToString("00") + ")";
+                    dataGridView1[Common.SUBJECT_COL, i].Value = subject + "(" + (workTime / 60).ToString("00") + ":" + (workTime % 60).ToString("00") + ")";
                 }
                 else {
-                    dataGridView1[Macros.SUBJECT_COL, i].Value = subject;
+                    dataGridView1[Common.SUBJECT_COL, i].Value = subject;
                 }
 
-                if (i > Macros.SPLIT_ROW) {
+                // 予定表から取得したものはOutlookに転記しない
+                if (i > Common.SPLIT_ROW) {
                     continue;
                 }
 
                 // 実績入力
-                bool startFlag = false;
+                bool startFlag     = false;
                 DateTime startTime = dateTimePicker1.Value;
-                DateTime endTime = dateTimePicker1.Value;
-                string hours = "";
-                string minutes = "";
-                for (int j = Macros.TIME_COL; j < dataGridView1.ColumnCount; j++) {
-                    if (dataGridView1[j, Macros.HEADER_ROW1].Value != null) {
-                        hours = dataGridView1[j, Macros.HEADER_ROW1].Value.ToString();
+                DateTime endTime   = dateTimePicker1.Value;
+                string hours       = "";
+                string minutes     = "";
+                for (int j = Common.FIRST_TIME_COL; j < dataGridView1.ColumnCount; j++) {
+                    if (dataGridView1[j, Common.HOUR_ROW].Value != null) {
+                        hours = dataGridView1[j, Common.HOUR_ROW].Value.ToString();
                     }
-                    minutes = dataGridView1[j, Macros.HEADER_ROW2].Value.ToString();
+                    minutes = dataGridView1[j, Common.MINUTE_ROW].Value.ToString();
 
                     if (!startFlag) {
-                        if (dataGridView1[j, i].Style.BackColor == Macros.RESULT_COLOR) {
+                        if (dataGridView1[j, i].Style.BackColor == Common.RESULT_COLOR) {
                             startFlag = true;
                             startTime = DateTime.Parse(dateTimePicker1.Value.ToString("yyyy/MM/dd") + " " + hours + ":" + minutes);
                         }
                     }
                     else {
-                        if (dataGridView1[j, i].Style.BackColor != Macros.RESULT_COLOR) {
-                            startFlag = false;
-                            endTime = DateTime.Parse(dateTimePicker1.Value.ToString("yyyy/MM/dd") + " " + hours + ":" + minutes);
-
-                            settingSchedule.subject = subject;
-                            settingSchedule.start = startTime;
-                            settingSchedule.end = endTime;
-                            settingSchedule.categories = category;
-                            settingSchedule.importance = OlImportance.olImportanceNormal;
-                            settingSchedule.sensitivity = OlSensitivity.olPrivate;
-                            ctrlOutlook.SetSchedule(settingSchedule, "");
-                        }
-
-                        if (j == dataGridView1.ColumnCount - 1) {
-                            startFlag = false;
-                            minutes = ((int.Parse(minutes) + 15) % 60).ToString();
-                            if (minutes == "0") {
-                                hours = (int.Parse(hours) + 1).ToString();
+                        if (dataGridView1[j, i].Style.BackColor != Common.RESULT_COLOR) {
+                            // 最終列の場合、ちょっと調整
+                            if (j == dataGridView1.ColumnCount - 1) {
+                                minutes = ((int.Parse(minutes) + 15) % 60).ToString();
+                                if (minutes == "0") {
+                                    hours = (int.Parse(hours) + 1).ToString();
+                                }
                             }
+                            startFlag = false;
                             endTime = DateTime.Parse(dateTimePicker1.Value.ToString("yyyy/MM/dd") + " " + hours + ":" + minutes);
 
-                            settingSchedule.subject = subject;
-                            settingSchedule.start = startTime;
-                            settingSchedule.end = endTime;
-                            settingSchedule.categories = category;
-                            settingSchedule.importance = OlImportance.olImportanceNormal;
+                            settingSchedule.subject     = subject;
+                            settingSchedule.start       = startTime;
+                            settingSchedule.end         = endTime;
+                            settingSchedule.categories  = category;
+                            settingSchedule.importance  = OlImportance.olImportanceNormal;
                             settingSchedule.sensitivity = OlSensitivity.olPrivate;
-                            ctrlOutlook.SetSchedule(settingSchedule, "");
+                            Common.ctrlOutlook.SetSchedule(settingSchedule);
                         }
                     }
                 }
             }
 
-            MessageBox.Show("Outlookへの実績を記入しました", "", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show("Outlookへの実績を記入しました", "WorkSupportTool", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void CopyButton_Click(object sender, EventArgs e)
         {
             int[] arrWorkTime = new int[arrCategory.Length];
+            string copyText   = "";
 
             // 工数計算
-            for (int i = Macros.SCHEDULE_ROW; i < Macros.MAX_ROW; i++) {
+            for (int i = Common.FIRST_SCHEDULE_ROW; i < Common.MAX_ROW; i++) {
                 int workTime = 0;
 
-                if (i == Macros.SPLIT_ROW || i == Macros.MTG_ROW) {
+                if ( (i == Common.SPLIT_ROW) || (i == Common.FIRST_MTG_ROW) ) {
                     continue;
                 }
 
-                for (int j = Macros.TIME_COL; j < dataGridView1.ColumnCount; j++) {
-                    if (dataGridView1[j, i].Style.BackColor == Macros.RESULT_COLOR) {
+                for (int j = Common.FIRST_TIME_COL; j < dataGridView1.ColumnCount; j++) {
+                    if (dataGridView1[j, i].Style.BackColor == Common.RESULT_COLOR) {
                         workTime++;
                     }
                 }
 
                 workTime = workTime * 15;
                 for (int j = 0; j < arrCategory.Length; j++) {
-                    if (arrCategory[j] == dataGridView1[Macros.CATEGORY_COL, i].Value.ToString()) {
+                    if (arrCategory[j] == dataGridView1[Common.CATEGORY_COL, i].Value.ToString()) {
                         arrWorkTime[j] = arrWorkTime[j] + workTime;
                     }
                 }
             }
 
-            // クリップボードに工数をコピー
-            string copyText = "";
-            int[] copyNum = new int[arrCategory.Length];
-            for (int i = 0; i < arrCategory.Length; i++) {
-                string[] values = arrCategory[i].Split('_');
-                int n = 0;
-
-                if (int.TryParse(values[0], out n)) {
-                    copyNum[n] = arrWorkTime[i];
-                }
-            }
-
-            for (int i = 0; i < copyNum.Length; i++) {
-                copyText = copyText + (copyNum[i] / 60).ToString("00") + ":" + (copyNum[i] % 60).ToString("00") + "\t";
+            // クリップボードに工数をコピー 
+            for (int i = 0; i < arrWorkTime.Length; i++) {
+                copyText = copyText + (arrWorkTime[i] / 60).ToString("00") + ":" + (arrWorkTime[i] % 60).ToString("00") + "\t";
             }
             Clipboard.SetText(copyText);
-            MessageBox.Show("クリップボードへ工数をコピーしました", "", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-            System.Diagnostics.Process.Start(OutlookAddIn1.Properties.Settings.Default.WORKTIME_URL);
+            MessageBox.Show("クリップボードへ工数をコピーしました", "WorkSupportTool", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            System.Diagnostics.Process.Start(OutlookAddIn1.Properties.Settings.Default.worktimeURL);
         }
 
         // ダブルクリックで計画・実績入力
         private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             string cell = "";
-            string mode = "";
 
             for (int i = 0; i < dataGridView1.SelectedCells.Count; i++) {
                 int row = dataGridView1.SelectedCells[i].RowIndex;
                 int col = dataGridView1.SelectedCells[i].ColumnIndex;
 
-                if ((row < Macros.SCHEDULE_ROW) || (col < Macros.TIME_COL)) {
+                if ( (row < Common.FIRST_SCHEDULE_ROW) || (col < Common.FIRST_TIME_COL) ) {
                     continue;
                 }
 
                 // 休憩は計画・実績入力不可
-                if (dataGridView1[col, row].Style.BackColor == Macros.REST_COLOR) {
+                if (dataGridView1[col, row].Style.BackColor == Common.REST_COLOR) {
                     continue;
                 }
 
@@ -503,21 +445,17 @@ namespace WorkSupportTool
                     cell = dataGridView1[col, row].Value.ToString();
                 }
 
-                if (dataGridView1[Macros.CATEGORY_COL, Macros.HEADER_ROW2].Value != null) {
-                    mode = dataGridView1[Macros.CATEGORY_COL, Macros.HEADER_ROW2].Value.ToString();
-                }
-
-                if (mode == Macros.PLAN_BTN) {
+                if (PlanRadioButton.Checked) {
                     if (cell == "") {
-                        dataGridView1[col, row].Value = Macros.PLAN_MARK;
+                        dataGridView1[col, row].Value = Common.PLAN_MARK;
                     }
                     else {
                         dataGridView1[col, row].Value = "";
                     }
                 }
-                else if (mode == Macros.ACHIEVE_BTN) {
+                else {
                     if (dataGridView1[col, row].Style.BackColor == default) {
-                        dataGridView1[col, row].Style.BackColor = Macros.RESULT_COLOR;
+                        dataGridView1[col, row].Style.BackColor = Common.RESULT_COLOR;
                     }
                     else {
                         dataGridView1[col, row].Style.BackColor = default;
@@ -532,14 +470,14 @@ namespace WorkSupportTool
             DataGridViewCell cell1 = dataGridView1[column, row];
             DataGridViewCell cell2;
 
-            if (mode == Macros.MODE_ROW) {
+            if (mode == Common.CHECK_ROW_MODE) {
                 cell2 = dataGridView1[column, row - 1];
             }
             else {
                 cell2 = dataGridView1[column - 1, row];
             }
 
-            if (cell1.Value == null || cell2.Value == null) {
+            if ( (cell1.Value == null) || (cell2.Value == null) ) {
                 return false;
             }
 
@@ -554,18 +492,18 @@ namespace WorkSupportTool
 
         private void dataGridView1_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
-            int mode = Macros.MODE_ROW;
+            int mode = Common.CHECK_ROW_MODE;
 
             // 1行目については何もしない
-            if (( e.RowIndex == Macros.HEADER_ROW1) && (e.ColumnIndex < Macros.TIME_COL) ) {
+            if ( (e.RowIndex == Common.HOUR_ROW) && (e.ColumnIndex < Common.FIRST_TIME_COL) ) {
                 return;
             }
-            if (e.RowIndex > Macros.HEADER_ROW2) {
+            if (e.RowIndex > Common.MINUTE_ROW) {
                 return;
             }
 
-            if (e.ColumnIndex > Macros.CATEGORY_COL) {
-                mode = Macros.MODE_COL;
+            if (e.ColumnIndex > Common.CATEGORY_COL) {
+                mode = Common.CHECK_COL_MODE;
             }
 
             if (IsTheSameCellValue(e.ColumnIndex, e.RowIndex, mode)) {
@@ -577,12 +515,12 @@ namespace WorkSupportTool
         private void dataGridView1_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
         {
             // ヘッダー以外は何もしない
-            if (e.RowIndex > Macros.HEADER_ROW1) {
+            if (e.RowIndex > Common.HOUR_ROW) {
                 return;
             }
 
             // セルの下側・右側の境界線を「境界線なし」に設定
-            if (e.ColumnIndex < Macros.TIME_COL) {
+            if (e.ColumnIndex < Common.FIRST_TIME_COL) {
                 e.AdvancedBorderStyle.Bottom = DataGridViewAdvancedCellBorderStyle.None;
             }
             else {
@@ -590,12 +528,12 @@ namespace WorkSupportTool
             }
 
             // 1行目や列ヘッダ、行ヘッダの場合は何もしない
-            if ( (e.RowIndex == Macros.HEADER_ROW1) && (e.ColumnIndex < Macros.TIME_COL) ) {
+            if ( (e.RowIndex == Common.HOUR_ROW) && (e.ColumnIndex < Common.FIRST_TIME_COL) ) {
                 return;
             }
 
-            if (e.ColumnIndex < Macros.TIME_COL) {
-                if (IsTheSameCellValue(e.ColumnIndex, e.RowIndex, Macros.MODE_ROW)) {
+            if (e.ColumnIndex < Common.FIRST_TIME_COL) {
+                if (IsTheSameCellValue(e.ColumnIndex, e.RowIndex, Common.CHECK_ROW_MODE)) {
                     // セルの上側の境界線を「境界線なし」に設定
                     e.AdvancedBorderStyle.Top = DataGridViewAdvancedCellBorderStyle.None;
                 }
@@ -604,8 +542,8 @@ namespace WorkSupportTool
                     e.AdvancedBorderStyle.Top = dataGridView1.AdvancedCellBorderStyle.Top;
                 }
             }
-            if (e.ColumnIndex > Macros.TIME_COL) {
-                if (IsTheSameCellValue(e.ColumnIndex, e.RowIndex, Macros.MODE_COL)) {
+            if (e.ColumnIndex > Common.FIRST_TIME_COL) {
+                if (IsTheSameCellValue(e.ColumnIndex, e.RowIndex, Common.CHECK_COL_MODE)) {
                     // セルの左側の境界線を「境界線なし」に設定
                     e.AdvancedBorderStyle.Left = DataGridViewAdvancedCellBorderStyle.None;
                 }

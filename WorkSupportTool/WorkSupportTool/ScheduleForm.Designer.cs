@@ -127,6 +127,8 @@
             this.ClearButton = new System.Windows.Forms.Button();
             this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
             this.CopyButton = new System.Windows.Forms.Button();
+            this.PlanRadioButton = new System.Windows.Forms.RadioButton();
+            this.AchieveRadioButton = new System.Windows.Forms.RadioButton();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -780,11 +782,35 @@
             this.CopyButton.UseVisualStyleBackColor = true;
             this.CopyButton.Click += new System.EventHandler(this.CopyButton_Click);
             // 
+            // PlanRadioButton
+            // 
+            this.PlanRadioButton.AutoSize = true;
+            this.PlanRadioButton.Location = new System.Drawing.Point(500, 15);
+            this.PlanRadioButton.Name = "PlanRadioButton";
+            this.PlanRadioButton.Size = new System.Drawing.Size(47, 16);
+            this.PlanRadioButton.TabIndex = 6;
+            this.PlanRadioButton.TabStop = true;
+            this.PlanRadioButton.Text = "計画";
+            this.PlanRadioButton.UseVisualStyleBackColor = true;
+            // 
+            // AchieveRadioButton
+            // 
+            this.AchieveRadioButton.AutoSize = true;
+            this.AchieveRadioButton.Location = new System.Drawing.Point(553, 15);
+            this.AchieveRadioButton.Name = "AchieveRadioButton";
+            this.AchieveRadioButton.Size = new System.Drawing.Size(47, 16);
+            this.AchieveRadioButton.TabIndex = 7;
+            this.AchieveRadioButton.TabStop = true;
+            this.AchieveRadioButton.Text = "実績";
+            this.AchieveRadioButton.UseVisualStyleBackColor = true;
+            // 
             // ScheduleForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1714, 561);
+            this.Controls.Add(this.AchieveRadioButton);
+            this.Controls.Add(this.PlanRadioButton);
             this.Controls.Add(this.CopyButton);
             this.Controls.Add(this.dateTimePicker1);
             this.Controls.Add(this.ClearButton);
@@ -801,6 +827,7 @@
             this.Load += new System.EventHandler(this.ScheduleForm_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -859,5 +886,7 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn Column48;
         private System.Windows.Forms.DateTimePicker dateTimePicker1;
         private System.Windows.Forms.Button CopyButton;
+        private System.Windows.Forms.RadioButton PlanRadioButton;
+        private System.Windows.Forms.RadioButton AchieveRadioButton;
     }
 }

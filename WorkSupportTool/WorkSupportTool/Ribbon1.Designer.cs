@@ -100,7 +100,7 @@
             // 
             // ScheduleButton
             // 
-            this.ScheduleButton.Image = global::OutlookAddIn1.Properties.Resources.schedule;
+            this.ScheduleButton.Image = global::WorkSupportTool.Properties.Resources.schedule;
             this.ScheduleButton.Label = "予定表";
             this.ScheduleButton.Name = "ScheduleButton";
             this.ScheduleButton.ShowImage = true;
@@ -108,7 +108,7 @@
             // 
             // RecordButton
             // 
-            this.RecordButton.Image = global::OutlookAddIn1.Properties.Resources.startRecord;
+            this.RecordButton.Image = global::WorkSupportTool.Properties.Resources.startRecord;
             this.RecordButton.Label = "記録開始";
             this.RecordButton.Name = "RecordButton";
             this.RecordButton.ShowImage = true;
@@ -122,7 +122,7 @@
             // 
             // WorkButton
             // 
-            this.WorkButton.Image = global::OutlookAddIn1.Properties.Resources.company;
+            this.WorkButton.Image = global::WorkSupportTool.Properties.Resources.company;
             this.WorkButton.Label = "出勤切替";
             this.WorkButton.Name = "WorkButton";
             this.WorkButton.ShowImage = true;
@@ -130,7 +130,7 @@
             // 
             // HomeWorkButton
             // 
-            this.HomeWorkButton.Image = global::OutlookAddIn1.Properties.Resources.home;
+            this.HomeWorkButton.Image = global::WorkSupportTool.Properties.Resources.home;
             this.HomeWorkButton.Label = "在宅切替";
             this.HomeWorkButton.Name = "HomeWorkButton";
             this.HomeWorkButton.ShowImage = true;
@@ -146,7 +146,7 @@
             // 
             // PomodoroButton
             // 
-            this.PomodoroButton.Image = global::OutlookAddIn1.Properties.Resources.startTimer;
+            this.PomodoroButton.Image = global::WorkSupportTool.Properties.Resources.startTimer;
             this.PomodoroButton.Label = "タイマー開始";
             this.PomodoroButton.Name = "PomodoroButton";
             this.PomodoroButton.ShowImage = true;

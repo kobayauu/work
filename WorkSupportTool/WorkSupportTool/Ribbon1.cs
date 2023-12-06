@@ -5,19 +5,22 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Microsoft.Office.Interop.Outlook;
+using System.Reflection.Emit;
 
 namespace WorkSupportTool
 {
     public partial class Ribbon1
     {
+        public delegate void DelegateUpdateText();
+
         // 予定表チェックタイマー
-        System.Timers.Timer recordTimer = new System.Timers.Timer(OutlookAddIn1.Properties.Settings.Default.timerSpan);
+        System.Timers.Timer recordTimer = new System.Timers.Timer(WorkSupportTool.Properties.Settings.Default.timerSpan);
         int recording                   = 0x00; // 0bit目：記録中フラグ、1bit目：自動記録中フラグ
         DateTime startWorkTime          = DateTime.Now;
         DateTime endWorkTime            = DateTime.Now;
 
         // ポモードロタイマー
-        System.Timers.Timer pomodoroTimer = new System.Timers.Timer(1000);
+        System.Timers.Timer pomodoroTimer = new System.Timers.Timer(100);
         int remainingSeconds              = 0;
 
 
@@ -68,7 +71,7 @@ namespace WorkSupportTool
             recording              |= 0x01;
             startWorkTime           = DateTime.Now;
             RecordButton.Label      = "停止・登録";
-            RecordButton.Image      = OutlookAddIn1.Properties.Resources.record;
+            RecordButton.Image      = WorkSupportTool.Properties.Resources.record;
             SubjectComboBox.Enabled = false;
         }
 
@@ -80,7 +83,7 @@ namespace WorkSupportTool
             int endCol     = 0;
 
             // ファイル読込
-            Common.ctrlFile.ReadCSVFile(OutlookAddIn1.Properties.Settings.Default.shcheduleFile, ref lines);
+            Common.ctrlFile.ReadCSVFile(WorkSupportTool.Properties.Settings.Default.shcheduleFile, ref lines);
             string[] hours   = lines[0].Split(',');
             string[] minutes = lines[1].Split(',');
 
@@ -155,11 +158,11 @@ namespace WorkSupportTool
             for (int i = 1; i < changeValues.Length; i++) {
                 lines[writeRow] = lines[writeRow] + "," + changeValues[i];
             }
-            Common.ctrlFile.WriteCSVFile(OutlookAddIn1.Properties.Settings.Default.shcheduleFile, lines);
+            Common.ctrlFile.WriteCSVFile(WorkSupportTool.Properties.Settings.Default.shcheduleFile, lines);
 
             recording               = 0x00;
             RecordButton.Label      = "記録開始";
-            RecordButton.Image      = OutlookAddIn1.Properties.Resources.startRecord;
+            RecordButton.Image      = WorkSupportTool.Properties.Resources.startRecord;
             SubjectComboBox.Enabled = true;
         }
 
@@ -197,7 +200,7 @@ namespace WorkSupportTool
 
             // 記録中に休憩時間になったら強制的に停止・記録
             if ((recording & 0x01) == 0x01) {
-                string restTimes = OutlookAddIn1.Properties.Settings.Default.restTime;
+                string restTimes = WorkSupportTool.Properties.Settings.Default.restTime;
                 string[] values = restTimes.Split(',');
 
                 for (int i = 0; i < values.Length; i++) {
@@ -214,7 +217,7 @@ namespace WorkSupportTool
             string status = PomodoroButton.Label;
 
             if (status.Contains("タイマー開始")) {
-                PomodoroButton.Image = OutlookAddIn1.Properties.Resources.stop;
+                PomodoroButton.Image = WorkSupportTool.Properties.Resources.stop;
                 WorkMinutesDropDown.Enabled = false;
                 RestMinutesDropDown.Enabled = false;
                 pomodoroTimer.Start();
@@ -224,7 +227,7 @@ namespace WorkSupportTool
                     pomodoroTimer.Stop();
                     remainingSeconds = 0;
                     PomodoroButton.Label = "タイマー開始";
-                    PomodoroButton.Image = OutlookAddIn1.Properties.Resources.startTimer;
+                    PomodoroButton.Image = WorkSupportTool.Properties.Resources.startTimer;
                     WorkMinutesDropDown.Enabled = true;
                     RestMinutesDropDown.Enabled = true;
                 }
@@ -234,11 +237,15 @@ namespace WorkSupportTool
         private void OnElapsed_PomodoroTimer(object sender, System.Timers.ElapsedEventArgs e)
         {
             string[] status = PomodoroButton.Label.Split(' ');
+            bool startFlag = false;
 
             // 残り時間が0になったらタイマー停止
             if (remainingSeconds == 0) {
                 // 作業時間にする
                 if ((status[0] == "タイマー開始") || (status[0] == "休憩中")) {
+                    if (status[0] == "タイマー開始") {
+                        startFlag = true;
+                    }
                     remainingSeconds = int.Parse(WorkMinutesDropDown.SelectedItem.Label) * 60;
                     status[0] = "作業中";
                 }
@@ -248,7 +255,14 @@ namespace WorkSupportTool
                     status[0] = "休憩中";
                 }
 
-                MessageBox.Show(status[0] + "を開始してください", "WorkSupportTool", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                // 作業⇔休憩の切替時にメッセージボックス表示
+                if (!startFlag) {
+                    PomodoroButton.Enabled = false;
+                    pomodoroTimer.Stop();
+                    MessageBox.Show(status[0] + "を開始してください", "WorkSupportTool", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    PomodoroButton.Enabled = true;
+                    pomodoroTimer.Start();
+                }
             }
 
             // 残り時間等を表示
@@ -366,7 +380,7 @@ namespace WorkSupportTool
             RibbonDropDownItem item;
 
             // 予定表読込
-            Common.ctrlFile.ReadCSVFile(OutlookAddIn1.Properties.Settings.Default.shcheduleFile, ref lines);
+            Common.ctrlFile.ReadCSVFile(WorkSupportTool.Properties.Settings.Default.shcheduleFile, ref lines);
             for (int i = Common.FIRST_SCHEDULE_ROW; i < Common.MAX_ROW; i++) {
                 string[] values = lines[i].Split(',');
 

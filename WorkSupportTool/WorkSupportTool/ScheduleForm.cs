@@ -45,7 +45,7 @@ namespace WorkSupportTool
             dataGridView1.Rows[Common.MINUTE_ROW].DefaultCellStyle.BackColor = Color.LightCyan;
 
             // 計画/実績モード設定
-            if (OutlookAddIn1.Properties.Settings.Default.scheduleMode == 0) {
+            if (WorkSupportTool.Properties.Settings.Default.scheduleMode == 0) {
                 PlanRadioButton.Checked = true;
             }
             else {
@@ -53,7 +53,7 @@ namespace WorkSupportTool
             }
 
             // ファイル読込
-            Common.ctrlFile.ReadCSVFile(OutlookAddIn1.Properties.Settings.Default.shcheduleFile, ref lines);
+            Common.ctrlFile.ReadCSVFile(WorkSupportTool.Properties.Settings.Default.shcheduleFile, ref lines);
             for (int i = 0; i < Common.MAX_ROW; i++) {
                 string[] values = lines[i].Split(',');
 
@@ -143,14 +143,14 @@ namespace WorkSupportTool
 
             // 計画/実績モード設定
             if (PlanRadioButton.Checked) {
-                OutlookAddIn1.Properties.Settings.Default.scheduleMode = 0;
+                WorkSupportTool.Properties.Settings.Default.scheduleMode = 0;
             }
             else {
-                OutlookAddIn1.Properties.Settings.Default.scheduleMode = 1;
+                WorkSupportTool.Properties.Settings.Default.scheduleMode = 1;
             }
 
             // ファイルへ編集結果更新(3行目～)
-            Common.ctrlFile.ReadCSVFile(OutlookAddIn1.Properties.Settings.Default.shcheduleFile, ref lines);            
+            Common.ctrlFile.ReadCSVFile(WorkSupportTool.Properties.Settings.Default.shcheduleFile, ref lines);            
             for (int i = Common.FIRST_SCHEDULE_ROW; i < Common.MAX_ROW; i++) {
                 string tmp = (i - 1).ToString();
 
@@ -184,7 +184,7 @@ namespace WorkSupportTool
                 lines[i] = tmp;
             }
 
-            Common.ctrlFile.WriteCSVFile(OutlookAddIn1.Properties.Settings.Default.shcheduleFile, lines);
+            Common.ctrlFile.WriteCSVFile(WorkSupportTool.Properties.Settings.Default.shcheduleFile, lines);
         }
 
         private void ClearButton_Click(object sender, EventArgs e)
@@ -274,7 +274,7 @@ namespace WorkSupportTool
             }
 
             // 定例MTGのPJ No設定
-            string[] lines = OutlookAddIn1.Properties.Settings.Default.regularMTG.Split(',');
+            string[] lines = WorkSupportTool.Properties.Settings.Default.regularMTG.Split(',');
             for (int i = 0; i < lines.Length; i++) {
                 for (int j = Common.FIRST_MTG_ROW + 1; j < Common.MAX_ROW; j++) {
                     string[] values = lines[i].Split('-');
@@ -420,7 +420,7 @@ namespace WorkSupportTool
             }
             Clipboard.SetText(copyText);
             MessageBox.Show("クリップボードへ工数をコピーしました", "WorkSupportTool", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            System.Diagnostics.Process.Start(OutlookAddIn1.Properties.Settings.Default.worktimeURL);
+            System.Diagnostics.Process.Start(WorkSupportTool.Properties.Settings.Default.worktimeURL);
         }
 
         // ダブルクリックで計画・実績入力

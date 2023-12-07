@@ -20,7 +20,7 @@ namespace WorkSupportTool
         DateTime endWorkTime            = DateTime.Now;
 
         // ポモードロタイマー
-        System.Timers.Timer pomodoroTimer = new System.Timers.Timer(100);
+        System.Timers.Timer pomodoroTimer = new System.Timers.Timer(1000);
         int remainingSeconds              = 0;
 
 

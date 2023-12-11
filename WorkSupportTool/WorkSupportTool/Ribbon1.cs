@@ -128,37 +128,39 @@ namespace WorkSupportTool
 
             // 予定表の計画・実績フラグ書換
             string[] changeValues = lines[writeRow].Split(',');
-            for (int i = startCol; i < endCol; i++) {
-                if (changeValues[i] == "") {
-                    changeValues[i] = Common.ACHEIVE_NUM;
+            if ( (startCol != 0) && (endCol != 0) ) {
+                for (int i = startCol; i < endCol; i++) {
+                    if (changeValues[i] == "") {
+                        changeValues[i] = Common.ACHEIVE_NUM;
+                    }
+                    else if (changeValues[i] == Common.PLAN_NUM) {
+                        changeValues[i] = Common.AS_PLANED_NUM;
+                    }
                 }
-                else if (changeValues[i] == Common.PLAN_NUM) {
-                    changeValues[i] = Common.AS_PLANED_NUM;
+                if (startCol == endCol) {
+                    if (changeValues[startCol] == "") {
+                        changeValues[startCol] = Common.ACHEIVE_NUM;
+                    }
+                    else if (changeValues[startCol] == Common.PLAN_NUM) {
+                        changeValues[startCol] = Common.AS_PLANED_NUM;
+                    }
                 }
-            }
-            if (startCol == endCol) {
-                if (changeValues[startCol] == "") {
-                    changeValues[startCol] = Common.ACHEIVE_NUM;
+                if (endCol == 48) {
+                    if (changeValues[endCol] == "") {
+                        changeValues[endCol] = Common.ACHEIVE_NUM;
+                    }
+                    else if (changeValues[endCol] == Common.PLAN_NUM) {
+                        changeValues[endCol] = Common.AS_PLANED_NUM;
+                    }
                 }
-                else if (changeValues[startCol] == Common.PLAN_NUM) {
-                    changeValues[startCol] = Common.AS_PLANED_NUM;
-                }
-            }
-            if (endCol == 48) {
-                if (changeValues[endCol] == "") {
-                    changeValues[endCol] = Common.ACHEIVE_NUM;
-                }
-                else if (changeValues[endCol] == Common.PLAN_NUM) {
-                    changeValues[endCol] = Common.AS_PLANED_NUM;
-                }
-            }
 
-            // 元に戻す
-            lines[writeRow] = changeValues[0];
-            for (int i = 1; i < changeValues.Length; i++) {
-                lines[writeRow] = lines[writeRow] + "," + changeValues[i];
+                // 元に戻す
+                lines[writeRow] = changeValues[0];
+                for (int i = 1; i < changeValues.Length; i++) {
+                    lines[writeRow] = lines[writeRow] + "," + changeValues[i];
+                }
+                Common.ctrlFile.WriteCSVFile(WorkSupportTool.Properties.Settings.Default.shcheduleFile, lines);
             }
-            Common.ctrlFile.WriteCSVFile(WorkSupportTool.Properties.Settings.Default.shcheduleFile, lines);
 
             recording               = 0x00;
             RecordButton.Label      = "記録開始";

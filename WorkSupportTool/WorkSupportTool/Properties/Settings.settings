@@ -21,10 +21,10 @@
       <Value Profile="(Default)">朝会-00_現行機種[特殊印刷機] GG51100,アプリMTG-00_現行機種[特殊印刷機] GG51100,ソフトMTG-00_現行機種[特殊印刷機] GG51100,GTXpoly定例-03_GTXpoly GDGS300,GT CFT-00_現行機種[特殊印刷機] GG51100,GTXpoly製造定例（製造-開発）-03_GTXpoly GDGS300,使い倒しWG(全体)-00_現行機種[特殊印刷機] GG51100,使い倒しWG【DTF】-00_現行機種[特殊印刷機] GG51100</Value>
     </Setting>
     <Setting Name="workMinutes" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">1</Value>
+      <Value Profile="(Default)">25</Value>
     </Setting>
     <Setting Name="restMinutes" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">1</Value>
+      <Value Profile="(Default)">5</Value>
     </Setting>
   </Settings>
 </SettingsFile>

@@ -821,7 +821,7 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "ScheduleForm";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "予定表";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ScheduleForm_FormClosing);
             this.Load += new System.EventHandler(this.ScheduleForm_Load);

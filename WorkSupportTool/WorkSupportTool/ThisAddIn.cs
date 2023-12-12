@@ -12,6 +12,8 @@ namespace WorkSupportTool
     {
         private void ThisAddIn_Startup(object sender, System.EventArgs e)
         {
+            MainForm mainForm = new MainForm();
+            mainForm.Show();
         }
 
         private void ThisAddIn_Shutdown(object sender, System.EventArgs e)

@@ -97,5 +97,29 @@ namespace WorkSupportTool.Properties {
                 this["regularMTG"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public int workMinutes {
+            get {
+                return ((int)(this["workMinutes"]));
+            }
+            set {
+                this["workMinutes"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public int restMinutes {
+            get {
+                return ((int)(this["restMinutes"]));
+            }
+            set {
+                this["restMinutes"] = value;
+            }
+        }
     }
 }
